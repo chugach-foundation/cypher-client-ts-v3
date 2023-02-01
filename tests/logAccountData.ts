@@ -13,16 +13,6 @@ interface ClearingCofig {
   maintMargin: number
 }
 
-interface OpenPosition {
-  side: 'bid' | 'ask'
-  price: number
-  masterAccount: string
-  subAccount: string
-  market: string
-  dateTime: string
-  coinQty: number
-}
-
 // Load  Env Variables
 require('dotenv').config({
   path: __dirname + `/default.env`,
