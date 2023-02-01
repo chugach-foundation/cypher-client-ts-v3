@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": ["es2022", "dom"],
+    "module": "CommonJS",
+    "target": "es2020",
+    "outDir": "lib",
+    "esModuleInterop": true,
+    "declaration": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "baseUrl": "."
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

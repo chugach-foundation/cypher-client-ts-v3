@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "lib": ["es2022", "dom"],
+    "module": "CommonJS",
+    "target": "es2020",
+    "outDir": "lib",
+    "esModuleInterop": true,
+    "declaration": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@cypher-client": ["../src/index.ts"],
+      "@cypher-client/*": ["../src/*"]
+    }
+  },
+  "include": ["**/*"],
+  "exclude": ["node_modules"]
+}
