@@ -1,9 +1,11 @@
-import { Clearing, CypherAccount } from '@cypher-client/accounts'
+import { Clearing, CypherAccount, CypherSubAccount, PerpetualMarket } from '@cypher-client/accounts'
 import { CypherClient } from '@cypher-client/client'
 import { CONFIGS } from '@cypher-client/constants'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { loadWallet, confirmOpts, loadAccs, fetchGraphqlData } from 'utils'
 import { Cluster } from '@cypher-client/types'
+import { deriveMarketAddress, splToUiAmountFixed } from '@cypher-client/utils'
+import { I80F48 } from '@blockworks-foundation/mango-client'
 
 // INFO:
 // Example in this file is only guaranteed to work with a cypher account that has one main subaccount
@@ -26,6 +28,14 @@ require('dotenv').config({
 const CLUSTER = process.env.CLUSTER as Cluster
 const RPC_ENDPOINT = process.env.RPC_ENDPOINT
 const KP_PATH = process.env.KEYPAIR_PATH
+
+// encoding string for deriving market addresses
+export const encodeStrToUint8Array = (str: string): number[] => {
+  const encoder = new TextEncoder()
+  const empty = Array(32).fill(0)
+  const encodedArr = Array.from(encoder.encode(str))
+  return empty.map((_, i) => encodedArr[i] || 0)
+}
 
 // c-ratio (current ratio)
 export const getCRatioRelatedData = (acc: CypherAccount) => {
@@ -53,6 +63,17 @@ export const getLeverageRatio = (acc: CypherAccount) => {
   const assetsValue = Number(data.assetsValue.toFixed(6))
   return liabsValue / (assetsValue - liabsValue)
 }
+
+export const getPerpPosition = async (client: CypherClient, acc: CypherAccount, subacc: CypherSubAccount, mktName: string) => {
+  const encodedMkt = encodeStrToUint8Array(mktName)
+  const [mktPubkey, number] = deriveMarketAddress(encodedMkt, client.cypherPID)
+  const perpMkt = await PerpetualMarket.load(client, mktPubkey)
+  const basePosition = new I80F48(subacc.getDerivativePosition(mktPubkey).basePosition)
+  const position = Number(splToUiAmountFixed(basePosition, perpMkt.state.inner.config.decimals).toFixed(6))
+
+  return position
+}
+
 
 // unreralized pnl (for your portfolio and a given mkt) WIP!!!
 export const getUnrealizedPnl = async (acc: CypherAccount) => {
@@ -90,18 +111,21 @@ export const main = async () => {
   const wallet = loadWallet(KP_PATH)
   const client = new CypherClient(CLUSTER, RPC_ENDPOINT, new NodeWallet(wallet), confirmOpts)
   const [acc, subAcc] = await loadAccs(client, wallet)
+  const MARKET = process.env.MARKET
 
   const cRatioData = getCRatioRelatedData(acc)
   const cRatio = Number(cRatioData.cRatio.toFixed(6)) * 100 // * 100 turns c-ratio unto %, same format as init and maintenance ratios
   const initMarginRatio = await getInitialMarginRatio(client, acc)
   const maintMarginRatio = await getMaintenanceMarginRatio(client, acc)
   const leverageRatio = getLeverageRatio(acc)
+  const perpPosition = await getPerpPosition(client, acc, subAcc, MARKET)
 
   return {
     cRatio,
     initMarginRatio,
     maintMarginRatio,
     leverageRatio,
+    perpPosition,
   }
 }
 
