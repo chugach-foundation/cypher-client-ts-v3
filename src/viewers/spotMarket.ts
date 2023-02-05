@@ -1,9 +1,7 @@
-import { BN } from '@project-serum/anchor';
 import { Market, Orderbook } from '@project-serum/serum';
 import { Pool } from '../accounts';
 import { Fills, OrderbookListenerCB, ParsedOrderbook } from '../types';
 import { CypherClient } from '../client/index';
-import { splToUiPrice, splToUiAmount } from '../utils/tokenAmount';
 
 export class SpotMarketViewer {
   private _bidsListener: number;

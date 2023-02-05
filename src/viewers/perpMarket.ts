@@ -1,17 +1,24 @@
 import { EventFill, EventQueue, Slab } from '@chugach-foundation/aaob';
 import { PerpetualMarket } from '../accounts';
-import { Fills, OrderbookListenerCB, ParsedOrderbook } from '../types';
+import {
+  EventQueueListenerCB,
+  Fills,
+  OrderbookListenerCB,
+  ParsedOrderbook
+} from '../types';
 import { CypherClient } from '../client/index';
 import { PublicKey } from '@solana/web3.js';
 import { CALLBACK_INFO_LEN } from '../constants/shared';
 import { DerivativesMarket } from './derivativesMarket';
 import { BN } from '@project-serum/anchor';
 import { splToUiAmount, priceLotsToNative } from '../utils/tokenAmount';
+import { FillsListenerCB } from '../types/index';
 
 export class PerpMarketViewer implements DerivativesMarket {
   private _bidsListener: number;
   private _asksListener: number;
   private _eventQueueListener: number;
+  private _fillsListener: number;
 
   constructor(
     readonly client: CypherClient,
@@ -58,6 +65,24 @@ export class PerpMarketViewer implements DerivativesMarket {
     });
   }
 
+  eventQueueParser(data: Buffer): EventQueue {
+    return EventQueue.parse(CALLBACK_INFO_LEN, data);
+  }
+
+  fillsParser(data: Buffer): Fills {
+    const eq = EventQueue.parse(CALLBACK_INFO_LEN, data);
+    const events = [...Array(eq.header.head.toNumber())]
+      .map((e) => eq.parseEvent(e))
+      .filter((e) => e instanceof EventFill);
+
+    return events.map((fill: EventFill) => {
+      return {
+        price: fill.quoteSize.div(fill.baseSize).toNumber(),
+        amount: fill.baseSize.toNumber()
+      };
+    });
+  }
+
   addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250) {
     const bidsAddress = this.market.state.inner.bids;
     this._bidsListener = this.connection.onAccountChange(
@@ -86,11 +111,11 @@ export class PerpMarketViewer implements DerivativesMarket {
       this.connection.removeAccountChangeListener(this._asksListener);
   }
 
-  addEventQueueListener(callback: () => void) {
+  addEventQueueListener(callback: EventQueueListenerCB) {
     this.removeEventQueueListener();
     this._eventQueueListener = this.connection.onAccountChange(
       this.market.state.inner.eventQueue,
-      callback,
+      ({ data }) => callback(this.eventQueueParser(data)),
       'processed'
     );
   }
@@ -98,6 +123,20 @@ export class PerpMarketViewer implements DerivativesMarket {
   removeEventQueueListener() {
     if (this._eventQueueListener)
       this.connection.removeAccountChangeListener(this._eventQueueListener);
+  }
+
+  addFillsListener(callback: FillsListenerCB) {
+    this.removeEventQueueListener();
+    this._fillsListener = this.connection.onAccountChange(
+      this.market.state.inner.eventQueue,
+      ({ data }) => callback(this.fillsParser(data)),
+      'processed'
+    );
+  }
+
+  removeFillsListener() {
+    if (this._fillsListener)
+      this.connection.removeAccountChangeListener(this._fillsListener);
   }
 
   calcMarketOrderPrice(

@@ -1,3 +1,4 @@
+import { EventQueue } from '@chugach-foundation/aaob';
 import { PublicKey, Transaction } from '@solana/web3.js';
 
 export type Cluster = 'localnet' | 'devnet' | 'mainnet-beta';
@@ -17,6 +18,8 @@ export interface Config {
 export type StateUpdateHandler<T> = (state: T) => void;
 export type ParsedOrderbook = [number, number][];
 export type OrderbookListenerCB = (bidsOrAsks: ParsedOrderbook) => void;
+export type EventQueueListenerCB = (eq: EventQueue) => void;
+export type FillsListenerCB = (fills: Fills) => void;
 export type Fills = { price: number; amount: number }[];
 
 export interface Wallet {
