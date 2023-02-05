@@ -64,6 +64,7 @@ export const getLeverageRatio = (acc: CypherAccount) => {
   return liabsValue / (assetsValue - liabsValue)
 }
 
+// returns positon size for a given perp market, can be used for futures as well
 export const getPerpPosition = async (client: CypherClient, acc: CypherAccount, subacc: CypherSubAccount, mktName: string) => {
   const encodedMkt = encodeStrToUint8Array(mktName)
   const [mktPubkey, number] = deriveMarketAddress(encodedMkt, client.cypherPID)
