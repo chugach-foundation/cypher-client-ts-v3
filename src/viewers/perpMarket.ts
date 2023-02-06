@@ -1,8 +1,16 @@
-import { EventFill, EventQueue, Slab } from '@chugach-foundation/aaob';
+import {
+  EventFill,
+  EventOut,
+  EventQueue,
+  EventQueueHeader,
+  Slab
+} from '@chugach-foundation/aaob';
 import { PerpetualMarket } from '../accounts';
 import {
   EventQueueListenerCB,
   Fills,
+  FillsExtended,
+  FillsListenerCB,
   OrderbookListenerCB,
   ParsedOrderbook
 } from '../types';
@@ -12,7 +20,6 @@ import { CALLBACK_INFO_LEN } from '../constants/shared';
 import { DerivativesMarket } from './derivativesMarket';
 import { BN } from '@project-serum/anchor';
 import { splToUiAmount, priceLotsToNative } from '../utils/tokenAmount';
-import { FillsListenerCB } from '../types/index';
 
 export class PerpMarketViewer implements DerivativesMarket {
   private _bidsListener: number;
@@ -69,16 +76,23 @@ export class PerpMarketViewer implements DerivativesMarket {
     return EventQueue.parse(CALLBACK_INFO_LEN, data);
   }
 
-  fillsParser(data: Buffer): Fills {
-    const eq = EventQueue.parse(CALLBACK_INFO_LEN, data);
-    const events = [...Array(eq.header.head.toNumber())]
-      .map((e) => eq.parseEvent(e))
+  fillsParser(data: Buffer): FillsExtended {
+    const eq = this.eventQueueParser(data);
+    const events = [...Array(eq.header.count.toNumber()).keys()]
+      .map((e) => eq.peekAt(e))
       .filter((e) => e instanceof EventFill);
 
     return events.map((fill: EventFill) => {
       return {
         price: fill.quoteSize.div(fill.baseSize).toNumber(),
-        amount: fill.baseSize.toNumber()
+        amount: fill.baseSize.toNumber(),
+        makerAccount: new PublicKey(
+          Buffer.from(fill.makerCallbackInfo.slice(0, 32))
+        ),
+        makerOrderId: fill.makerOrderId,
+        takerAccount: new PublicKey(
+          Buffer.from(fill.takerCallbackInfo.slice(0, 32))
+        )
       };
     });
   }
@@ -254,12 +268,14 @@ export class PerpMarketViewer implements DerivativesMarket {
   }
 
   async loadFills(): Promise<Fills> {
-    const FILL_LIMIT = 20;
     const eventQueue = await this.loadEventQueue(
       this.market.state.inner.eventQueue
     );
-    const fills = eventQueue.parseFill(FILL_LIMIT);
-    return fills.map((fill: EventFill) => {
+    const events = [...Array(eventQueue.header.head.toNumber()).keys()]
+      .map((e) => eventQueue.parseEvent(e))
+      .filter((e) => e instanceof EventFill);
+
+    return events.map((fill: EventFill) => {
       return {
         price: fill.quoteSize.div(fill.baseSize).toNumber(),
         amount: fill.baseSize.toNumber()

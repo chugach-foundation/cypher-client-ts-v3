@@ -1,4 +1,5 @@
 import { EventQueue } from '@chugach-foundation/aaob';
+import { BN } from '@project-serum/anchor';
 import { PublicKey, Transaction } from '@solana/web3.js';
 
 export type Cluster = 'localnet' | 'devnet' | 'mainnet-beta';
@@ -19,8 +20,15 @@ export type StateUpdateHandler<T> = (state: T) => void;
 export type ParsedOrderbook = [number, number][];
 export type OrderbookListenerCB = (bidsOrAsks: ParsedOrderbook) => void;
 export type EventQueueListenerCB = (eq: EventQueue) => void;
-export type FillsListenerCB = (fills: Fills) => void;
+export type FillsListenerCB = (fills: FillsExtended) => void;
 export type Fills = { price: number; amount: number }[];
+export type FillsExtended = {
+  price: number;
+  amount: number;
+  makerAccount: PublicKey;
+  makerOrderId: BN;
+  takerAccount: PublicKey;
+}[];
 
 export interface Wallet {
   signTransaction(tx: Transaction): Promise<Transaction>;

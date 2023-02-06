@@ -1,6 +1,18 @@
-import { EventFill, EventQueue, Slab } from '@chugach-foundation/aaob';
+import {
+  EventFill,
+  EventOut,
+  EventQueue,
+  Slab
+} from '@chugach-foundation/aaob';
 import { FuturesMarket } from '../accounts';
-import { Fills, OrderbookListenerCB, ParsedOrderbook } from '../types';
+import {
+  EventQueueListenerCB,
+  Fills,
+  FillsExtended,
+  FillsListenerCB,
+  OrderbookListenerCB,
+  ParsedOrderbook
+} from '../types';
 import { CypherClient } from '../client/index';
 import { PublicKey } from '@solana/web3.js';
 import { CALLBACK_INFO_LEN } from '../constants/shared';
@@ -12,6 +24,7 @@ export class FuturesMarketViewer implements DerivativesMarket {
   private _bidsListener: number;
   private _asksListener: number;
   private _eventQueueListener: number;
+  private _fillsListener: number;
 
   constructor(readonly client: CypherClient, readonly market: FuturesMarket) {}
 
@@ -55,6 +68,31 @@ export class FuturesMarketViewer implements DerivativesMarket {
     });
   }
 
+  eventQueueParser(data: Buffer): EventQueue {
+    return EventQueue.parse(CALLBACK_INFO_LEN, data);
+  }
+
+  fillsParser(data: Buffer): FillsExtended {
+    const eq = this.eventQueueParser(data);
+    const events = [...Array(eq.header.count.toNumber()).keys()]
+      .map((e) => eq.peekAt(e))
+      .filter((e) => e instanceof EventFill);
+
+    return events.map((fill: EventFill) => {
+      return {
+        price: fill.quoteSize.div(fill.baseSize).toNumber(),
+        amount: fill.baseSize.toNumber(),
+        makerAccount: new PublicKey(
+          Buffer.from(fill.makerCallbackInfo.slice(0, 32))
+        ),
+        makerOrderId: fill.makerOrderId,
+        takerAccount: new PublicKey(
+          Buffer.from(fill.takerCallbackInfo.slice(0, 32))
+        )
+      };
+    });
+  }
+
   addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250) {
     const bidsAddress = this.market.state.inner.bids;
     this._bidsListener = this.connection.onAccountChange(
@@ -83,11 +121,11 @@ export class FuturesMarketViewer implements DerivativesMarket {
       this.connection.removeAccountChangeListener(this._asksListener);
   }
 
-  addEventQueueListener(callback: () => void) {
+  addEventQueueListener(callback: EventQueueListenerCB) {
     this.removeEventQueueListener();
     this._eventQueueListener = this.connection.onAccountChange(
       this.market.state.inner.eventQueue,
-      callback,
+      ({ data }) => callback(this.eventQueueParser(data)),
       'processed'
     );
   }
@@ -95,6 +133,20 @@ export class FuturesMarketViewer implements DerivativesMarket {
   removeEventQueueListener() {
     if (this._eventQueueListener)
       this.connection.removeAccountChangeListener(this._eventQueueListener);
+  }
+
+  addFillsListener(callback: FillsListenerCB) {
+    this.removeEventQueueListener();
+    this._fillsListener = this.connection.onAccountChange(
+      this.market.state.inner.eventQueue,
+      ({ data }) => callback(this.fillsParser(data)),
+      'processed'
+    );
+  }
+
+  removeFillsListener() {
+    if (this._fillsListener)
+      this.connection.removeAccountChangeListener(this._fillsListener);
   }
 
   calcMarketOrderPrice(
@@ -212,12 +264,15 @@ export class FuturesMarketViewer implements DerivativesMarket {
   }
 
   async loadFills(): Promise<Fills> {
-    const FILL_LIMIT = 20;
     const eventQueue = await this.loadEventQueue(
       this.market.state.inner.eventQueue
     );
-    const fills = eventQueue.parseFill(FILL_LIMIT);
-    return fills.map((fill: EventFill) => {
+
+    const events = [...Array(eventQueue.header.head.toNumber()).keys()]
+      .map((e) => eventQueue.parseEvent(e))
+      .filter((e) => e instanceof EventFill);
+
+    return events.map((fill: EventFill) => {
       return {
         price: fill.quoteSize.div(fill.baseSize).toNumber(),
         amount: fill.baseSize.toNumber()
