@@ -1,4 +1,5 @@
 import { EventQueue } from '@chugach-foundation/aaob';
+import { Cache } from './on-chain';
 import { BN } from '@project-serum/anchor';
 import { PublicKey, Transaction } from '@solana/web3.js';
 
@@ -17,6 +18,7 @@ export interface Config {
 }
 
 export type StateUpdateHandler<T> = (state: T) => void;
+export type CacheListenerCB = (cache: Cache) => void;
 export type ParsedOrderbook = [number, number][];
 export type OrderbookListenerCB = (bidsOrAsks: ParsedOrderbook) => void;
 export type EventQueueListenerCB = (eq: EventQueue) => void;

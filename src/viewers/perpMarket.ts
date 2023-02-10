@@ -30,7 +30,7 @@ export class PerpMarketViewer implements DerivativesMarket {
   constructor(
     readonly client: CypherClient,
     readonly market: PerpetualMarket
-  ) {}
+  ) { }
 
   private get connection() {
     return this.client.connection;

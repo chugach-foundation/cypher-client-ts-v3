@@ -1,8 +1,9 @@
 import { PublicKey, Keypair } from '@solana/web3.js';
 import { CypherClient } from '../client';
-import { CacheAccountState, StateUpdateHandler, Cache } from '../types';
+import { CacheAccountState, StateUpdateHandler, Cache, CacheListenerCB } from '../types';
 
 export class CacheAccount {
+  private _cacheListener: number;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
@@ -39,6 +40,10 @@ export class CacheAccount {
     };
   }
 
+  private get connection() {
+    return this.client.connection;
+  }
+
   static async load(
     client: CypherClient,
     address: PublicKey,
@@ -66,16 +71,30 @@ export class CacheAccount {
     return this.state.caches[idx];
   }
 
-  subscribe() {
+  addCacheListener(callback: CacheListenerCB, idx: number) {
+    const cb = (_: CacheAccountState): void => {
+      const cache = this.getCache(idx);
+      callback(cache);
+    };
+    this._subscribe(cb)
+  }
+
+  removeCacheListener() {
+    if (this._cacheListener)
+      this.connection.removeAccountChangeListener(this._cacheListener);
+  }
+
+  private _subscribe(callback: (data: CacheAccountState) => void) {
     this.client.accounts.cacheAccount
       .subscribe(this.address)
       .on('change', (state: CacheAccountState) => {
         this.state = state;
-        // todo: check if dexMarkets need to be reloaded.(market listing/delisting)
-        if (this._onStateUpdate) {
-          this._onStateUpdate(this.state);
-        }
+        callback(state)
       });
+  }
+
+  subscribe() {
+    this._subscribe(this._onStateUpdate)
   }
 
   async unsubscribe() {
