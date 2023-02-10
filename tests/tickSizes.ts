@@ -4,7 +4,7 @@ import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { loadWallet, confirmOpts } from 'utils'
 import { Cluster } from '@cypher-client/types'
 import { deriveMarketAddress, sleep } from '@cypher-client/utils'
-import { priceLotsToNative, splToUiAmount } from '../src/utils/tokenAmount';
+import { priceLotsToNative, splToUiAmount } from '../src/utils/tokenAmount'
 import { BN } from '@project-serum/anchor'
 
 // Load  Env Variables
@@ -53,7 +53,6 @@ export const main = async () => {
   console.log(tickSizeNativeUnits.toNumber())
   const tickSizeUi = splToUiAmount(tickSizeNativeUnits, 6)
   console.log(tickSizeUi)
-
 }
 
 main()

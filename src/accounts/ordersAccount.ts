@@ -148,6 +148,14 @@ export class DerivativesOrdersAccount {
     return { price, quantity };
   }
 
+  getBaseTokenFree(subAcctIdx: number, baseDecimals: number) {
+    return splToUiAmount(this.state.baseTokenFree[subAcctIdx], baseDecimals);
+  }
+
+  getQuoteTokenFree(subAcctIdx: number, quoteDecimals: number) {
+    return splToUiAmount(this.state.quoteTokenFree[subAcctIdx], quoteDecimals);
+  }
+
   subscribe() {
     this.client.accounts.ordersAccount
       .subscribe(this.address)
