@@ -1,6 +1,6 @@
 {
   "name": "@chugach-foundation/cypher-client",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "TypeScript SDK for cypher protocol v3",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
