@@ -6,7 +6,7 @@ export const BPS_100_PERCENT = 10_000;
 
 export const CONFIGS: { [key in Cluster]: Config } = {
   localnet: {
-    CYPHER_PID: new PublicKey('6prLRRLSvwWLkCBc7V2B3FWi716AssNyPfp1NH88751v'),
+    CYPHER_PID: new PublicKey('E2hQJAedG6bX2w3rbPQ5XrBnPvC7u3mAorKLvU6XPxwe'),
     PYTH_PID: new PublicKey('gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s'),
     DEX_PID: new PublicKey('EoTcMgcDRTJVZDMZWBoU6rhYHZfkNTVEAfz3uUJRcYGj'),
     FAUCET_PID: new PublicKey('2gCkR5aaUiTVRiKDB79EWXm5PAVDWtNTnp9mGuu4ZKdY'),
@@ -14,12 +14,12 @@ export const CONFIGS: { [key in Cluster]: Config } = {
     PYTH_QUOTE_PRODUCT: new PublicKey(
       '6NpdXrQEpmDZ3jZKmM2rhdmkd3H6QAk23j2x8bkXcHKA'
     ),
-    CACHE: new PublicKey('D5PjhWiJZwz1YeGKhnpaGAhuSJ4Napyjeru2Qx9Hv5rb'),
+    CACHE: new PublicKey('DV1umVB5KzBkPuav7JbDNNKUzaDk9v2zAUNudR3kKRmZ'),
     HISTORY_API_GRAPHQL: 'http://localhost:8081/v1/graphql',
     HISTORY_API_REST: 'http://localhost:8081/api/rest'
   },
   devnet: {
-    CYPHER_PID: new PublicKey('6prLRRLSvwWLkCBc7V2B3FWi716AssNyPfp1NH88751v'),
+    CYPHER_PID: new PublicKey('E2hQJAedG6bX2w3rbPQ5XrBnPvC7u3mAorKLvU6XPxwe'),
     PYTH_PID: new PublicKey('gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s'),
     DEX_PID: new PublicKey('EoTcMgcDRTJVZDMZWBoU6rhYHZfkNTVEAfz3uUJRcYGj'),
     FAUCET_PID: new PublicKey('2gCkR5aaUiTVRiKDB79EWXm5PAVDWtNTnp9mGuu4ZKdY'),
@@ -27,7 +27,7 @@ export const CONFIGS: { [key in Cluster]: Config } = {
     PYTH_QUOTE_PRODUCT: new PublicKey(
       '6NpdXrQEpmDZ3jZKmM2rhdmkd3H6QAk23j2x8bkXcHKA'
     ),
-    CACHE: new PublicKey('3ac3b5RYdEogzXHr7xMESiyYKkDzXGShuSJWX1ZPWHRP'),
+    CACHE: new PublicKey('DV1umVB5KzBkPuav7JbDNNKUzaDk9v2zAUNudR3kKRmZ'),
     HISTORY_API_GRAPHQL: 'devnet-v3.cypher-history.com/v1/graphql',
     HISTORY_API_REST: 'devnet-v3.cypher-history.com/api/rest'
   },

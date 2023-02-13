@@ -152,10 +152,12 @@ export class SpotMarketViewer {
   getContractsOnOrderbooks(bids: ParsedOrderbook, asks: ParsedOrderbook) {
     let contracts = 0;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, size] of bids) {
       contracts += size;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, size] of asks) {
       contracts += size;
     }

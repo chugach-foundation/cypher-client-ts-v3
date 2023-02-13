@@ -1,5 +1,5 @@
 export type Cypher = {
-  "version": "0.1.0",
+  "version": "3.0.0",
   "name": "cypher",
   "instructions": [
     {
@@ -527,6 +527,37 @@ export type Cypher = {
           "name": "args",
           "type": {
             "defined": "CreateClearingArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "createOracleStub",
+      "accounts": [
+        {
+          "name": "oracleStub",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "symbol",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
           }
         }
       ]
@@ -1454,6 +1485,32 @@ export type Cypher = {
       "args": []
     },
     {
+      "name": "setAccountFeeTier",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "tier",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "setClearingAuthority",
       "accounts": [
         {
@@ -1842,6 +1899,22 @@ export type Cypher = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "setOracleStubPrice",
+      "accounts": [
+        {
+          "name": "oracleStub",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "i128"
+        }
+      ]
     },
     {
       "name": "setSubAccountDelegate",
@@ -3796,6 +3869,33 @@ export type Cypher = {
             "type": {
               "vec": "u16"
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "oracleStub",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "symbol",
+            "docs": [
+              "the symbol of the underlying token that this oracle stub provides a feed for"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "price",
+            "docs": [
+              "The oracle price"
+            ],
+            "type": "i128"
           }
         ]
       }
@@ -7833,26 +7933,31 @@ export type Cypher = {
     },
     {
       "code": 6082,
+      "name": "PythPriceStatusNotTrading",
+      "msg": "the given pyth price feed is not trading"
+    },
+    {
+      "code": 6083,
       "name": "ConfidenceIntervalExceeded",
       "msg": "the confidence interval for the oracle price feed has been exceeded"
     },
     {
-      "code": 6083,
+      "code": 6084,
       "name": "ReduceOnlyMode",
       "msg": "the given instrument is in reduce only mode"
     },
     {
-      "code": 6084,
+      "code": 6085,
       "name": "CancelOnlyMode",
       "msg": "the given instrument is in cancel only mode"
     },
     {
-      "code": 6085,
+      "code": 6086,
       "name": "HaltedMode",
       "msg": "the given instrument has been halted"
     },
     {
-      "code": 6086,
+      "code": 6087,
       "name": "Default",
       "msg": "Default"
     }
@@ -7860,7 +7965,7 @@ export type Cypher = {
 };
 
 export const IDL: Cypher = {
-  "version": "0.1.0",
+  "version": "3.0.0",
   "name": "cypher",
   "instructions": [
     {
@@ -8388,6 +8493,37 @@ export const IDL: Cypher = {
           "name": "args",
           "type": {
             "defined": "CreateClearingArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "createOracleStub",
+      "accounts": [
+        {
+          "name": "oracleStub",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "symbol",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
           }
         }
       ]
@@ -9315,6 +9451,32 @@ export const IDL: Cypher = {
       "args": []
     },
     {
+      "name": "setAccountFeeTier",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "tier",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "setClearingAuthority",
       "accounts": [
         {
@@ -9703,6 +9865,22 @@ export const IDL: Cypher = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "setOracleStubPrice",
+      "accounts": [
+        {
+          "name": "oracleStub",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "price",
+          "type": "i128"
+        }
+      ]
     },
     {
       "name": "setSubAccountDelegate",
@@ -11657,6 +11835,33 @@ export const IDL: Cypher = {
             "type": {
               "vec": "u16"
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "oracleStub",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "symbol",
+            "docs": [
+              "the symbol of the underlying token that this oracle stub provides a feed for"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "price",
+            "docs": [
+              "The oracle price"
+            ],
+            "type": "i128"
           }
         ]
       }
@@ -15694,26 +15899,31 @@ export const IDL: Cypher = {
     },
     {
       "code": 6082,
+      "name": "PythPriceStatusNotTrading",
+      "msg": "the given pyth price feed is not trading"
+    },
+    {
+      "code": 6083,
       "name": "ConfidenceIntervalExceeded",
       "msg": "the confidence interval for the oracle price feed has been exceeded"
     },
     {
-      "code": 6083,
+      "code": 6084,
       "name": "ReduceOnlyMode",
       "msg": "the given instrument is in reduce only mode"
     },
     {
-      "code": 6084,
+      "code": 6085,
       "name": "CancelOnlyMode",
       "msg": "the given instrument is in cancel only mode"
     },
     {
-      "code": 6085,
+      "code": 6086,
       "name": "HaltedMode",
       "msg": "the given instrument has been halted"
     },
     {
-      "code": 6086,
+      "code": 6087,
       "name": "Default",
       "msg": "Default"
     }

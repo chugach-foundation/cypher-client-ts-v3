@@ -12,9 +12,6 @@ export function priceLotsToNative(
     .mul(new BN(Math.pow(10, decimals)))
     .div(baseMultiplier);
 }
-///
-//let res = price as u128 * quote_multiplier as u128 * coin_decimals_factor as u128
-/// base_multiplier as u128;
 
 export function fp32Mul(a: BN, bFp32: BN): BN {
   return a.mul(bFp32).ushrn(32);

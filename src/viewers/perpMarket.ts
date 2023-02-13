@@ -1,10 +1,4 @@
-import {
-  EventFill,
-  EventOut,
-  EventQueue,
-  EventQueueHeader,
-  Slab
-} from '@chugach-foundation/aaob';
+import { EventFill, EventQueue, Slab } from '@chugach-foundation/aaob';
 import { PerpetualMarket } from '../accounts';
 import {
   EventQueueListenerCB,
@@ -30,7 +24,7 @@ export class PerpMarketViewer implements DerivativesMarket {
   constructor(
     readonly client: CypherClient,
     readonly market: PerpetualMarket
-  ) { }
+  ) {}
 
   private get connection() {
     return this.client.connection;
@@ -232,10 +226,12 @@ export class PerpMarketViewer implements DerivativesMarket {
   getContractsOnOrderbooks(bids: ParsedOrderbook, asks: ParsedOrderbook) {
     let contracts = 0;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, size] of bids) {
       contracts += size;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, size] of asks) {
       contracts += size;
     }

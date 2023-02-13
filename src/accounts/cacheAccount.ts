@@ -1,6 +1,11 @@
 import { PublicKey, Keypair } from '@solana/web3.js';
 import { CypherClient } from '../client';
-import { CacheAccountState, StateUpdateHandler, Cache, CacheListenerCB } from '../types';
+import {
+  CacheAccountState,
+  StateUpdateHandler,
+  Cache,
+  CacheListenerCB
+} from '../types';
 
 export class CacheAccount {
   private _cacheListener: number;
@@ -72,11 +77,12 @@ export class CacheAccount {
   }
 
   addCacheListener(callback: CacheListenerCB, idx: number) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const cb = (_: CacheAccountState): void => {
       const cache = this.getCache(idx);
       callback(cache);
     };
-    this._subscribe(cb)
+    this._subscribe(cb);
   }
 
   removeCacheListener() {
@@ -89,12 +95,12 @@ export class CacheAccount {
       .subscribe(this.address)
       .on('change', (state: CacheAccountState) => {
         this.state = state;
-        callback(state)
+        callback(state);
       });
   }
 
   subscribe() {
-    this._subscribe(this._onStateUpdate)
+    this._subscribe(this._onStateUpdate);
   }
 
   async unsubscribe() {
