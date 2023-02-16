@@ -70,6 +70,11 @@ export class CypherSubAccount {
     return null;
   }
 
+  // The position does not account for deposit or borrow interest
+  // To get the actual value of the position
+  // If its a deposit, multiply it by the deposit interest rate
+  // If its a borrow, multiply it by the borrow interest rate
+  // The index can be found in the resp cypher pool
   getSpotPositions(): SpotPosition[] {
     const positions: SpotPosition[] = [];
     for (const position of this.state.positions) {
