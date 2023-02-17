@@ -1,4 +1,9 @@
-import { EventFill, EventQueue, Slab } from '@chugach-foundation/aaob';
+import {
+  EventFill,
+  EventQueue,
+  Slab,
+  getPriceFromKey
+} from '@chugach-foundation/aaob';
 import { FuturesMarket } from '../accounts';
 import {
   EventQueueListenerCB,
@@ -13,7 +18,11 @@ import { PublicKey } from '@solana/web3.js';
 import { CALLBACK_INFO_LEN } from '../constants/shared';
 import { DerivativesMarket } from './derivativesMarket';
 import { BN } from '@project-serum/anchor';
-import { splToUiAmount, priceLotsToNative } from '../utils/tokenAmount';
+import {
+  splToUiAmount,
+  priceLotsToNative,
+  getSideFromKey
+} from '../utils/tokenAmount';
 
 export class FuturesMarketViewer implements DerivativesMarket {
   private _bidsListener: number;
@@ -74,8 +83,10 @@ export class FuturesMarketViewer implements DerivativesMarket {
       .filter((e) => e instanceof EventFill);
 
     return events.map((fill: EventFill) => {
+      const side = getSideFromKey(fill.makerOrderId);
       return {
-        price: fill.quoteSize.div(fill.baseSize).toNumber(),
+        side: side,
+        price: getPriceFromKey(fill.makerOrderId).ushrn(32).toNumber(),
         amount: fill.baseSize.toNumber(),
         makerAccount: new PublicKey(
           Buffer.from(fill.makerCallbackInfo.slice(0, 32))

@@ -1,5 +1,20 @@
 import { I80F48 } from '@blockworks-foundation/mango-client';
 import { BN } from '@project-serum/anchor';
+import { Side } from '../types/on-chain';
+
+export function getSideFromKey(orderId: BN): Side {
+  const orderIdSideFlag = new BN(1).shln(63);
+  const and = orderIdSideFlag.and(orderId);
+  try {
+    if (and.toNumber() !== 0) {
+      return Side.Bid;
+    } else {
+      return Side.Ask;
+    }
+  } catch (e) {
+    return Side.Bid;
+  }
+}
 
 export function priceLotsToNative(
   priceLots: BN,

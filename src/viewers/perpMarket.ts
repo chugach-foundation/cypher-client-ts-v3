@@ -1,4 +1,9 @@
-import { EventFill, EventQueue, Slab } from '@chugach-foundation/aaob';
+import {
+  EventFill,
+  EventQueue,
+  Slab,
+  getPriceFromKey
+} from '@chugach-foundation/aaob';
 import { PerpetualMarket } from '../accounts';
 import {
   EventQueueListenerCB,
@@ -13,13 +18,16 @@ import { PublicKey } from '@solana/web3.js';
 import { CALLBACK_INFO_LEN } from '../constants/shared';
 import { DerivativesMarket } from './derivativesMarket';
 import { BN } from '@project-serum/anchor';
-import { splToUiAmount, priceLotsToNative } from '../utils/tokenAmount';
+import {
+  splToUiAmount,
+  priceLotsToNative,
+  getSideFromKey
+} from '../utils/tokenAmount';
 
 export class PerpMarketViewer implements DerivativesMarket {
   private _bidsListener: number;
   private _asksListener: number;
   private _eventQueueListener: number;
-  private _fillsListener: number;
 
   constructor(
     readonly client: CypherClient,
@@ -77,8 +85,10 @@ export class PerpMarketViewer implements DerivativesMarket {
       .filter((e) => e instanceof EventFill);
 
     return events.map((fill: EventFill) => {
+      const side = getSideFromKey(fill.makerOrderId);
       return {
-        price: fill.quoteSize.div(fill.baseSize).toNumber(),
+        side: side,
+        price: getPriceFromKey(fill.makerOrderId).ushrn(32).toNumber(),
         amount: fill.baseSize.toNumber(),
         makerAccount: new PublicKey(
           Buffer.from(fill.makerCallbackInfo.slice(0, 32))
@@ -135,7 +145,7 @@ export class PerpMarketViewer implements DerivativesMarket {
 
   addFillsListener(callback: FillsListenerCB) {
     this.removeEventQueueListener();
-    this._fillsListener = this.connection.onAccountChange(
+    this._eventQueueListener = this.connection.onAccountChange(
       this.market.state.inner.eventQueue,
       ({ data }) => callback(this.fillsParser(data)),
       'processed'
@@ -143,8 +153,8 @@ export class PerpMarketViewer implements DerivativesMarket {
   }
 
   removeFillsListener() {
-    if (this._fillsListener)
-      this.connection.removeAccountChangeListener(this._fillsListener);
+    if (this._eventQueueListener)
+      this.connection.removeAccountChangeListener(this._eventQueueListener);
   }
 
   calcMarketOrderPrice(

@@ -3,7 +3,6 @@ import { uiToSplAmount } from '../utils';
 import { BPS_100_PERCENT } from '../constants';
 
 import { BN } from '@project-serum/anchor';
-import { CypherClient } from '../client';
 import { Clearing, CypherAccount } from '../accounts';
 
 export const encodeStrToUint8Array = (str: string): number[] => {

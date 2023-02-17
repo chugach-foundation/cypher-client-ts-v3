@@ -1,5 +1,5 @@
 import { EventQueue } from '@chugach-foundation/aaob';
-import { Cache } from './on-chain';
+import { Cache, Side } from './on-chain';
 import { BN } from '@project-serum/anchor';
 import { PublicKey, Transaction } from '@solana/web3.js';
 
@@ -30,6 +30,7 @@ export type FillsExtended = {
   makerAccount: PublicKey;
   makerOrderId: BN;
   takerAccount: PublicKey;
+  side: Side;
 }[];
 
 export interface Wallet {

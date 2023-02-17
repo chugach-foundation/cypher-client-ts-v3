@@ -1,16 +1,28 @@
 import { Market, Orderbook } from '@project-serum/serum';
 import { Pool } from '../accounts';
-import { Fills, OrderbookListenerCB, ParsedOrderbook } from '../types';
+import {
+  Fills,
+  FillsExtended,
+  FillsListenerCB,
+  OrderbookListenerCB,
+  ParsedOrderbook
+} from '../types';
 import { CypherClient } from '../client/index';
+import { decodeEventsSince, Event } from '@project-serum/serum/lib/queue';
 import { PublicKey } from '@solana/web3.js';
+import { getPriceFromKey } from '@chugach-foundation/aaob';
+import { getSideFromKey } from '../utils/tokenAmount';
 
 export class SpotMarketViewer {
   private _bidsListener: number;
   private _asksListener: number;
   private _eventQueueListener: number;
   private _openOrdersAccountListener: number;
+  private _lastSeqNum: number;
 
-  constructor(readonly client: CypherClient, readonly pool: Pool) {}
+  constructor(readonly client: CypherClient, readonly pool: Pool) {
+    this._lastSeqNum = 0;
+  }
 
   private get connection() {
     return this.client.connection;
@@ -25,6 +37,29 @@ export class SpotMarketViewer {
     return orderbook
       .getL2(orderbookDepth)
       .map(([price, size]) => [price, size]);
+  }
+
+  eventQueueParser(data: Buffer): Event[] {
+    return decodeEventsSince(data, this._lastSeqNum);
+  }
+
+  fillsParser(data: Buffer): FillsExtended {
+    const events = this.eventQueueParser(data);
+    this._lastSeqNum = events[events.length - 1].seqNum;
+
+    return events
+      .filter((evt: Event) => evt.eventFlags.fill && evt.eventFlags.maker)
+      .map((fill: Event) => {
+        const side = getSideFromKey(fill.orderId);
+        return {
+          side: side,
+          price: getPriceFromKey(fill.orderId).toNumber(),
+          amount: fill.nativeQuantityReleased.toNumber(),
+          makerAccount: fill.openOrders,
+          makerOrderId: fill.orderId,
+          takerAccount: PublicKey.default
+        };
+      });
   }
 
   addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250) {
@@ -84,7 +119,15 @@ export class SpotMarketViewer {
     this.removeOpenOrdersAccountListener();
     this._openOrdersAccountListener = this.connection.onAccountChange(
       openOrdersAccount,
-      callback,
+      callback
+    );
+  }
+
+  addFillsListener(callback: FillsListenerCB) {
+    this.removeEventQueueListener();
+    this._eventQueueListener = this.connection.onAccountChange(
+      this.market.decoded.eventQueue,
+      ({ data }) => callback(this.fillsParser(data)),
       'processed'
     );
   }
@@ -94,6 +137,11 @@ export class SpotMarketViewer {
       this.connection.removeAccountChangeListener(
         this._openOrdersAccountListener
       );
+  }
+
+  removeFillsListener() {
+    if (this._eventQueueListener)
+      this.connection.removeAccountChangeListener(this._eventQueueListener);
   }
 
   calcMarketOrderPrice(
