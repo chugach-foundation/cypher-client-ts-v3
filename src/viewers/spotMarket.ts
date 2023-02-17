@@ -2,11 +2,13 @@ import { Market, Orderbook } from '@project-serum/serum';
 import { Pool } from '../accounts';
 import { Fills, OrderbookListenerCB, ParsedOrderbook } from '../types';
 import { CypherClient } from '../client/index';
+import { PublicKey } from '@solana/web3.js';
 
 export class SpotMarketViewer {
   private _bidsListener: number;
   private _asksListener: number;
   private _eventQueueListener: number;
+  private _openOrdersAccountListener: number;
 
   constructor(readonly client: CypherClient, readonly pool: Pool) {}
 
@@ -71,6 +73,27 @@ export class SpotMarketViewer {
   removeEventQueueListener() {
     if (this._eventQueueListener)
       this.connection.removeAccountChangeListener(this._eventQueueListener);
+  }
+
+  addOpenOrdersAccountListener(
+    openOrdersAccount: PublicKey,
+    callback: () => void
+  ) {
+    if (this.market == null) return null;
+
+    this.removeOpenOrdersAccountListener();
+    this._openOrdersAccountListener = this.connection.onAccountChange(
+      openOrdersAccount,
+      callback,
+      'processed'
+    );
+  }
+
+  removeOpenOrdersAccountListener() {
+    if (this._openOrdersAccountListener)
+      this.connection.removeAccountChangeListener(
+        this._openOrdersAccountListener
+      );
   }
 
   calcMarketOrderPrice(
