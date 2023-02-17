@@ -32,6 +32,7 @@ export class Pool {
     args: CreatePoolArgs
   ) {
     const [pool, poolBump] = derivePoolAddress(args.poolName, client.cypherPID);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [poolNode, poolNodeBump] = derivePoolNodeAddress(
       pool,
       0,

@@ -8,7 +8,6 @@ import { Pool } from './pool';
 import { CypherClient } from '../client';
 import { makeCreateMarketAccountsIxs } from '../instructions';
 import { deriveMarketAddress } from '../utils';
-import { BN } from '@project-serum/anchor';
 import type {
   CreatePerpetualMarketArgs,
   PerpetualMarketState,

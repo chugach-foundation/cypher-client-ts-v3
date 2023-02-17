@@ -98,7 +98,8 @@ export class FaucetClient {
     target: PublicKey
   ): Promise<TransactionInstruction> {
     const faucet = FaucetClient.deriveFaucetAddress(this._cluster, mint);
-    const [mintAuthority, _] = FaucetClient.deriveMintAuthority(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [mintAuthority, mintBump] = FaucetClient.deriveMintAuthority(
       this._cluster,
       mint
     );

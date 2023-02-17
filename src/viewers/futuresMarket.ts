@@ -15,7 +15,7 @@ import {
 } from '../types';
 import { CypherClient } from '../client/index';
 import { PublicKey } from '@solana/web3.js';
-import { CALLBACK_INFO_LEN } from '../constants/shared';
+import { CALLBACK_INFO_LEN, QUOTE_TOKEN_DECIMALS } from '../constants/shared';
 import { DerivativesMarket } from './derivativesMarket';
 import { BN } from '@project-serum/anchor';
 import {
@@ -65,7 +65,7 @@ export class FuturesMarketViewer implements DerivativesMarket {
             this.market.state.inner.quoteMultiplier,
             this.market.state.inner.config.decimals
           ),
-          6
+          QUOTE_TOKEN_DECIMALS
         ),
         splToUiAmount(baseQty, this.market.state.inner.config.decimals)
       ];
@@ -86,8 +86,19 @@ export class FuturesMarketViewer implements DerivativesMarket {
       const side = getSideFromKey(fill.makerOrderId);
       return {
         side: side,
-        price: getPriceFromKey(fill.makerOrderId).ushrn(32).toNumber(),
-        amount: fill.baseSize.toNumber(),
+        price: splToUiAmount(
+          priceLotsToNative(
+            getPriceFromKey(fill.makerOrderId).ushrn(32),
+            this.market.state.inner.baseMultiplier,
+            this.market.state.inner.quoteMultiplier,
+            this.market.state.inner.config.decimals
+          ),
+          QUOTE_TOKEN_DECIMALS
+        ),
+        amount: splToUiAmount(
+          fill.baseSize,
+          this.market.state.inner.config.decimals
+        ),
         makerAccount: new PublicKey(
           Buffer.from(fill.makerCallbackInfo.slice(0, 32))
         ),
@@ -282,8 +293,19 @@ export class FuturesMarketViewer implements DerivativesMarket {
 
     return events.map((fill: EventFill) => {
       return {
-        price: fill.quoteSize.div(fill.baseSize).toNumber(),
-        amount: fill.baseSize.toNumber()
+        price: splToUiAmount(
+          priceLotsToNative(
+            getPriceFromKey(fill.makerOrderId).ushrn(32),
+            this.market.state.inner.baseMultiplier,
+            this.market.state.inner.quoteMultiplier,
+            this.market.state.inner.config.decimals
+          ),
+          QUOTE_TOKEN_DECIMALS
+        ),
+        amount: splToUiAmount(
+          fill.baseSize,
+          this.market.state.inner.config.decimals
+        )
       };
     });
   }

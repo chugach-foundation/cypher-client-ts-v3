@@ -1,10 +1,15 @@
 import { ComputeBudgetProgram } from '@solana/web3.js';
 import { uiToSplAmount } from '../utils';
 import { BPS_100_PERCENT } from '../constants';
-
 import { BN } from '@project-serum/anchor';
 import { Clearing, CypherAccount } from '../accounts';
+import { QUOTE_TOKEN_DECIMALS } from '../constants/shared';
 
+/**
+ * String encoding for Pools and Market names.
+ * @param str The name.
+ * @returns The encoded value.
+ */
 export const encodeStrToUint8Array = (str: string): number[] => {
   const encoder = new TextEncoder();
   const empty = Array(32).fill(0);
@@ -45,7 +50,7 @@ export const getArgsInLots = ({
   decimals: number;
   size: number;
 }) => {
-  const limitPrice = uiToSplAmount(price, 6);
+  const limitPrice = uiToSplAmount(price, QUOTE_TOKEN_DECIMALS);
 
   const decimalFactor = new BN(Math.pow(10, decimals));
   const feeTier = account.state.feeTier;

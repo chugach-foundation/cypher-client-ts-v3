@@ -9,13 +9,9 @@ import { CypherClient } from '../client';
 import { ZERO_BN } from '@blockworks-foundation/mango-client';
 import { BN } from '@project-serum/anchor';
 import { FuturesMarketViewer, PerpMarketViewer } from '../viewers';
-import {
-  getQuoteFromBase,
-  splToUiPrice,
-  splToUiAmount,
-  priceLotsToNative
-} from '../utils';
+import { splToUiAmount, priceLotsToNative } from '../utils';
 import { LeafNode, getPriceFromKey } from '@chugach-foundation/aaob';
+import { QUOTE_TOKEN_DECIMALS } from '../constants/shared';
 
 export interface Order {
   side: Side;
@@ -140,7 +136,7 @@ export class DerivativesOrdersAccount {
         viewer.market.state.inner.quoteMultiplier,
         viewer.market.state.inner.config.decimals
       ),
-      6
+      QUOTE_TOKEN_DECIMALS
     );
     const quantity = splToUiAmount(
       baseQty,

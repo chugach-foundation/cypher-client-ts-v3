@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import { deriveSubAccountAddress, splToUiAmountFixed } from '../utils';
 import { CypherClient } from '../client';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import { CypherClient } from '../client';
 import { deriveAccountAddress } from '../utils';
@@ -9,11 +10,7 @@ import {
 } from '../utils/pda';
 import { Pool } from './pool';
 import { DerivativesOrdersAccount } from './ordersAccount';
-import {
-  DerivativesMarket,
-  FuturesMarketViewer,
-  PerpMarketViewer
-} from '../viewers';
+import { FuturesMarketViewer, PerpMarketViewer } from '../viewers';
 import { getAssociatedTokenAddress } from '@project-serum/associated-token';
 
 export class CypherAccount {

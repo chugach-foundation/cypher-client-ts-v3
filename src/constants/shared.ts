@@ -3,6 +3,7 @@ import type { Cluster, Config } from '../types';
 
 export const CALLBACK_INFO_LEN = 34;
 export const BPS_100_PERCENT = 10_000;
+export const QUOTE_TOKEN_DECIMALS = 6;
 
 export const CONFIGS: { [key in Cluster]: Config } = {
   localnet: {

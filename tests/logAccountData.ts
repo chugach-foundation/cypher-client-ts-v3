@@ -4,7 +4,11 @@ import { CONFIGS } from '@cypher-client/constants'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { loadWallet, confirmOpts, loadAccs, fetchGraphqlData } from 'utils'
 import { Cluster } from '@cypher-client/types'
-import { deriveMarketAddress, splToUiAmountFixed } from '@cypher-client/utils'
+import {
+  deriveMarketAddress,
+  encodeStrToUint8Array,
+  splToUiAmountFixed
+} from '@cypher-client/utils'
 import { I80F48 } from '@blockworks-foundation/mango-client'
 
 // INFO:
@@ -28,14 +32,6 @@ require('dotenv').config({
 const CLUSTER = process.env.CLUSTER as Cluster
 const RPC_ENDPOINT = process.env.RPC_ENDPOINT
 const KP_PATH = process.env.KEYPAIR_PATH
-
-// encoding string for deriving market addresses
-export const encodeStrToUint8Array = (str: string): number[] => {
-  const encoder = new TextEncoder()
-  const empty = Array(32).fill(0)
-  const encodedArr = Array.from(encoder.encode(str))
-  return empty.map((_, i) => encodedArr[i] || 0)
-}
 
 // c-ratio (current ratio)
 export const getCRatioRelatedData = (acc: CypherAccount) => {

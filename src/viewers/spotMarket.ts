@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Market, Orderbook } from '@project-serum/serum';
 import { Pool } from '../accounts';
 import {

@@ -5,11 +5,19 @@ import { FuturesMarket } from '@cypher-client/accounts/futuresMarket'
 import { FuturesMarketViewer } from '@cypher-client/viewers/futuresMarket'
 import { Pool } from '@cypher-client/accounts/pool'
 import { SpotMarketViewer } from '@cypher-client/viewers/spotMarket'
-import { splToUiPrice, splToUiAmount } from '@cypher-client/utils/tokenAmount'
-import { BN } from '@project-serum/anchor'
-import { deriveAccountAddress } from '@cypher-client/utils'
 
-const client = new CypherClient('devnet')
+// Load  Env Variables
+require('dotenv').config({
+  path: __dirname + `/default.env`,
+})
+
+require('dotenv').config({
+  path: __dirname + `/args.env`, // Can also be used to override default env variables
+})
+
+const RPC_ENDPOINT = process.env.RPC_ENDPOINT
+
+const client = new CypherClient('devnet', RPC_ENDPOINT)
 
 async function testRun(cypherClient: CypherClient) {
   console.log('-------------- Perpetual Markets --------------')

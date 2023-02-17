@@ -3,7 +3,7 @@ import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { loadWallet, confirmOpts } from 'utils'
 import { Cluster } from '@cypher-client/types'
-import { deriveMarketAddress, sleep } from '@cypher-client/utils'
+import { deriveMarketAddress, encodeStrToUint8Array, sleep } from '@cypher-client/utils'
 import { PerpMarketViewer } from '@cypher-client/viewers'
 import { FillsListenerCB, Fills } from '../lib/types/index'
 import { FillsExtended } from '../src/types/index'
@@ -23,14 +23,6 @@ require('dotenv').config({
 const CLUSTER = process.env.CLUSTER as Cluster
 const RPC_ENDPOINT = process.env.RPC_ENDPOINT
 const KP_PATH = process.env.KEYPAIR_PATH
-
-// encoding string for deriving market addresses
-export const encodeStrToUint8Array = (str: string): number[] => {
-  const encoder = new TextEncoder()
-  const empty = Array(32).fill(0)
-  const encodedArr = Array.from(encoder.encode(str))
-  return empty.map((_, i) => encodedArr[i] || 0)
-}
 
 // get perp market for a specified market
 export const getPerpMkt = async (client: CypherClient, mktName: string) => {
@@ -57,7 +49,8 @@ export const perpFillListener = (perpViewer: PerpMarketViewer) => {
     for (const fill of fills) {
       const side = fill.side['bid'] ? 'bid' : 'ask'
       console.log(
-        'side: ' +
+        'perp: ' +
+          'side: ' +
           side +
           ' amount: ' +
           fill.amount +
