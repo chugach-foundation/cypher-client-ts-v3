@@ -16,6 +16,10 @@ export function getSideFromKey(orderId: BN): Side {
   }
 }
 
+export function sizeLotsToNative(sizeLots: BN, baseMultiplier: BN): BN {
+  return sizeLots.mul(baseMultiplier);
+}
+
 export function priceLotsToNative(
   priceLots: BN,
   baseMultiplier: BN,

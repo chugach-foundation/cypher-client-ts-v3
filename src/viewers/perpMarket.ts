@@ -21,7 +21,8 @@ import { BN } from '@project-serum/anchor';
 import {
   splToUiAmount,
   priceLotsToNative,
-  getSideFromKey
+  getSideFromKey,
+  sizeLotsToNative
 } from '../utils/tokenAmount';
 
 export class PerpMarketViewer implements DerivativesMarket {
@@ -55,20 +56,18 @@ export class PerpMarketViewer implements DerivativesMarket {
   ): ParsedOrderbook {
     const slab = Slab.deserialize(data, CALLBACK_INFO_LEN);
     return slab.getL2DepthJS(orderbookDepth, increasing).map((level) => {
-      const scaledPrice = level.price;
-      const baseQty = new BN(level.size.toNumber()).mul(
+      const price = priceLotsToNative(
+        level.price.ushrn(32),
+        this.market.state.inner.baseMultiplier,
+        this.market.state.inner.quoteMultiplier,
+        this.market.state.inner.config.decimals
+      );
+      const baseQty = sizeLotsToNative(
+        level.size,
         this.market.state.inner.baseMultiplier
       );
       return [
-        splToUiAmount(
-          priceLotsToNative(
-            scaledPrice.ushrn(32),
-            this.market.state.inner.baseMultiplier,
-            this.market.state.inner.quoteMultiplier,
-            this.market.state.inner.config.decimals
-          ),
-          QUOTE_TOKEN_DECIMALS
-        ),
+        splToUiAmount(price, QUOTE_TOKEN_DECIMALS),
         splToUiAmount(baseQty, this.market.state.inner.config.decimals)
       ];
     });
@@ -98,7 +97,10 @@ export class PerpMarketViewer implements DerivativesMarket {
           QUOTE_TOKEN_DECIMALS
         ),
         amount: splToUiAmount(
-          fill.baseSize,
+          sizeLotsToNative(
+            fill.baseSize,
+            this.market.state.inner.baseMultiplier
+          ),
           this.market.state.inner.config.decimals
         ),
         makerAccount: new PublicKey(
@@ -304,7 +306,10 @@ export class PerpMarketViewer implements DerivativesMarket {
           QUOTE_TOKEN_DECIMALS
         ),
         amount: splToUiAmount(
-          fill.baseSize,
+          sizeLotsToNative(
+            fill.baseSize,
+            this.market.state.inner.baseMultiplier
+          ),
           this.market.state.inner.config.decimals
         )
       };
