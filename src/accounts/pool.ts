@@ -70,12 +70,6 @@ export class Pool {
       address
     )) as PoolState;
     if (!state.tokenMint.equals(client.quoteMint)) {
-      console.log(
-        JSON.stringify({
-          dexMarket: state.dexMarket,
-          dexPID: client.dexPID
-        })
-      );
       const market = await Market.load(
         client.connection,
         state.dexMarket,
