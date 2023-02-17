@@ -7,9 +7,10 @@ import {
   ZERO_BN,
   ZERO_I80F48
 } from '@blockworks-foundation/mango-client';
-import { DerivativePosition, SpotPosition } from '../types/on-chain';
 import type { CypherSubAccountState, StateUpdateHandler } from '../types';
 import { CacheAccount } from './cacheAccount';
+import { SpotPosition } from '../viewers/spotPosition';
+import { DerivativePosition } from '../viewers/derivativePosition';
 
 export class CypherSubAccount {
   constructor(
@@ -65,7 +66,7 @@ export class CypherSubAccount {
   getSpotPosition(tokenMint: PublicKey): SpotPosition {
     for (const position of this.state.positions) {
       if (position.spot.tokenMint.equals(tokenMint)) {
-        return position.spot;
+        return new SpotPosition(position.spot);
       }
     }
     return null;
@@ -80,16 +81,16 @@ export class CypherSubAccount {
     const positions: SpotPosition[] = [];
     for (const position of this.state.positions) {
       if (!position.spot.tokenMint.equals(PublicKey.default)) {
-        positions.push(position.spot);
+        positions.push(new SpotPosition(position.spot));
       }
     }
     return positions;
   }
 
-  getDerivativePosition(market: PublicKey): DerivativePosition {
+  getDerivativePosition(market: PublicKey): DerivativePosition | null {
     for (const position of this.state.positions) {
       if (position.derivative.market.equals(market)) {
-        return position.derivative;
+        return new DerivativePosition(position.derivative);
       }
     }
     return null;
@@ -99,7 +100,7 @@ export class CypherSubAccount {
     const positions: DerivativePosition[] = [];
     for (const position of this.state.positions) {
       if (!position.derivative.market.equals(PublicKey.default)) {
-        positions.push(position.derivative);
+        positions.push(new DerivativePosition(position.derivative));
       }
     }
     return positions;

@@ -122,11 +122,11 @@ export const main = async () => {
   const spotMkt = await getSpotMkt(client, POOL)
   const spotMktViewer = new SpotMarketViewer(client, spotMkt)
 
-  await loadPerpFills(perpMktViewer)
-  perpFillListener(perpMktViewer)
+  // await loadPerpFills(perpMktViewer)
+  // perpFillListener(perpMktViewer)
 
   await loadSpotFills(spotMktViewer)
-  spotFillListener(spotMktViewer)
+  //spotFillListener(spotMktViewer)
 
   while (true) {
     await sleep(100)

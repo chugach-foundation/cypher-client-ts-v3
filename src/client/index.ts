@@ -5,12 +5,19 @@ import {
   ConfirmOptions,
   Connection
 } from '@solana/web3.js';
-import { AnchorProvider, Program } from '@project-serum/anchor';
+import {
+  AccountNamespace,
+  AnchorProvider,
+  MethodsNamespace,
+  Program,
+  Provider
+} from '@project-serum/anchor';
 import { FaucetClient } from './faucet';
 import { CONFIGS } from '../constants';
 import cypherIdl from '../generated/idl/cypher.json';
 import type { Cypher } from '../generated/types/cypher';
 import type { Cluster, Wallet } from '../types';
+import { PublicKey } from '@solana/web3.js';
 
 export class CypherClient {
   private _program: Program<Cypher>;
@@ -57,46 +64,46 @@ export class CypherClient {
     }
   }
 
-  private get _provider() {
+  private get _provider(): Provider {
     return this._program.provider;
   }
 
-  get anchorProvider() {
+  get anchorProvider(): AnchorProvider {
     const provider = this._program.provider as AnchorProvider;
     if (provider.wallet) {
       return provider;
     }
   }
 
-  get connection() {
+  get connection(): Connection {
     return this._provider.connection;
   }
 
-  get methods() {
+  get methods(): MethodsNamespace<Cypher> {
     return this._program.methods;
   }
 
-  get accounts() {
+  get accounts(): AccountNamespace<Cypher> {
     return this._program.account;
   }
 
-  get isWalletConnected() {
+  get isWalletConnected(): boolean {
     return !!this.anchorProvider;
   }
 
-  get walletPubkey() {
+  get walletPubkey(): PublicKey {
     return this.anchorProvider?.wallet.publicKey;
   }
 
-  get cypherPID() {
+  get cypherPID(): PublicKey {
     return CONFIGS[this.cluster].CYPHER_PID;
   }
 
-  get dexPID() {
+  get dexPID(): PublicKey {
     return CONFIGS[this.cluster].DEX_PID;
   }
 
-  get quoteMint() {
+  get quoteMint(): PublicKey {
     return CONFIGS[this.cluster].QUOTE_MINT;
   }
 
@@ -104,11 +111,11 @@ export class CypherClient {
     eventName: string,
     // eslint-disable-next-line
     callback: (event: any, slot: number) => void
-  ) {
+  ): number {
     return this._program.addEventListener(eventName, callback);
   }
 
-  async removeEventListener(listener: number) {
+  async removeEventListener(listener: number): Promise<void> {
     return await this._program.removeEventListener(listener);
   }
 
@@ -116,7 +123,7 @@ export class CypherClient {
     tx: Transaction,
     signers?: Signer[],
     opts?: ConfirmOptions
-  ) {
+  ): Promise<string> {
     return this.anchorProvider?.sendAndConfirm(tx, signers, opts);
   }
 
@@ -124,7 +131,7 @@ export class CypherClient {
     ixs: TransactionInstruction[],
     signers?: Signer[],
     opts?: ConfirmOptions
-  ) {
+  ): Promise<string> {
     const tx = new Transaction();
     tx.add(...ixs);
     return this.sendAndConfirm(tx, signers, opts);

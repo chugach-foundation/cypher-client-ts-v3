@@ -65,7 +65,7 @@ export const getPerpPosition = async (client: CypherClient, acc: CypherAccount, 
   const encodedMkt = encodeStrToUint8Array(mktName)
   const [mktPubkey, number] = deriveMarketAddress(encodedMkt, client.cypherPID)
   const perpMkt = await PerpetualMarket.load(client, mktPubkey)
-  const basePosition = new I80F48(subacc.getDerivativePosition(mktPubkey).basePosition)
+  const basePosition = new I80F48(subacc.getDerivativePosition(mktPubkey).totalPosition)
   const position = Number(splToUiAmountFixed(basePosition, perpMkt.state.inner.config.decimals).toFixed(6))
 
   return position

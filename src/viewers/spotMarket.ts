@@ -55,7 +55,9 @@ export class SpotMarketViewer {
         return {
           side: side,
           price: getPriceFromKey(fill.orderId).toNumber(),
-          amount: fill.nativeQuantityReleased.toNumber(),
+          amount: this.pool.market.baseSplSizeToNumber(
+            fill.nativeQuantityReleased
+          ),
           makerAccount: fill.openOrders,
           makerOrderId: fill.orderId,
           takerAccount: PublicKey.default
@@ -253,8 +255,30 @@ export class SpotMarketViewer {
 
   async loadFills(): Promise<Fills> {
     if (this.market == null) return null;
+    const { data } = await this.connection.getAccountInfo(
+      this.pool.market.decoded.eventQueue
+    );
+    const events = this.eventQueueParser(data);
 
-    const FILL_LIMIT = 20;
-    return await this.market.loadFills(this.connection, FILL_LIMIT);
+    return events
+      .filter((evt: Event) => evt.eventFlags.fill && evt.eventFlags.maker)
+      .map((fill: Event) => {
+        const side = getSideFromKey(fill.orderId);
+        const amount =
+          (side as any).bid !== undefined
+            ? this.market.baseSplSizeToNumber(fill.nativeQuantityReleased)
+            : this.market.baseSplSizeToNumber(fill.nativeQuantityPaid);
+        const price = this.market.priceLotsToNumber(
+          getPriceFromKey(fill.orderId)
+        );
+        return {
+          side: side,
+          price: price,
+          amount: amount,
+          makerAccount: fill.openOrders,
+          makerOrderId: fill.orderId,
+          takerAccount: PublicKey.default
+        };
+      });
   }
 }

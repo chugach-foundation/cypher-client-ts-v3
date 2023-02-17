@@ -230,15 +230,15 @@ export interface PoolState extends _Pool {
 }
 
 export interface PositionSlot extends _PositionSlot {
-  spot: SpotPosition;
-  derivative: DerivativePosition;
+  spot: SpotPositionState;
+  derivative: DerivativePositionState;
 }
 
-export interface SpotPosition extends _SpotPosition {
+export interface SpotPositionState extends _SpotPosition {
   openOrdersCache: OpenOrdersCache;
 }
 
-export interface DerivativePosition extends _DerivativePosition {
+export interface DerivativePositionState extends _DerivativePosition {
   openOrdersCache: OpenOrdersCache;
   marketType: MarketType;
 }

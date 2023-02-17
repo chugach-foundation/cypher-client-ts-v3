@@ -17,7 +17,6 @@ import { CypherClient } from '../client/index';
 import { PublicKey } from '@solana/web3.js';
 import { CALLBACK_INFO_LEN, QUOTE_TOKEN_DECIMALS } from '../constants/shared';
 import { DerivativesMarket } from './derivativesMarket';
-import { BN } from '@project-serum/anchor';
 import {
   splToUiAmount,
   priceLotsToNative,

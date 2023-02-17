@@ -37,29 +37,32 @@ export class FaucetClient {
     ) as Program<Faucet>;
   }
 
-  static get quoteMintAddrFull() {
+  static get quoteMintAddrFull(): Keypair {
     return Keypair.fromSecretKey(Uint8Array.from(faucetMint));
   }
 
-  static deriveFaucetAddress(cluster: Cluster, mint: PublicKey) {
+  static deriveFaucetAddress(cluster: Cluster, mint: PublicKey): PublicKey {
     return utils.publicKey.findProgramAddressSync(
       [utils.bytes.utf8.encode('FAUCET'), mint.toBuffer()],
       CONFIGS[cluster].FAUCET_PID
     )[0];
   }
 
-  static deriveMintAuthority(cluster: Cluster, mint: PublicKey) {
+  static deriveMintAuthority(
+    cluster: Cluster,
+    mint: PublicKey
+  ): [PublicKey, number] {
     return utils.publicKey.findProgramAddressSync(
       [utils.bytes.utf8.encode('MINT_AUTHORITY'), mint.toBuffer()],
       CONFIGS[cluster].FAUCET_PID
     );
   }
 
-  private get _provider() {
+  private get _provider(): AnchorProvider {
     return this._program?.provider as AnchorProvider;
   }
 
-  private get _walletPubkey() {
+  private get _walletPubkey(): PublicKey {
     return this._provider?.wallet.publicKey;
   }
 
