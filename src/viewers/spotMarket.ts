@@ -77,7 +77,7 @@ export class SpotMarketViewer {
 
   addOpenOrdersAccountListener(
     openOrdersAccount: PublicKey,
-    callback: () => void
+    callback: (x: any) => void
   ) {
     if (this.market == null) return null;
 
