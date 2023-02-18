@@ -48,7 +48,7 @@ export function getQuoteFromBase(
 }
 
 export function splToUiAmount(splAmount: BN, decimals: number) {
-  return splAmount.div(new BN(10 ** decimals)).toNumber();
+  return splAmount.toNumber() / 10 ** decimals;
 }
 
 export function splToUiAmountFixed(
@@ -63,10 +63,7 @@ export function splToUiPrice(
   baseDecimals: number,
   quoteDecimals: number
 ): number {
-  return splPrice
-    .mul(new BN(10 ** baseDecimals))
-    .div(new BN(10 ** quoteDecimals))
-    .toNumber();
+  return (splPrice.toNumber() * 10 ** baseDecimals) / 10 ** quoteDecimals;
 }
 
 export function uiToSplAmount(uiAmount: number, decimals: number): BN {

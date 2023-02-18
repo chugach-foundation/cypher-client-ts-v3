@@ -54,7 +54,9 @@ export class SpotMarketViewer {
         const side = getSideFromKey(fill.orderId);
         return {
           side: side,
-          price: getPriceFromKey(fill.orderId).toNumber(),
+          price: this.pool.market.priceLotsToNumber(
+            getPriceFromKey(fill.orderId)
+          ),
           amount: this.pool.market.baseSplSizeToNumber(
             fill.nativeQuantityReleased
           ),

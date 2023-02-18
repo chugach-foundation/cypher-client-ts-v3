@@ -49,7 +49,7 @@ export const perpFillListener = (perpViewer: PerpMarketViewer) => {
     for (const fill of fills) {
       const side = fill.side['bid'] ? 'bid' : 'ask'
       console.log(
-        'perp: ' +
+        'PERP - ' +
           'side: ' +
           side +
           ' amount: ' +
@@ -73,7 +73,7 @@ export const loadPerpFills = async (perpViewer: PerpMarketViewer) => {
   const fills = await perpViewer.loadFills()
   console.log('---------------------------------------------------')
   for (const fill of fills) {
-    console.log('amount: ' + fill.amount + ' price: ' + fill.price)
+    console.log('PERP - amount: ' + fill.amount + ' price: ' + fill.price)
   }
   console.log('---------------------------------------------------')
 }
@@ -83,7 +83,7 @@ export const spotFillListener = (spotViewer: SpotMarketViewer) => {
     for (const fill of fills) {
       const side = fill.side['bid'] ? 'bid' : 'ask'
       console.log(
-        'side: ' +
+        'SPOT - side: ' +
           side +
           ' amount: ' +
           fill.amount +
@@ -106,7 +106,7 @@ export const loadSpotFills = async (spotViewer: SpotMarketViewer) => {
   const fills = await spotViewer.loadFills()
   console.log('---------------------------------------------------')
   for (const fill of fills) {
-    console.log('amount: ' + fill.amount + ' price: ' + fill.price)
+    console.log('SPOT - amount: ' + fill.amount + ' price: ' + fill.price)
   }
   console.log('---------------------------------------------------')
 }
@@ -122,11 +122,11 @@ export const main = async () => {
   const spotMkt = await getSpotMkt(client, POOL)
   const spotMktViewer = new SpotMarketViewer(client, spotMkt)
 
-  // await loadPerpFills(perpMktViewer)
-  // perpFillListener(perpMktViewer)
+  await loadPerpFills(perpMktViewer)
+  perpFillListener(perpMktViewer)
 
   await loadSpotFills(spotMktViewer)
-  //spotFillListener(spotMktViewer)
+  spotFillListener(spotMktViewer)
 
   while (true) {
     await sleep(100)
