@@ -7,7 +7,12 @@ import {
   ZERO_BN,
   ZERO_I80F48
 } from '@blockworks-foundation/mango-client';
-import type { CypherSubAccountState, StateUpdateHandler } from '../types';
+import type {
+  CypherSubAccountState,
+  DerivativePositionState,
+  SpotPositionState,
+  StateUpdateHandler
+} from '../types';
 import { CacheAccount } from './cacheAccount';
 import { SpotPosition } from '../viewers/spotPosition';
 import { DerivativePosition } from '../viewers/derivativePosition';
@@ -77,6 +82,16 @@ export class CypherSubAccount {
   // If its a deposit, multiply it by the deposit interest rate
   // If its a borrow, multiply it by the borrow interest rate
   // The index can be found in the resp cypher pool
+  getSpotPositionsInfo(): SpotPositionState[] {
+    const positions: SpotPositionState[] = [];
+    for (const position of this.state.positions) {
+      if (!position.spot.tokenMint.equals(PublicKey.default)) {
+        positions.push(position.spot);
+      }
+    }
+    return positions;
+  }
+
   getSpotPositions(): SpotPosition[] {
     const positions: SpotPosition[] = [];
     for (const position of this.state.positions) {
@@ -94,6 +109,16 @@ export class CypherSubAccount {
       }
     }
     return null;
+  }
+
+  getDerivativePositionsInfo(): DerivativePositionState[] {
+    const positions: DerivativePositionState[] = [];
+    for (const position of this.state.positions) {
+      if (!position.derivative.market.equals(PublicKey.default)) {
+        positions.push(position.derivative);
+      }
+    }
+    return positions;
   }
 
   getDerivativePositions(): DerivativePosition[] {
