@@ -119,12 +119,22 @@ export const getUnrealizedPnl = async (acc: CypherAccount) => {
 export const main = async () => {
   const wallet = loadWallet(KP_PATH)
   const client = new CypherClient(CLUSTER, RPC_ENDPOINT, new NodeWallet(wallet), confirmOpts)
-  const [account, subAccount] = await loadAccs(client, wallet)
   const [marketPubkey, marketBump] = deriveMarketAddress(
     encodeStrToUint8Array(MARKET),
     client.cypherPID,
   )
   const perpMarket = await PerpetualMarket.load(client, marketPubkey)
+
+  const [account, subAccount] = await loadAccs(
+    client,
+    wallet,
+    (acc) => {
+      console.log('account updated')
+    },
+    (subAccount) => {
+      getPerpPosition(subAccount, perpMarket)
+    },
+  )
 
   const cRatioData = getCRatioRelatedData(account)
   const cRatio = Number(cRatioData.cRatio.toFixed(6)) * 100 // * 100 turns c-ratio unto %, same format as init and maintenance ratios

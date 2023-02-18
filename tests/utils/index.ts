@@ -33,23 +33,53 @@ export const confirmOpts: ConfirmOptions = {
   skipPreflight: true,
 }
 
-export const loadAccs = async (client: CypherClient, wallet: Keypair) => {
+export const loadAccs = async (
+  client: CypherClient,
+  wallet: Keypair,
+  onAccountUpdate?: (account: CypherAccount) => void,
+  onSubAccountUpdate?: (subAccount: CypherSubAccount) => void,
+) => {
   const [acctAddress] = deriveAccountAddress(wallet.publicKey, 0, client.cypherPID)
-  let acc = await CypherAccount.load(client, acctAddress)
+  let acc = await CypherAccount.load(client, acctAddress, (state) => {
+    acc.state = state
+    if (onAccountUpdate) {
+      onAccountUpdate(acc)
+    }
+  })
 
   if (acc === null) {
     await createAccs()
-    acc = await CypherAccount.load(client, acctAddress)
+    acc = await CypherAccount.load(client, acctAddress, (state) => {
+      acc.state = state
+      if (onAccountUpdate) {
+        onAccountUpdate(acc)
+      }
+    })
+    acc.subscribe()
     throw new Error('Account not found')
+  } else {
+    acc.subscribe()
   }
 
   const [subAcctAddress] = deriveSubAccountAddress(acc.address, 0, client.cypherPID)
-  let subAcc = await CypherSubAccount.load(client, subAcctAddress)
+  let subAcc = await CypherSubAccount.load(client, subAcctAddress, (state) => {
+    subAcc.state = state
+    if (onSubAccountUpdate) {
+      onSubAccountUpdate(subAcc)
+    }
+  })
 
   if (subAcc === null) {
     await createSubAcc()
-    subAcc = await CypherSubAccount.load(client, subAcctAddress)
+    subAcc = await CypherSubAccount.load(client, subAcctAddress, (state) => {
+      subAcc.state = state
+      if (onSubAccountUpdate) {
+        onSubAccountUpdate(subAcc)
+      }
+    })
     throw new Error('Account not found')
+  } else {
+    subAcc.subscribe()
   }
 
   return [acc, subAcc] as const
