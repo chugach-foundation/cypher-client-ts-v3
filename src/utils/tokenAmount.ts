@@ -28,7 +28,7 @@ export function priceLotsToNative(
 ): BN {
   return priceLots
     .mul(quoteMultiplier)
-    .mul(new BN(Math.pow(10, decimals)))
+    .mul(new BN(10 ** decimals))
     .div(baseMultiplier);
 }
 
@@ -48,13 +48,14 @@ export function getQuoteFromBase(
 }
 
 export function splToUiAmount(splAmount: BN, decimals: number) {
-  return splAmount.toNumber() / Math.pow(10, decimals);
+  return splAmount.div(new BN(10 ** decimals)).toNumber();
 }
+
 export function splToUiAmountFixed(
   splAmount: I80F48,
   decimals: number
 ): I80F48 {
-  return splAmount.div(I80F48.fromNumber(Math.pow(10, decimals)));
+  return splAmount.div(I80F48.fromNumber(10 ** decimals));
 }
 
 export function splToUiPrice(
@@ -62,20 +63,18 @@ export function splToUiPrice(
   baseDecimals: number,
   quoteDecimals: number
 ): number {
-  return (
-    (splPrice.toNumber() * Math.pow(10, baseDecimals)) /
-    Math.pow(10, quoteDecimals)
-  );
+  return splPrice
+    .mul(new BN(10 ** baseDecimals))
+    .div(new BN(10 ** quoteDecimals))
+    .toNumber();
 }
 
 export function uiToSplAmount(uiAmount: number, decimals: number): BN {
-  return new BN(uiAmount * Math.pow(10, decimals));
+  return new BN(uiAmount * 10 ** decimals);
 }
 
 export function uiToSplAmountFixed(uiAmount: number, decimals: number): I80F48 {
-  return I80F48.fromNumber(uiAmount).mul(
-    I80F48.fromNumber(Math.pow(10, decimals))
-  );
+  return I80F48.fromNumber(uiAmount).mul(I80F48.fromNumber(10 ** decimals));
 }
 
 export function uiToSplPrice(
@@ -83,7 +82,5 @@ export function uiToSplPrice(
   baseDecimals: number,
   quoteDecimals: number
 ): BN {
-  return new BN(uiPrice * Math.pow(10, quoteDecimals)).divn(
-    Math.pow(10, baseDecimals)
-  );
+  return new BN(uiPrice * 10 ** quoteDecimals).divn(10 ** baseDecimals);
 }
