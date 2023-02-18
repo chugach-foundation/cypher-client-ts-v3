@@ -1,14 +1,16 @@
 import { DerivativePositionState } from '../types';
-import { BN } from '@project-serum/anchor';
+import { I80F48 } from '@blockworks-foundation/mango-client';
 
 export class DerivativePosition {
   constructor(public state: DerivativePositionState) {}
 
-  get totalPosition(): BN {
-    return this.state.basePosition.add(
-      this.state.openOrdersCache.coinTotal.sub(
-        this.state.openOrdersCache.coinFree
-      )
+  get totalPosition(): I80F48 {
+    return this.basePosition.add(
+      I80F48.fromU64(this.state.openOrdersCache.coinTotal)
     );
+  }
+
+  get basePosition(): I80F48 {
+    return new I80F48(this.state.basePosition);
   }
 }
