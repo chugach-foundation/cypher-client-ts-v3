@@ -9,7 +9,7 @@ import { CypherClient } from '../client';
 import { ZERO_BN } from '@blockworks-foundation/mango-client';
 import { BN } from '@project-serum/anchor';
 import { FuturesMarketViewer, PerpMarketViewer } from '../viewers';
-import { splToUiAmount, priceLotsToNative } from '../utils';
+import { splToUiAmount, priceLotsToNative, sizeLotsToNative } from '../utils';
 import { LeafNode, getPriceFromKey } from '@chugach-foundation/aaob';
 import { QUOTE_TOKEN_DECIMALS } from '../constants/shared';
 
@@ -128,10 +128,10 @@ export class DerivativesOrdersAccount {
     leafNode: LeafNode
   ) {
     const baseM = viewer.market.state.inner.baseMultiplier;
-    const baseQty = leafNode.baseQuantity.mul(baseM);
+    const baseQty = sizeLotsToNative(leafNode.baseQuantity, baseM);
     const price = splToUiAmount(
       priceLotsToNative(
-        getPriceFromKey(leafNode.key),
+        getPriceFromKey(leafNode.key).ushrn(32),
         viewer.market.state.inner.baseMultiplier,
         viewer.market.state.inner.quoteMultiplier,
         viewer.market.state.inner.config.decimals
