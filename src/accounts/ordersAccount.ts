@@ -128,7 +128,7 @@ export class DerivativesOrdersAccount {
     leafNode: LeafNode
   ) {
     const baseM = viewer.market.state.inner.baseMultiplier;
-    const baseQty = new BN(leafNode.baseQuantity.toNumber()).mul(baseM);
+    const baseQty = leafNode.baseQuantity.mul(baseM);
     const price = splToUiAmount(
       priceLotsToNative(
         getPriceFromKey(leafNode.key),
