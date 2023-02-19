@@ -133,11 +133,11 @@ export class CypherSubAccount {
   }
 
   getAssetsValue(cacheAccount: CacheAccount): {
+    assetsValueUnweighted: I80F48;
     assetsValue: I80F48;
-    assetsValueMargin: I80F48;
   } {
+    const assetsValueUnweighted = I80F48.fromNumber(0);
     const assetsValue = I80F48.fromNumber(0);
-    const assetsValueMargin = I80F48.fromNumber(0);
 
     for (const { spot, derivative } of this.state.positions) {
       if (!spot.tokenMint.equals(PublicKey.default)) {
@@ -156,8 +156,8 @@ export class CypherSubAccount {
             priceCache.decimals
           ).mul(oraclePrice);
 
-          assetsValue.iadd(positionValue);
-          assetsValueMargin.iadd(positionValue.mul(weight));
+          assetsValueUnweighted.iadd(positionValue);
+          assetsValue.iadd(positionValue.mul(weight));
 
           // console.log(
           //   'Asset ----- Token: ',
@@ -181,8 +181,8 @@ export class CypherSubAccount {
             QUOTE_TOKEN_DECIMALS
           ).mul(oraclePrice);
 
-          assetsValue.iadd(coinTotalIncl);
-          assetsValueMargin.iadd(coinTotalIncl.mul(weight));
+          assetsValueUnweighted.iadd(coinTotalIncl);
+          assetsValue.iadd(coinTotalIncl.mul(weight));
         }
 
         const pcTotalIncl = splToUiAmountFixed(
@@ -190,8 +190,8 @@ export class CypherSubAccount {
           QUOTE_TOKEN_DECIMALS
         );
 
+        assetsValueUnweighted.iadd(pcTotalIncl);
         assetsValue.iadd(pcTotalIncl);
-        assetsValueMargin.iadd(pcTotalIncl);
       }
 
       if (!derivative.market.equals(PublicKey.default)) {
@@ -229,8 +229,8 @@ export class CypherSubAccount {
             derivPrice
           );
 
-          assetsValue.iadd(positionValue);
-          assetsValueMargin.iadd(positionValue.mul(weight));
+          assetsValueUnweighted.iadd(positionValue);
+          assetsValue.iadd(positionValue.mul(weight));
 
           // console.log(
           //   'Asset ----- Market: ',
@@ -254,8 +254,8 @@ export class CypherSubAccount {
             QUOTE_TOKEN_DECIMALS
           ).mul(derivPrice);
 
-          assetsValue.iadd(coinTotalIncl);
-          assetsValueMargin.iadd(coinTotalIncl.mul(weight));
+          assetsValueUnweighted.iadd(coinTotalIncl);
+          assetsValue.iadd(coinTotalIncl.mul(weight));
         }
 
         const pcTotalIncl = splToUiAmountFixed(
@@ -263,20 +263,20 @@ export class CypherSubAccount {
           QUOTE_TOKEN_DECIMALS
         );
 
+        assetsValueUnweighted.iadd(pcTotalIncl);
         assetsValue.iadd(pcTotalIncl);
-        assetsValueMargin.iadd(pcTotalIncl);
       }
     }
 
-    return { assetsValue, assetsValueMargin };
+    return { assetsValueUnweighted, assetsValue };
   }
 
   getLiabilitiesValue(cacheAccount: CacheAccount): {
+    liabilitiesValueUnweighted: I80F48;
     liabilitiesValue: I80F48;
-    liabilitiesValueMargin: I80F48;
   } {
+    const liabilitiesValueUnweighted = I80F48.fromNumber(0);
     const liabilitiesValue = I80F48.fromNumber(0);
-    const liabilitiesValueMargin = I80F48.fromNumber(0);
 
     for (const { spot, derivative } of this.state.positions) {
       if (!spot.tokenMint.equals(PublicKey.default)) {
@@ -295,8 +295,8 @@ export class CypherSubAccount {
             priceCache.decimals
           ).mul(oraclePrice);
 
-          liabilitiesValue.iadd(positionValue);
-          liabilitiesValueMargin.iadd(positionValue.mul(weight));
+          liabilitiesValueUnweighted.iadd(positionValue);
+          liabilitiesValue.iadd(positionValue.mul(weight));
 
           // console.log(
           //   'Liability ----- Token: ',
@@ -349,8 +349,8 @@ export class CypherSubAccount {
             decimals
           ).mul(derivPrice);
 
-          liabilitiesValue.iadd(positionValue);
-          liabilitiesValueMargin.iadd(positionValue.mul(weight));
+          liabilitiesValueUnweighted.iadd(positionValue);
+          liabilitiesValue.iadd(positionValue.mul(weight));
 
           // console.log(
           //   'Liability ----- Market: ',
@@ -370,7 +370,7 @@ export class CypherSubAccount {
       }
     }
 
-    return { liabilitiesValue, liabilitiesValueMargin };
+    return { liabilitiesValueUnweighted, liabilitiesValue };
   }
 
   subscribe() {

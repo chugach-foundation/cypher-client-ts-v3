@@ -88,28 +88,27 @@ export class CypherAccount {
     subAccounts: CypherSubAccount[]
   ): {
     assetsValue: I80F48;
-    assetsValueMargin: I80F48;
+    assetsValueUnweighted: I80F48;
     liabilitiesValue: I80F48;
-    liabilitiesValueMargin: I80F48;
+    liabilitiesValueUnweighted: I80F48;
     cRatio: I80F48;
-    cRatioMargin: I80F48;
   } {
     const totalAssetsValue = I80F48.fromNumber(0);
-    const totalAssetsValueMargin = I80F48.fromNumber(0);
+    const totalAssetsValueUnweighted = I80F48.fromNumber(0);
     const totalLiabilitiesValue = I80F48.fromNumber(0);
-    const totalLiabilitiesValueMargin = I80F48.fromNumber(0);
+    const totalLiabilitiesValueUnweighted = I80F48.fromNumber(0);
 
     for (const subAccount of subAccounts) {
-      const { assetsValue, assetsValueMargin } =
+      const { assetsValue, assetsValueUnweighted } =
         subAccount.getAssetsValue(cacheAccount);
-      const { liabilitiesValue, liabilitiesValueMargin } =
+      const { liabilitiesValue, liabilitiesValueUnweighted } =
         subAccount.getLiabilitiesValue(cacheAccount);
 
       if ((subAccount.state.marginingType as any).cross) {
         totalAssetsValue.iadd(assetsValue);
-        totalAssetsValueMargin.iadd(assetsValueMargin);
+        totalAssetsValueUnweighted.iadd(assetsValueUnweighted);
         totalLiabilitiesValue.iadd(liabilitiesValue);
-        totalLiabilitiesValueMargin.iadd(liabilitiesValueMargin);
+        totalLiabilitiesValueUnweighted.iadd(liabilitiesValueUnweighted);
       }
       // const cRatio = assetsValue.div(liabsValue);
       // console.log(
@@ -126,15 +125,12 @@ export class CypherAccount {
 
     return {
       assetsValue: totalAssetsValue,
-      assetsValueMargin: totalAssetsValueMargin,
+      assetsValueUnweighted: totalAssetsValueUnweighted,
       liabilitiesValue: totalLiabilitiesValue,
-      liabilitiesValueMargin: totalLiabilitiesValueMargin,
+      liabilitiesValueUnweighted: totalLiabilitiesValueUnweighted,
       cRatio: totalLiabilitiesValue.isZero()
         ? new I80F48(I80F48.MAX_BN)
-        : totalAssetsValue.div(totalLiabilitiesValue),
-      cRatioMargin: totalLiabilitiesValueMargin.isZero()
-        ? new I80F48(I80F48.MAX_BN)
-        : totalAssetsValueMargin.div(totalLiabilitiesValueMargin)
+        : totalAssetsValue.div(totalLiabilitiesValue)
     };
   }
 
