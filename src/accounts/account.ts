@@ -88,18 +88,28 @@ export class CypherAccount {
     subAccounts: CypherSubAccount[]
   ): {
     assetsValue: I80F48;
+    assetsValueMargin: I80F48;
     liabilitiesValue: I80F48;
+    liabilitiesValueMargin: I80F48;
     cRatio: I80F48;
+    cRatioMargin: I80F48;
   } {
     const totalAssetsValue = I80F48.fromNumber(0);
+    const totalAssetsValueMargin = I80F48.fromNumber(0);
     const totalLiabilitiesValue = I80F48.fromNumber(0);
+    const totalLiabilitiesValueMargin = I80F48.fromNumber(0);
 
     for (const subAccount of subAccounts) {
-      const assetsValue = subAccount.getAssetsValue(cacheAccount);
-      const liabsValue = subAccount.getLiabilitiesValue(cacheAccount);
+      const { assetsValue, assetsValueMargin } =
+        subAccount.getAssetsValue(cacheAccount);
+      const { liabilitiesValue, liabilitiesValueMargin } =
+        subAccount.getLiabilitiesValue(cacheAccount);
+
       if ((subAccount.state.marginingType as any).cross) {
         totalAssetsValue.iadd(assetsValue);
-        totalLiabilitiesValue.iadd(liabsValue);
+        totalAssetsValueMargin.iadd(assetsValueMargin);
+        totalLiabilitiesValue.iadd(liabilitiesValue);
+        totalLiabilitiesValueMargin.iadd(liabilitiesValueMargin);
       }
       // const cRatio = assetsValue.div(liabsValue);
       // console.log(
@@ -116,10 +126,15 @@ export class CypherAccount {
 
     return {
       assetsValue: totalAssetsValue,
+      assetsValueMargin: totalAssetsValueMargin,
       liabilitiesValue: totalLiabilitiesValue,
+      liabilitiesValueMargin: totalLiabilitiesValueMargin,
       cRatio: totalLiabilitiesValue.isZero()
         ? new I80F48(I80F48.MAX_BN)
-        : totalAssetsValue.div(totalLiabilitiesValue)
+        : totalAssetsValue.div(totalLiabilitiesValue),
+      cRatioMargin: totalLiabilitiesValueMargin.isZero()
+        ? new I80F48(I80F48.MAX_BN)
+        : totalAssetsValueMargin.div(totalLiabilitiesValueMargin)
     };
   }
 

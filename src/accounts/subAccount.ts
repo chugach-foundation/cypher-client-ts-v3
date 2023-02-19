@@ -132,8 +132,12 @@ export class CypherSubAccount {
     return positions;
   }
 
-  getAssetsValue(cacheAccount: CacheAccount): I80F48 {
+  getAssetsValue(cacheAccount: CacheAccount): {
+    assetsValue: I80F48;
+    assetsValueMargin: I80F48;
+  } {
     const assetsValue = I80F48.fromNumber(0);
+    const assetsValueMargin = I80F48.fromNumber(0);
 
     for (const { spot, derivative } of this.state.positions) {
       if (!spot.tokenMint.equals(PublicKey.default)) {
@@ -150,10 +154,10 @@ export class CypherSubAccount {
           const positionValue = splToUiAmountFixed(
             basePosition,
             priceCache.decimals
-          )
-            .mul(oraclePrice)
-            .mul(weight);
+          ).mul(oraclePrice);
+
           assetsValue.iadd(positionValue);
+          assetsValueMargin.iadd(positionValue.mul(weight));
 
           // console.log(
           //   'Asset ----- Token: ',
@@ -172,21 +176,22 @@ export class CypherSubAccount {
         }
 
         if (openOrdersCache.coinTotal != ZERO_BN) {
-          assetsValue.iadd(
-            splToUiAmountFixed(
-              I80F48.fromU64(openOrdersCache.coinTotal),
-              QUOTE_TOKEN_DECIMALS
-            )
-              .mul(oraclePrice)
-              .mul(weight)
-          );
-        }
-        assetsValue.iadd(
-          splToUiAmountFixed(
-            I80F48.fromU64(openOrdersCache.pcTotal),
+          const coinTotalIncl = splToUiAmountFixed(
+            I80F48.fromU64(openOrdersCache.coinTotal),
             QUOTE_TOKEN_DECIMALS
-          )
+          ).mul(oraclePrice);
+
+          assetsValue.iadd(coinTotalIncl);
+          assetsValueMargin.iadd(coinTotalIncl.mul(weight));
+        }
+
+        const pcTotalIncl = splToUiAmountFixed(
+          I80F48.fromU64(openOrdersCache.pcTotal),
+          QUOTE_TOKEN_DECIMALS
         );
+
+        assetsValue.iadd(pcTotalIncl);
+        assetsValueMargin.iadd(pcTotalIncl);
       }
 
       if (!derivative.market.equals(PublicKey.default)) {
@@ -220,10 +225,12 @@ export class CypherSubAccount {
 
         const basePosition = new I80F48(derivative.basePosition);
         if (basePosition.isPos()) {
-          const positionValue = splToUiAmountFixed(basePosition, decimals)
-            .mul(derivPrice)
-            .mul(weight);
+          const positionValue = splToUiAmountFixed(basePosition, decimals).mul(
+            derivPrice
+          );
+
           assetsValue.iadd(positionValue);
+          assetsValueMargin.iadd(positionValue.mul(weight));
 
           // console.log(
           //   'Asset ----- Market: ',
@@ -242,29 +249,34 @@ export class CypherSubAccount {
         }
 
         if (openOrdersCache.coinTotal != ZERO_BN) {
-          assetsValue.iadd(
-            splToUiAmountFixed(
-              I80F48.fromU64(openOrdersCache.coinTotal),
-              QUOTE_TOKEN_DECIMALS
-            )
-              .mul(derivPrice)
-              .mul(weight)
-          );
-        }
-        assetsValue.iadd(
-          splToUiAmountFixed(
-            I80F48.fromU64(openOrdersCache.pcTotal),
+          const coinTotalIncl = splToUiAmountFixed(
+            I80F48.fromU64(openOrdersCache.coinTotal),
             QUOTE_TOKEN_DECIMALS
-          )
+          ).mul(derivPrice);
+
+          assetsValue.iadd(coinTotalIncl);
+          assetsValueMargin.iadd(coinTotalIncl.mul(weight));
+        }
+
+        const pcTotalIncl = splToUiAmountFixed(
+          I80F48.fromU64(openOrdersCache.pcTotal),
+          QUOTE_TOKEN_DECIMALS
         );
+
+        assetsValue.iadd(pcTotalIncl);
+        assetsValueMargin.iadd(pcTotalIncl);
       }
     }
 
-    return assetsValue;
+    return { assetsValue, assetsValueMargin };
   }
 
-  getLiabilitiesValue(cacheAccount: CacheAccount): I80F48 {
+  getLiabilitiesValue(cacheAccount: CacheAccount): {
+    liabilitiesValue: I80F48;
+    liabilitiesValueMargin: I80F48;
+  } {
     const liabilitiesValue = I80F48.fromNumber(0);
+    const liabilitiesValueMargin = I80F48.fromNumber(0);
 
     for (const { spot, derivative } of this.state.positions) {
       if (!spot.tokenMint.equals(PublicKey.default)) {
@@ -281,10 +293,10 @@ export class CypherSubAccount {
           const positionValue = splToUiAmountFixed(
             basePosition.abs(),
             priceCache.decimals
-          )
-            .mul(oraclePrice)
-            .mul(weight);
+          ).mul(oraclePrice);
+
           liabilitiesValue.iadd(positionValue);
+          liabilitiesValueMargin.iadd(positionValue.mul(weight));
 
           // console.log(
           //   'Liability ----- Token: ',
@@ -332,10 +344,13 @@ export class CypherSubAccount {
 
         const basePosition = new I80F48(derivative.basePosition);
         if (basePosition.isNeg()) {
-          const positionValue = splToUiAmountFixed(basePosition.abs(), decimals)
-            .mul(derivPrice)
-            .mul(weight);
+          const positionValue = splToUiAmountFixed(
+            basePosition.abs(),
+            decimals
+          ).mul(derivPrice);
+
           liabilitiesValue.iadd(positionValue);
+          liabilitiesValueMargin.iadd(positionValue.mul(weight));
 
           // console.log(
           //   'Liability ----- Market: ',
@@ -355,7 +370,7 @@ export class CypherSubAccount {
       }
     }
 
-    return liabilitiesValue;
+    return { liabilitiesValue, liabilitiesValueMargin };
   }
 
   subscribe() {
