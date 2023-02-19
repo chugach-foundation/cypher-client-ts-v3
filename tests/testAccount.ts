@@ -10,38 +10,30 @@ require('dotenv').config({
   path: __dirname + `/default.env`,
 })
 
-const client = new CypherClient('devnet', process.env.RPC_ENDPOINT)
+const client = new CypherClient('mainnet-beta', process.env.RPC_ENDPOINT)
 
-const cypherAccountPubkey = new PublicKey('F6aEixL5NsjzNwUuzs3xA4nY5Rgn6m3GASPTJqHqB1Qk')
-const cypherSubAccountPubkey = new PublicKey('68GjaPgHT3Fk5baBg3CZWYfLoCpzLfawqgGiKfdUqhtn')
+const cypherAccountPubkey = new PublicKey('4R476ZsZfQaJhbmt6iam4o49mD4vjbfALkgWxehtnLMY')
 
 async function testRun(cypherClient: CypherClient) {
-  const cacheAccount = await CacheAccount.load(cypherClient, CONFIGS['devnet'].CACHE)
+  const cacheAccount = await CacheAccount.load(cypherClient, CONFIGS['mainnet-beta'].CACHE)
   const account = await CypherAccount.load(cypherClient, cypherAccountPubkey)
-  const subAccount = await CypherSubAccount.load(cypherClient, cypherSubAccountPubkey)
+  const subAccountCaches = account.state.subAccountCaches.filter(
+    (sac) => sac.subAccount.toString() != PublicKey.default.toString(),
+  )
+  const subAccounts = await Promise.all(
+    subAccountCaches.map(async (sac) => {
+      return await CypherSubAccount.load(cypherClient, sac.subAccount)
+    }),
+  )
 
   console.log('///// Master Account \\\\\\')
   if (account != null) {
-    const masterCRatio = account.getCRatio()
+    const masterCRatio = account.getCRatio(cacheAccount, subAccounts)
     console.log('Assets Value: ', masterCRatio.assetsValue.toFixed(8))
     console.log('Liabilities Value: ', masterCRatio.liabilitiesValue.toFixed(8))
     console.log('C Ratio: ', masterCRatio.cRatio.toFixed(8))
   }
   console.log('///// Master Account \\\\\\\n')
-
-  console.log('///// Sub Account \\\\\\')
-  if (subAccount != null) {
-    const assetsValue = subAccount.getAssetsValue(cacheAccount)
-    const liabilitiesValue = subAccount.getLiabilitiesValue(cacheAccount)
-    console.log('Assets Value: ', assetsValue.toFixed(8))
-    console.log('Liabilities Value: ', liabilitiesValue.toFixed(8))
-    if (liabilitiesValue.isZero()) {
-      console.log('C Ratio: MAX')
-    } else {
-      console.log('C Ratio: ', assetsValue.div(liabilitiesValue).toFixed(8))
-    }
-  }
-  console.log('///// Sub Account \\\\\\\n')
 }
 
 testRun(client)

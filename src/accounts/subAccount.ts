@@ -16,6 +16,7 @@ import type {
 import { CacheAccount } from './cacheAccount';
 import { SpotPosition } from '../viewers/spotPosition';
 import { DerivativePosition } from '../viewers/derivativePosition';
+import { QUOTE_TOKEN_DECIMALS } from '../constants/shared';
 
 export class CypherSubAccount {
   constructor(
@@ -172,12 +173,20 @@ export class CypherSubAccount {
 
         if (openOrdersCache.coinTotal != ZERO_BN) {
           assetsValue.iadd(
-            I80F48.fromU64(openOrdersCache.coinTotal)
+            splToUiAmountFixed(
+              I80F48.fromU64(openOrdersCache.coinTotal),
+              QUOTE_TOKEN_DECIMALS
+            )
               .mul(oraclePrice)
               .mul(weight)
           );
         }
-        assetsValue.iadd(I80F48.fromU64(openOrdersCache.pcTotal));
+        assetsValue.iadd(
+          splToUiAmountFixed(
+            I80F48.fromU64(openOrdersCache.pcTotal),
+            QUOTE_TOKEN_DECIMALS
+          )
+        );
       }
 
       if (!derivative.market.equals(PublicKey.default)) {
@@ -234,12 +243,20 @@ export class CypherSubAccount {
 
         if (openOrdersCache.coinTotal != ZERO_BN) {
           assetsValue.iadd(
-            I80F48.fromU64(openOrdersCache.coinTotal)
+            splToUiAmountFixed(
+              I80F48.fromU64(openOrdersCache.coinTotal),
+              QUOTE_TOKEN_DECIMALS
+            )
               .mul(derivPrice)
               .mul(weight)
           );
         }
-        assetsValue.iadd(I80F48.fromU64(openOrdersCache.pcTotal));
+        assetsValue.iadd(
+          splToUiAmountFixed(
+            I80F48.fromU64(openOrdersCache.pcTotal),
+            QUOTE_TOKEN_DECIMALS
+          )
+        );
       }
     }
 

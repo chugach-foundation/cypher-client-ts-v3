@@ -12,6 +12,8 @@ import { Pool } from './pool';
 import { DerivativesOrdersAccount } from './ordersAccount';
 import { FuturesMarketViewer, PerpMarketViewer } from '../viewers';
 import { getAssociatedTokenAddress } from '@project-serum/associated-token';
+import { CypherSubAccount } from './subAccount';
+import { CacheAccount } from './cacheAccount';
 
 export class CypherAccount {
   constructor(
@@ -81,7 +83,10 @@ export class CypherAccount {
     return subAccounts;
   }
 
-  getCRatio(): {
+  getCRatio(
+    cacheAccount: CacheAccount,
+    subAccounts: CypherSubAccount[]
+  ): {
     assetsValue: I80F48;
     liabilitiesValue: I80F48;
     cRatio: I80F48;
@@ -89,27 +94,24 @@ export class CypherAccount {
     const totalAssetsValue = I80F48.fromNumber(0);
     const totalLiabilitiesValue = I80F48.fromNumber(0);
 
-    for (const subAccountCache of this.state.subAccountCaches) {
-      if (!subAccountCache.subAccount.equals(PublicKey.default)) {
-        const assetsValue = new I80F48(subAccountCache.assetsValue);
-        const liabsValue = new I80F48(subAccountCache.liabilitiesValue);
-        if ((subAccountCache.margining as any).cross) {
-          totalAssetsValue.iadd(assetsValue);
-          totalLiabilitiesValue.iadd(liabsValue);
-        }
-
-        // const cRatio = new I80F48(subAccountCache.cRatio);
-        // console.log(
-        //   'SubAccount:',
-        //   subAccountCache.subAccount.toString(),
-        //   'Assets:',
-        //   assetsValue.toFixed(4),
-        //   'Liabilities:',
-        //   liabsValue.toFixed(4),
-        //   'C-Ratio:',
-        //   cRatio.toFixed(4)
-        // );
+    for (const subAccount of subAccounts) {
+      const assetsValue = subAccount.getAssetsValue(cacheAccount);
+      const liabsValue = subAccount.getLiabilitiesValue(cacheAccount);
+      if ((subAccount.state.marginingType as any).cross) {
+        totalAssetsValue.iadd(assetsValue);
+        totalLiabilitiesValue.iadd(liabsValue);
       }
+      // const cRatio = assetsValue.div(liabsValue);
+      // console.log(
+      //   'SubAccount:',
+      //   subAccount.address.toString(),
+      //   'Assets:',
+      //   assetsValue.toFixed(4),
+      //   'Liabilities:',
+      //   liabsValue.toFixed(4),
+      //   'C-Ratio:',
+      //   cRatio.toFixed(4)
+      // );
     }
 
     return {
