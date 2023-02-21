@@ -142,6 +142,7 @@ export class CypherSubAccount {
     for (const { spot, derivative } of this.state.positions) {
       if (!spot.tokenMint.equals(PublicKey.default)) {
         const priceCache = cacheAccount.getCache(spot.cacheIndex);
+        const decimals = priceCache.decimals;
         const openOrdersCache = spot.openOrdersCache;
         const oraclePrice = new I80F48(priceCache.oraclePrice);
 
@@ -178,7 +179,7 @@ export class CypherSubAccount {
         if (openOrdersCache.coinTotal != ZERO_BN) {
           const coinTotalIncl = splToUiAmountFixed(
             I80F48.fromU64(openOrdersCache.coinTotal),
-            QUOTE_TOKEN_DECIMALS
+            decimals
           ).mul(oraclePrice);
 
           assetsValueUnweighted.iadd(coinTotalIncl);
@@ -251,7 +252,7 @@ export class CypherSubAccount {
         if (openOrdersCache.coinTotal != ZERO_BN) {
           const coinTotalIncl = splToUiAmountFixed(
             I80F48.fromU64(openOrdersCache.coinTotal),
-            QUOTE_TOKEN_DECIMALS
+            decimals
           ).mul(derivPrice);
 
           assetsValueUnweighted.iadd(coinTotalIncl);
@@ -318,25 +319,17 @@ export class CypherSubAccount {
         const priceCache = cacheAccount.getCache(derivative.cacheIndex);
 
         let decimals = 0;
-        if ((derivative.marketType as any).perpetualFuture) {
-          decimals = priceCache.perpDecimals;
-        } else {
-          decimals = priceCache.futuresDecimals;
-        }
-
         let derivPrice: I80F48 = ZERO_I80F48;
-        if ((derivative.marketType as any).perpetualFuture) {
-          derivPrice = new I80F48(priceCache.oraclePrice);
-        } else {
-          derivPrice = new I80F48(priceCache.marketPrice);
-        }
-
         let weight: I80F48 = ZERO_I80F48;
         if ((derivative.marketType as any).perpetualFuture) {
+          decimals = priceCache.perpDecimals;
+          derivPrice = new I80F48(priceCache.oraclePrice);
           weight = I80F48.fromNumber(priceCache.perpInitLiabWeight).div(
             I80F48.fromNumber(100)
           );
         } else {
+          decimals = priceCache.futuresDecimals;
+          derivPrice = new I80F48(priceCache.marketPrice);
           weight = I80F48.fromNumber(priceCache.futuresInitLiabWeight).div(
             I80F48.fromNumber(100)
           );
