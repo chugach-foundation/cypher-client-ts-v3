@@ -16,6 +16,9 @@ import { FuturesMarketViewer, PerpMarketViewer } from '@cypher-client/viewers'
 import { Keypair, Transaction, PublicKey, ConfirmOptions } from '@solana/web3.js'
 import fs from 'fs'
 import { createAccs, createSubAcc } from '../testCreateAccount'
+import { CacheAccount } from '../../src/accounts/cacheAccount'
+import { CONFIGS } from '@cypher-client/constants'
+import { Cluster } from '../../lib/types/index'
 
 export const loadWallet = (KP_PATH: string): Keypair => {
   try {
@@ -31,6 +34,19 @@ export const loadWallet = (KP_PATH: string): Keypair => {
 export const confirmOpts: ConfirmOptions = {
   commitment: 'processed',
   skipPreflight: true,
+}
+
+export const loadAndSubscribeCache = async (
+  client: CypherClient,
+  onAccountUpdate?: (account: CacheAccount) => void,
+) => {
+  const cache = await CacheAccount.load(client, CONFIGS[client.cluster].CACHE, (state) => {
+    cache.state = state
+    if (onAccountUpdate) {
+      onAccountUpdate(cache)
+    }
+  })
+  return cache
 }
 
 export const loadAccs = async (
