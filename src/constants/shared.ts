@@ -7,7 +7,7 @@ export const QUOTE_TOKEN_DECIMALS = 6;
 
 export const CONFIGS: { [key in Cluster]: Config } = {
   localnet: {
-    CYPHER_PID: new PublicKey('E2hQJAedG6bX2w3rbPQ5XrBnPvC7u3mAorKLvU6XPxwe'),
+    CYPHER_PID: new PublicKey('9ZoxkdieCwUWu57SyNkd4PR2fb7azpNiefeZjwDbzBQo'),
     PYTH_PID: new PublicKey('gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s'),
     DEX_PID: new PublicKey('EoTcMgcDRTJVZDMZWBoU6rhYHZfkNTVEAfz3uUJRcYGj'),
     FAUCET_PID: new PublicKey('2gCkR5aaUiTVRiKDB79EWXm5PAVDWtNTnp9mGuu4ZKdY'),
@@ -20,7 +20,7 @@ export const CONFIGS: { [key in Cluster]: Config } = {
     HISTORY_API_REST: 'http://localhost:8081/api/rest'
   },
   devnet: {
-    CYPHER_PID: new PublicKey('E2hQJAedG6bX2w3rbPQ5XrBnPvC7u3mAorKLvU6XPxwe'),
+    CYPHER_PID: new PublicKey('9ZoxkdieCwUWu57SyNkd4PR2fb7azpNiefeZjwDbzBQo'),
     PYTH_PID: new PublicKey('gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s'),
     DEX_PID: new PublicKey('EoTcMgcDRTJVZDMZWBoU6rhYHZfkNTVEAfz3uUJRcYGj'),
     FAUCET_PID: new PublicKey('2gCkR5aaUiTVRiKDB79EWXm5PAVDWtNTnp9mGuu4ZKdY'),
