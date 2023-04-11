@@ -170,7 +170,9 @@ export class AccountVersion {
 }
 
 export interface ClearingState extends _Clearing {
+  clearingType: ClearingType;
   feeTiers: FeeTierArgs[];
+  config: ClearingConfig;
 }
 
 export interface AgnosticMarket extends _AgnosticMarket {
