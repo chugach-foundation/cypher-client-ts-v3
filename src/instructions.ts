@@ -85,6 +85,29 @@ export const makeCreateAccountIx = (
     .instruction();
 };
 
+export const makeCreateWhitelistedAccountIx = (
+  client: CypherClient,
+  clearing: PublicKey,
+  whitelist: PublicKey,
+  account: PublicKey,
+  authority: PublicKey,
+  payer: PublicKey,
+  accountNumber: number,
+  accountBump: number
+) => {
+  return client.methods
+    .createWhitelistedAccount(accountNumber, accountBump)
+    .accountsStrict({
+      clearing,
+      whitelist,
+      masterAccount: account,
+      authority,
+      payer,
+      systemProgram: SystemProgram.programId
+    })
+    .instruction();
+};
+
 export const makeCreateSubAccountIx = (
   client: CypherClient,
   masterAccount: PublicKey,
@@ -508,6 +531,45 @@ export const makeNewFuturesOrderIx = (
     .instruction();
 };
 
+export const makeNewFuturesOrdersIx = (
+  client: CypherClient,
+  clearing: PublicKey,
+  cacheAccount: PublicKey,
+  masterAccount: PublicKey,
+  subAccount: PublicKey,
+  market: PublicKey,
+  openOrders: PublicKey,
+  priceHistory: PublicKey,
+  orderbook: PublicKey,
+  eventQueue: PublicKey,
+  bids: PublicKey,
+  asks: PublicKey,
+  quotePoolNode: PublicKey,
+  authority: PublicKey,
+  args: NewDerivativeOrderArgs[]
+) => {
+  return client.methods
+    .multipleNewFuturesOrders({
+      ...args
+    })
+    .accountsStrict({
+      clearing,
+      cacheAccount,
+      masterAccount,
+      subAccount,
+      market,
+      openOrders,
+      priceHistory,
+      orderbook,
+      eventQueue,
+      bids,
+      asks,
+      quotePoolNode,
+      authority
+    })
+    .instruction();
+};
+
 export const makeCancelFuturesOrderIx = (
   client: CypherClient,
   clearing: PublicKey,
@@ -528,6 +590,42 @@ export const makeCancelFuturesOrderIx = (
     .cancelFuturesOrder({
       ...args,
       side: args.side as never
+    })
+    .accountsStrict({
+      clearing,
+      cacheAccount,
+      masterAccount,
+      subAccount,
+      market,
+      openOrders,
+      orderbook,
+      eventQueue,
+      bids,
+      asks,
+      quotePoolNode,
+      authority
+    })
+    .instruction();
+};
+export const makeCancelFuturesOrdersIx = (
+  client: CypherClient,
+  clearing: PublicKey,
+  cacheAccount: PublicKey,
+  masterAccount: PublicKey,
+  subAccount: PublicKey,
+  market: PublicKey,
+  openOrders: PublicKey,
+  orderbook: PublicKey,
+  eventQueue: PublicKey,
+  bids: PublicKey,
+  asks: PublicKey,
+  quotePoolNode: PublicKey,
+  authority: PublicKey,
+  args: CancelOrderArgs[]
+) => {
+  return client.methods
+    .cancelFuturesOrders({
+      ...args
     })
     .accountsStrict({
       clearing,
@@ -611,6 +709,43 @@ export const makeNewPerpOrderIx = (
     .instruction();
 };
 
+export const makeMultipleNewPerpOrdersIx = (
+  client: CypherClient,
+  clearing: PublicKey,
+  cacheAccount: PublicKey,
+  masterAccount: PublicKey,
+  subAccount: PublicKey,
+  market: PublicKey,
+  openOrders: PublicKey,
+  orderbook: PublicKey,
+  eventQueue: PublicKey,
+  bids: PublicKey,
+  asks: PublicKey,
+  quotePoolNode: PublicKey,
+  authority: PublicKey,
+  args: NewDerivativeOrderArgs[]
+) => {
+  return client.methods
+    .multipleNewPerpOrders({
+      ...args
+    })
+    .accountsStrict({
+      clearing,
+      cacheAccount,
+      masterAccount,
+      subAccount,
+      market,
+      openOrders,
+      orderbook,
+      eventQueue,
+      bids,
+      asks,
+      quotePoolNode,
+      authority
+    })
+    .instruction();
+};
+
 export const makeCancelPerpOrderIx = (
   client: CypherClient,
   clearing: PublicKey,
@@ -631,6 +766,43 @@ export const makeCancelPerpOrderIx = (
     .cancelPerpOrder({
       ...args,
       side: args.side as never
+    })
+    .accountsStrict({
+      clearing,
+      cacheAccount,
+      masterAccount,
+      subAccount,
+      market,
+      openOrders,
+      orderbook,
+      eventQueue,
+      bids,
+      asks,
+      quotePoolNode,
+      authority
+    })
+    .instruction();
+};
+
+export const makeCancelPerpOrdersIx = (
+  client: CypherClient,
+  clearing: PublicKey,
+  cacheAccount: PublicKey,
+  masterAccount: PublicKey,
+  subAccount: PublicKey,
+  market: PublicKey,
+  openOrders: PublicKey,
+  orderbook: PublicKey,
+  eventQueue: PublicKey,
+  bids: PublicKey,
+  asks: PublicKey,
+  quotePoolNode: PublicKey,
+  authority: PublicKey,
+  args: CancelOrderArgs[]
+) => {
+  return client.methods
+    .cancelPerpOrders({
+      ...args
     })
     .accountsStrict({
       clearing,

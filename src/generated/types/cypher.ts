@@ -1148,7 +1148,7 @@ export type Cypher = {
         },
         {
           "name": "authority",
-          "isMut": true,
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -1511,6 +1511,27 @@ export type Cypher = {
       ]
     },
     {
+      "name": "setCacheAuthority",
+      "accounts": [
+        {
+          "name": "cacheAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "setClearingAuthority",
       "accounts": [
         {
@@ -1834,6 +1855,27 @@ export type Cypher = {
       ]
     },
     {
+      "name": "setPoolNodeAuthority",
+      "accounts": [
+        {
+          "name": "poolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "setPoolNodeStatus",
       "accounts": [
         {
@@ -1853,6 +1895,27 @@ export type Cypher = {
           "type": {
             "defined": "OperatingStatus"
           }
+        }
+      ]
+    },
+    {
+      "name": "setPoolAuthority",
+      "accounts": [
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": "publicKey"
         }
       ]
     },
@@ -1880,6 +1943,70 @@ export type Cypher = {
       ]
     },
     {
+      "name": "setPoolParams",
+      "accounts": [
+        {
+          "name": "cache",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "initAssetWeight",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "maintAssetWeight",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "initLiabWeight",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "maintLiabWeight",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "optimalApr",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "optimalUtil",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "maxApr",
+          "type": {
+            "option": "u16"
+          }
+        }
+      ]
+    },
+    {
       "name": "setOracleProducts",
       "accounts": [
         {
@@ -1899,6 +2026,68 @@ export type Cypher = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "setOracleProductsV2",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "oracleProducts",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "productsType",
+          "type": {
+            "defined": "ProductsType"
+          }
+        },
+        {
+          "name": "maxConfidenceIntervals",
+          "type": {
+            "vec": "f64"
+          }
+        },
+        {
+          "name": "weights",
+          "type": {
+            "vec": "u16"
+          }
+        },
+        {
+          "name": "timeToLive",
+          "type": "u16"
+        },
+        {
+          "name": "pythWeight",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "switchboardWeight",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "chainlinkWeight",
+          "type": {
+            "option": "u16"
+          }
+        }
+      ]
     },
     {
       "name": "setOracleStubPrice",
@@ -2261,6 +2450,63 @@ export type Cypher = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "upgradeOracleProducts",
+      "accounts": [
+        {
+          "name": "cache",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "oracleProducts",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "twapLongerTimeHorizon",
+          "type": "u64"
+        },
+        {
+          "name": "twapShorterTimeHorizon",
+          "type": "u64"
+        },
+        {
+          "name": "twapPriceCollectionTick",
+          "type": "u64"
+        },
+        {
+          "name": "bandsDuration",
+          "type": "u64"
+        },
+        {
+          "name": "bandsThreshold",
+          "type": "u16"
+        }
+      ]
     },
     {
       "name": "withdrawFunds",
@@ -2861,6 +3107,81 @@ export type Cypher = {
       ]
     },
     {
+      "name": "cancelFuturesOrders",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "subAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "market",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "openOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "orderbook",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventQueue",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bids",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "asks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quotePoolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "vec": {
+              "defined": "CancelOrderArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "consumeFuturesEvents",
       "accounts": [
         {
@@ -2888,6 +3209,86 @@ export type Cypher = {
         {
           "name": "limit",
           "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "multipleNewFuturesOrders",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "subAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "market",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "openOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "priceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "orderbook",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventQueue",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bids",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "asks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quotePoolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "vec": {
+              "defined": "NewDerivativeOrderArgs"
+            }
+          }
         }
       ]
     },
@@ -3160,6 +3561,81 @@ export type Cypher = {
       ]
     },
     {
+      "name": "cancelPerpOrders",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "subAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "market",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "openOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "orderbook",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventQueue",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bids",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "asks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quotePoolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "vec": {
+              "defined": "CancelOrderArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "consumePerpEvents",
       "accounts": [
         {
@@ -3187,6 +3663,81 @@ export type Cypher = {
         {
           "name": "limit",
           "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "multipleNewPerpOrders",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "subAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "market",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "openOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "orderbook",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventQueue",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bids",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "asks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quotePoolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "vec": {
+              "defined": "NewDerivativeOrderArgs"
+            }
+          }
         }
       ]
     },
@@ -3790,10 +4341,29 @@ export type Cypher = {
           {
             "name": "productsType",
             "docs": [
-              "the products type"
+              "the products type",
+              "if this account is [`AccountVersion::One`] we can safely assume this to be a padding"
             ],
             "type": {
               "defined": "ProductsType"
+            }
+          },
+          {
+            "name": "version",
+            "docs": [
+              "the account version"
+            ],
+            "type": {
+              "defined": "AccountVersion"
+            }
+          },
+          {
+            "name": "feedType",
+            "docs": [
+              "the type of oracle feed"
+            ],
+            "type": {
+              "defined": "FeedType"
             }
           },
           {
@@ -3801,7 +4371,7 @@ export type Cypher = {
             "type": {
               "array": [
                 "u8",
-                7
+                5
               ]
             }
           },
@@ -3822,7 +4392,8 @@ export type Cypher = {
           {
             "name": "maxConfidenceInterval",
             "docs": [
-              "the maximum confidence interval for the oracle price"
+              "the maximum confidence interval for the oracle price",
+              "if this account is [`AccountVersion::One`] we can safely assume this to be a padding"
             ],
             "type": "f64"
           },
@@ -3850,7 +4421,8 @@ export type Cypher = {
           {
             "name": "products",
             "docs": [
-              "the product accounts"
+              "the product accounts",
+              "if this account is [`AccountVersion::One`] we can safely assume this to be a padding"
             ],
             "type": {
               "vec": {
@@ -3864,7 +4436,8 @@ export type Cypher = {
           {
             "name": "weights",
             "docs": [
-              "the weights of the products"
+              "the weights of the products",
+              "if this account is [`AccountVersion::One`] we can safely assume this to be a padding"
             ],
             "type": {
               "vec": "u16"
@@ -4068,16 +4641,28 @@ export type Cypher = {
           },
           {
             "name": "operatingStatus",
+            "docs": [
+              "the pool node's operating status"
+            ],
             "type": {
               "defined": "OperatingStatus"
             }
           },
           {
-            "name": "padding1",
+            "name": "version",
+            "docs": [
+              "the account version"
+            ],
+            "type": {
+              "defined": "AccountVersion"
+            }
+          },
+          {
+            "name": "padding",
             "type": {
               "array": [
                 "u8",
-                11
+                10
               ]
             }
           },
@@ -4204,11 +4789,20 @@ export type Cypher = {
             }
           },
           {
-            "name": "padding1",
+            "name": "version",
+            "docs": [
+              "the account version"
+            ],
+            "type": {
+              "defined": "AccountVersion"
+            }
+          },
+          {
+            "name": "padding",
             "type": {
               "array": [
                 "u8",
-                14
+                13
               ]
             }
           },
@@ -4378,9 +4972,13 @@ export type Cypher = {
         "kind": "struct",
         "fields": [
           {
-            "name": "market",
+            "name": "identifier",
             "docs": [
-              "market this price history is for"
+              "identifier of this price history",
+              "this can be a futures market pubkey",
+              "- in which this price history account is used to store the on-chain twap of the futures market",
+              "this can be an oracle products account",
+              "- in which this price history account is used to recreate a rolling twap from oracle price feeds"
             ],
             "type": "publicKey"
           },
@@ -5544,13 +6142,11 @@ export type Cypher = {
             "type": "u64"
           },
           {
-            "name": "padding1",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
+            "name": "safeguardedAt",
+            "docs": [
+              "the timestamp at which the safeguard was activated"
+            ],
+            "type": "u64"
           },
           {
             "name": "depositIndex",
@@ -5672,13 +6268,12 @@ export type Cypher = {
             "type": "u8"
           },
           {
-            "name": "padding2",
-            "type": {
-              "array": [
-                "u8",
-                1
-              ]
-            }
+            "name": "safeguard",
+            "docs": [
+              "the safeguard is used during extreme price movements and disallows increases in borrows",
+              "this is only applied to accounts that hold the asset which is safeguarded"
+            ],
+            "type": "bool"
           }
         ]
       }
@@ -6199,6 +6794,168 @@ export type Cypher = {
       }
     },
     {
+      "name": "FeedInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "status",
+            "docs": [
+              "the status of this feed"
+            ],
+            "type": {
+              "defined": "FeedStatus"
+            }
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                3
+              ]
+            }
+          },
+          {
+            "name": "weight",
+            "docs": [
+              "the weight of this feed if it is being used in a merged feed"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "timeToLive",
+            "docs": [
+              "the time to live of for this feed's results"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "feeds",
+            "docs": [
+              "the feed accounts",
+              "",
+              "in the case of pyth, this holds the product account pubkeys, not the actual price accounts"
+            ],
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "weights",
+            "docs": [
+              "the weights of each feed account",
+              "",
+              "this is only used to build an index from a set of feed accounts"
+            ],
+            "type": {
+              "vec": "u16"
+            }
+          },
+          {
+            "name": "maxConfidenceIntervals",
+            "docs": [
+              "the maximum confidence interval for each feed account"
+            ],
+            "type": {
+              "vec": "f64"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceBandsInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bandsDuration",
+            "docs": [
+              "duration of the bands in seconds"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bandsThreshold",
+            "docs": [
+              "the threshold at which the bands get activated"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                6
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleFeedInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "priceHistory",
+            "docs": [
+              "the price history account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "bandsInfo",
+            "docs": [
+              "the price bands info"
+            ],
+            "type": {
+              "defined": "PriceBandsInfo"
+            }
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u64",
+                32
+              ]
+            }
+          },
+          {
+            "name": "pyth",
+            "docs": [
+              "the pyth feed info"
+            ],
+            "type": {
+              "defined": "FeedInfo"
+            }
+          },
+          {
+            "name": "switchboard",
+            "docs": [
+              "the switchboard feed info"
+            ],
+            "type": {
+              "defined": "FeedInfo"
+            }
+          },
+          {
+            "name": "chainlink",
+            "docs": [
+              "the chainlink feed info"
+            ],
+            "type": {
+              "defined": "FeedInfo"
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "OpenOrder",
       "type": {
         "kind": "struct",
@@ -6375,7 +7132,7 @@ export type Cypher = {
             "type": "u8"
           },
           {
-            "name": "padding2",
+            "name": "padding",
             "type": {
               "array": [
                 "u8",
@@ -6384,7 +7141,7 @@ export type Cypher = {
             }
           },
           {
-            "name": "padding3",
+            "name": "padding2",
             "type": {
               "array": [
                 "u64",
@@ -6490,13 +7247,18 @@ export type Cypher = {
             "type": "publicKey"
           },
           {
-            "name": "padding2",
-            "type": {
-              "array": [
-                "u64",
-                4
-              ]
-            }
+            "name": "volatileAssetsValue",
+            "docs": [
+              "the value of volatile assets of this account"
+            ],
+            "type": "i128"
+          },
+          {
+            "name": "volatileLiabilitiesValue",
+            "docs": [
+              "the value of volatile liabilities of this account"
+            ],
+            "type": "i128"
           }
         ]
       }
@@ -6939,6 +7701,24 @@ export type Cypher = {
       }
     },
     {
+      "name": "FeedStatus",
+      "docs": [
+        "Represents the status of an oracle price feed.",
+        "This is only used for upgraded oracle feeds."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Disabled"
+          },
+          {
+            "name": "Enabled"
+          }
+        ]
+      }
+    },
+    {
       "name": "ProductsType",
       "type": {
         "kind": "enum",
@@ -6951,6 +7731,23 @@ export type Cypher = {
           },
           {
             "name": "Switchboard"
+          },
+          {
+            "name": "Chainlink"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeedType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Simple"
+          },
+          {
+            "name": "Merged"
           }
         ]
       }
@@ -6993,6 +7790,20 @@ export type Cypher = {
           },
           {
             "name": "Whitelisted"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AccountVersion",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Base"
+          },
+          {
+            "name": "One"
           }
         ]
       }
@@ -7958,6 +8769,21 @@ export type Cypher = {
     },
     {
       "code": 6087,
+      "name": "InvalidAccountVersion",
+      "msg": "the given account has an invalid version for this operation"
+    },
+    {
+      "code": 6088,
+      "name": "InvalidProductsType",
+      "msg": "the given oracle products account has an invalid type for this operation"
+    },
+    {
+      "code": 6089,
+      "name": "UnableToProducePrice",
+      "msg": "the given accounts were unable to produce an oracle price"
+    },
+    {
+      "code": 6090,
       "name": "Default",
       "msg": "Default"
     }
@@ -9114,7 +9940,7 @@ export const IDL: Cypher = {
         },
         {
           "name": "authority",
-          "isMut": true,
+          "isMut": false,
           "isSigner": true
         },
         {
@@ -9477,6 +10303,27 @@ export const IDL: Cypher = {
       ]
     },
     {
+      "name": "setCacheAuthority",
+      "accounts": [
+        {
+          "name": "cacheAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "setClearingAuthority",
       "accounts": [
         {
@@ -9800,6 +10647,27 @@ export const IDL: Cypher = {
       ]
     },
     {
+      "name": "setPoolNodeAuthority",
+      "accounts": [
+        {
+          "name": "poolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "setPoolNodeStatus",
       "accounts": [
         {
@@ -9819,6 +10687,27 @@ export const IDL: Cypher = {
           "type": {
             "defined": "OperatingStatus"
           }
+        }
+      ]
+    },
+    {
+      "name": "setPoolAuthority",
+      "accounts": [
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newAuthority",
+          "type": "publicKey"
         }
       ]
     },
@@ -9846,6 +10735,70 @@ export const IDL: Cypher = {
       ]
     },
     {
+      "name": "setPoolParams",
+      "accounts": [
+        {
+          "name": "cache",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "initAssetWeight",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "maintAssetWeight",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "initLiabWeight",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "maintLiabWeight",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "optimalApr",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "optimalUtil",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "maxApr",
+          "type": {
+            "option": "u16"
+          }
+        }
+      ]
+    },
+    {
       "name": "setOracleProducts",
       "accounts": [
         {
@@ -9865,6 +10818,68 @@ export const IDL: Cypher = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "setOracleProductsV2",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "oracleProducts",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "productsType",
+          "type": {
+            "defined": "ProductsType"
+          }
+        },
+        {
+          "name": "maxConfidenceIntervals",
+          "type": {
+            "vec": "f64"
+          }
+        },
+        {
+          "name": "weights",
+          "type": {
+            "vec": "u16"
+          }
+        },
+        {
+          "name": "timeToLive",
+          "type": "u16"
+        },
+        {
+          "name": "pythWeight",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "switchboardWeight",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "chainlinkWeight",
+          "type": {
+            "option": "u16"
+          }
+        }
+      ]
     },
     {
       "name": "setOracleStubPrice",
@@ -10227,6 +11242,63 @@ export const IDL: Cypher = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "upgradeOracleProducts",
+      "accounts": [
+        {
+          "name": "cache",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "priceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "oracleProducts",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "twapLongerTimeHorizon",
+          "type": "u64"
+        },
+        {
+          "name": "twapShorterTimeHorizon",
+          "type": "u64"
+        },
+        {
+          "name": "twapPriceCollectionTick",
+          "type": "u64"
+        },
+        {
+          "name": "bandsDuration",
+          "type": "u64"
+        },
+        {
+          "name": "bandsThreshold",
+          "type": "u16"
+        }
+      ]
     },
     {
       "name": "withdrawFunds",
@@ -10827,6 +11899,81 @@ export const IDL: Cypher = {
       ]
     },
     {
+      "name": "cancelFuturesOrders",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "subAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "market",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "openOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "orderbook",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventQueue",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bids",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "asks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quotePoolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "vec": {
+              "defined": "CancelOrderArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "consumeFuturesEvents",
       "accounts": [
         {
@@ -10854,6 +12001,86 @@ export const IDL: Cypher = {
         {
           "name": "limit",
           "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "multipleNewFuturesOrders",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "subAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "market",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "openOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "priceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "orderbook",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventQueue",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bids",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "asks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quotePoolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "vec": {
+              "defined": "NewDerivativeOrderArgs"
+            }
+          }
         }
       ]
     },
@@ -11126,6 +12353,81 @@ export const IDL: Cypher = {
       ]
     },
     {
+      "name": "cancelPerpOrders",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "subAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "market",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "openOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "orderbook",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventQueue",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bids",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "asks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quotePoolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "vec": {
+              "defined": "CancelOrderArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "consumePerpEvents",
       "accounts": [
         {
@@ -11153,6 +12455,81 @@ export const IDL: Cypher = {
         {
           "name": "limit",
           "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "multipleNewPerpOrders",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "masterAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "subAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "market",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "openOrders",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "orderbook",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventQueue",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bids",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "asks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quotePoolNode",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "vec": {
+              "defined": "NewDerivativeOrderArgs"
+            }
+          }
         }
       ]
     },
@@ -11756,10 +13133,29 @@ export const IDL: Cypher = {
           {
             "name": "productsType",
             "docs": [
-              "the products type"
+              "the products type",
+              "if this account is [`AccountVersion::One`] we can safely assume this to be a padding"
             ],
             "type": {
               "defined": "ProductsType"
+            }
+          },
+          {
+            "name": "version",
+            "docs": [
+              "the account version"
+            ],
+            "type": {
+              "defined": "AccountVersion"
+            }
+          },
+          {
+            "name": "feedType",
+            "docs": [
+              "the type of oracle feed"
+            ],
+            "type": {
+              "defined": "FeedType"
             }
           },
           {
@@ -11767,7 +13163,7 @@ export const IDL: Cypher = {
             "type": {
               "array": [
                 "u8",
-                7
+                5
               ]
             }
           },
@@ -11788,7 +13184,8 @@ export const IDL: Cypher = {
           {
             "name": "maxConfidenceInterval",
             "docs": [
-              "the maximum confidence interval for the oracle price"
+              "the maximum confidence interval for the oracle price",
+              "if this account is [`AccountVersion::One`] we can safely assume this to be a padding"
             ],
             "type": "f64"
           },
@@ -11816,7 +13213,8 @@ export const IDL: Cypher = {
           {
             "name": "products",
             "docs": [
-              "the product accounts"
+              "the product accounts",
+              "if this account is [`AccountVersion::One`] we can safely assume this to be a padding"
             ],
             "type": {
               "vec": {
@@ -11830,7 +13228,8 @@ export const IDL: Cypher = {
           {
             "name": "weights",
             "docs": [
-              "the weights of the products"
+              "the weights of the products",
+              "if this account is [`AccountVersion::One`] we can safely assume this to be a padding"
             ],
             "type": {
               "vec": "u16"
@@ -12034,16 +13433,28 @@ export const IDL: Cypher = {
           },
           {
             "name": "operatingStatus",
+            "docs": [
+              "the pool node's operating status"
+            ],
             "type": {
               "defined": "OperatingStatus"
             }
           },
           {
-            "name": "padding1",
+            "name": "version",
+            "docs": [
+              "the account version"
+            ],
+            "type": {
+              "defined": "AccountVersion"
+            }
+          },
+          {
+            "name": "padding",
             "type": {
               "array": [
                 "u8",
-                11
+                10
               ]
             }
           },
@@ -12170,11 +13581,20 @@ export const IDL: Cypher = {
             }
           },
           {
-            "name": "padding1",
+            "name": "version",
+            "docs": [
+              "the account version"
+            ],
+            "type": {
+              "defined": "AccountVersion"
+            }
+          },
+          {
+            "name": "padding",
             "type": {
               "array": [
                 "u8",
-                14
+                13
               ]
             }
           },
@@ -12344,9 +13764,13 @@ export const IDL: Cypher = {
         "kind": "struct",
         "fields": [
           {
-            "name": "market",
+            "name": "identifier",
             "docs": [
-              "market this price history is for"
+              "identifier of this price history",
+              "this can be a futures market pubkey",
+              "- in which this price history account is used to store the on-chain twap of the futures market",
+              "this can be an oracle products account",
+              "- in which this price history account is used to recreate a rolling twap from oracle price feeds"
             ],
             "type": "publicKey"
           },
@@ -13510,13 +14934,11 @@ export const IDL: Cypher = {
             "type": "u64"
           },
           {
-            "name": "padding1",
-            "type": {
-              "array": [
-                "u8",
-                8
-              ]
-            }
+            "name": "safeguardedAt",
+            "docs": [
+              "the timestamp at which the safeguard was activated"
+            ],
+            "type": "u64"
           },
           {
             "name": "depositIndex",
@@ -13638,13 +15060,12 @@ export const IDL: Cypher = {
             "type": "u8"
           },
           {
-            "name": "padding2",
-            "type": {
-              "array": [
-                "u8",
-                1
-              ]
-            }
+            "name": "safeguard",
+            "docs": [
+              "the safeguard is used during extreme price movements and disallows increases in borrows",
+              "this is only applied to accounts that hold the asset which is safeguarded"
+            ],
+            "type": "bool"
           }
         ]
       }
@@ -14165,6 +15586,168 @@ export const IDL: Cypher = {
       }
     },
     {
+      "name": "FeedInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "status",
+            "docs": [
+              "the status of this feed"
+            ],
+            "type": {
+              "defined": "FeedStatus"
+            }
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                3
+              ]
+            }
+          },
+          {
+            "name": "weight",
+            "docs": [
+              "the weight of this feed if it is being used in a merged feed"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "timeToLive",
+            "docs": [
+              "the time to live of for this feed's results"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "feeds",
+            "docs": [
+              "the feed accounts",
+              "",
+              "in the case of pyth, this holds the product account pubkeys, not the actual price accounts"
+            ],
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "weights",
+            "docs": [
+              "the weights of each feed account",
+              "",
+              "this is only used to build an index from a set of feed accounts"
+            ],
+            "type": {
+              "vec": "u16"
+            }
+          },
+          {
+            "name": "maxConfidenceIntervals",
+            "docs": [
+              "the maximum confidence interval for each feed account"
+            ],
+            "type": {
+              "vec": "f64"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceBandsInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bandsDuration",
+            "docs": [
+              "duration of the bands in seconds"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bandsThreshold",
+            "docs": [
+              "the threshold at which the bands get activated"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u8",
+                6
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleFeedInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "priceHistory",
+            "docs": [
+              "the price history account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "bandsInfo",
+            "docs": [
+              "the price bands info"
+            ],
+            "type": {
+              "defined": "PriceBandsInfo"
+            }
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": [
+                "u64",
+                32
+              ]
+            }
+          },
+          {
+            "name": "pyth",
+            "docs": [
+              "the pyth feed info"
+            ],
+            "type": {
+              "defined": "FeedInfo"
+            }
+          },
+          {
+            "name": "switchboard",
+            "docs": [
+              "the switchboard feed info"
+            ],
+            "type": {
+              "defined": "FeedInfo"
+            }
+          },
+          {
+            "name": "chainlink",
+            "docs": [
+              "the chainlink feed info"
+            ],
+            "type": {
+              "defined": "FeedInfo"
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "OpenOrder",
       "type": {
         "kind": "struct",
@@ -14341,7 +15924,7 @@ export const IDL: Cypher = {
             "type": "u8"
           },
           {
-            "name": "padding2",
+            "name": "padding",
             "type": {
               "array": [
                 "u8",
@@ -14350,7 +15933,7 @@ export const IDL: Cypher = {
             }
           },
           {
-            "name": "padding3",
+            "name": "padding2",
             "type": {
               "array": [
                 "u64",
@@ -14456,13 +16039,18 @@ export const IDL: Cypher = {
             "type": "publicKey"
           },
           {
-            "name": "padding2",
-            "type": {
-              "array": [
-                "u64",
-                4
-              ]
-            }
+            "name": "volatileAssetsValue",
+            "docs": [
+              "the value of volatile assets of this account"
+            ],
+            "type": "i128"
+          },
+          {
+            "name": "volatileLiabilitiesValue",
+            "docs": [
+              "the value of volatile liabilities of this account"
+            ],
+            "type": "i128"
           }
         ]
       }
@@ -14905,6 +16493,24 @@ export const IDL: Cypher = {
       }
     },
     {
+      "name": "FeedStatus",
+      "docs": [
+        "Represents the status of an oracle price feed.",
+        "This is only used for upgraded oracle feeds."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Disabled"
+          },
+          {
+            "name": "Enabled"
+          }
+        ]
+      }
+    },
+    {
       "name": "ProductsType",
       "type": {
         "kind": "enum",
@@ -14917,6 +16523,23 @@ export const IDL: Cypher = {
           },
           {
             "name": "Switchboard"
+          },
+          {
+            "name": "Chainlink"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeedType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Simple"
+          },
+          {
+            "name": "Merged"
           }
         ]
       }
@@ -14959,6 +16582,20 @@ export const IDL: Cypher = {
           },
           {
             "name": "Whitelisted"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AccountVersion",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Base"
+          },
+          {
+            "name": "One"
           }
         ]
       }
@@ -15924,6 +17561,21 @@ export const IDL: Cypher = {
     },
     {
       "code": 6087,
+      "name": "InvalidAccountVersion",
+      "msg": "the given account has an invalid version for this operation"
+    },
+    {
+      "code": 6088,
+      "name": "InvalidProductsType",
+      "msg": "the given oracle products account has an invalid type for this operation"
+    },
+    {
+      "code": 6089,
+      "name": "UnableToProducePrice",
+      "msg": "the given accounts were unable to produce an oracle price"
+    },
+    {
+      "code": 6090,
       "name": "Default",
       "msg": "Default"
     }

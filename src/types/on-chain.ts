@@ -1,13 +1,14 @@
 import { Event } from '@project-serum/anchor';
 import { TypeDef } from '@project-serum/anchor/dist/cjs/program/namespace/types';
 import type { Cypher } from '../generated/types/cypher';
+import { PublicKey } from '@solana/web3.js';
 
 type _CacheAccount = TypeDef<Cypher['accounts'][0], Cypher>;
 type _Clearing = TypeDef<Cypher['accounts'][1], Cypher>;
 export type WhiteList = TypeDef<Cypher['accounts'][2], Cypher>;
 type _FuturesMarket = TypeDef<Cypher['accounts'][3], Cypher>;
 type _PerpetualMarket = TypeDef<Cypher['accounts'][4], Cypher>;
-export type OracleProductsState = TypeDef<Cypher['accounts'][5], Cypher>;
+type _OracleProductsState = TypeDef<Cypher['accounts'][5], Cypher>;
 export type OracleStub = TypeDef<Cypher['accounts'][6], Cypher>;
 type _OrdersAccountState = TypeDef<Cypher['accounts'][7], Cypher>;
 export type PoolNodeState = TypeDef<Cypher['accounts'][8], Cypher>;
@@ -32,16 +33,19 @@ export type ClearingConfig = TypeDef<Cypher['types'][12], Cypher>;
 type _MarketConfig = TypeDef<Cypher['types'][13], Cypher>;
 export type LiquidityMiningInfo = TypeDef<Cypher['types'][14], Cypher>;
 type _AgnosticMarket = TypeDef<Cypher['types'][15], Cypher>;
-type _OpenOrder = TypeDef<Cypher['types'][16], Cypher>;
-export type NodeInfo = TypeDef<Cypher['types'][17], Cypher>;
-export type PoolConfig = TypeDef<Cypher['types'][18], Cypher>;
-export type PriceHistoryConfig = TypeDef<Cypher['types'][19], Cypher>;
-export type PriceWithTs = TypeDef<Cypher['types'][20], Cypher>;
-type _SubAccountCache = TypeDef<Cypher['types'][21], Cypher>;
-type _PositionSlot = TypeDef<Cypher['types'][22], Cypher>;
-type _SpotPosition = TypeDef<Cypher['types'][23], Cypher>;
-type _DerivativePosition = TypeDef<Cypher['types'][24], Cypher>;
-export type OpenOrdersCache = TypeDef<Cypher['types'][25], Cypher>;
+type _FeedInfo = TypeDef<Cypher['types'][16], Cypher>;
+export type PriceBandsInfo = TypeDef<Cypher['types'][17], Cypher>;
+type _OracleFeedInfo = TypeDef<Cypher['types'][18], Cypher>;
+type _OpenOrder = TypeDef<Cypher['types'][19], Cypher>;
+export type NodeInfo = TypeDef<Cypher['types'][20], Cypher>;
+export type PoolConfig = TypeDef<Cypher['types'][21], Cypher>;
+export type PriceHistoryConfig = TypeDef<Cypher['types'][22], Cypher>;
+export type PriceWithTs = TypeDef<Cypher['types'][23], Cypher>;
+type _SubAccountCache = TypeDef<Cypher['types'][24], Cypher>;
+type _PositionSlot = TypeDef<Cypher['types'][25], Cypher>;
+type _SpotPosition = TypeDef<Cypher['types'][26], Cypher>;
+type _DerivativePosition = TypeDef<Cypher['types'][27], Cypher>;
+export type OpenOrdersCache = TypeDef<Cypher['types'][28], Cypher>;
 
 export type AccountActionLog = Event<Cypher['events'][0]>;
 export type SubAccountActionLog = Event<Cypher['events'][1]>;
@@ -61,6 +65,7 @@ export class OperatingStatus {
   static readonly CancelOnly = { cancelOnly: {} };
   static readonly Halted = { halted: {} };
 }
+
 export class OrderType {
   static readonly Limit = { limit: {} };
   static readonly ImmediateOrCancel = { immediateOrCancel: {} };
@@ -133,8 +138,10 @@ export class SettlementType {
 }
 
 export class ProductsType {
+  static readonly Stub = { stub: {} };
   static readonly Pyth = { pyth: {} };
   static readonly Switchboard = { switchboard: {} };
+  static readonly Chainlink = { chainlink: {} };
 }
 
 export class SubAccountMargining {
@@ -145,6 +152,21 @@ export class SubAccountMargining {
 export class AccountType {
   static readonly Regular = { regulard: {} };
   static readonly Whitelisted = { whitelisted: {} };
+}
+
+export class FeedStatus {
+  static readonly Disabled = { disabled: {} };
+  static readonly Enabled = { enabled: {} };
+}
+
+export class FeedType {
+  static readonly Simple = { simple: {} };
+  static readonly Merged = { merged: {} };
+}
+
+export class AccountVersion {
+  static readonly Base = { base: {} };
+  static readonly One = { one: {} };
 }
 
 export interface ClearingState extends _Clearing {
@@ -245,4 +267,22 @@ export interface DerivativePositionState extends _DerivativePosition {
 
 export interface CacheAccountState extends _CacheAccount {
   caches: Cache[];
+}
+
+export interface FeedInfo extends _FeedInfo {
+  status: FeedStatus;
+}
+
+export interface OracleFeedInfo extends _OracleFeedInfo {
+  bandsInfo: PriceBandsInfo;
+  pyth: FeedInfo;
+  chainlink: FeedInfo;
+  switchboard: FeedInfo;
+}
+
+export interface OracleProductsState extends _OracleProductsState {
+  productsType: ProductsType;
+  version: AccountVersion;
+  feedType: FeedType;
+  products: PublicKey[];
 }
