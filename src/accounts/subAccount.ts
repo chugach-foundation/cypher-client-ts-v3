@@ -135,9 +135,12 @@ export class CypherSubAccount {
   getAssetsValue(cacheAccount: CacheAccount): {
     assetsValueUnweighted: I80F48;
     assetsValue: I80F48;
+    volatileAssetsValue: I80F48;
   } {
     const assetsValueUnweighted = I80F48.fromNumber(0);
     const assetsValue = I80F48.fromNumber(0);
+    const volatileAssetsValue = I80F48.fromNumber(0);
+    const cumPcTotal = I80F48.fromNumber(0);
 
     for (const { spot, derivative } of this.state.positions) {
       if (!spot.tokenMint.equals(PublicKey.default)) {
@@ -159,6 +162,9 @@ export class CypherSubAccount {
 
           assetsValueUnweighted.iadd(positionValue);
           assetsValue.iadd(positionValue.mul(weight));
+          if (priceCache.safeguard) {
+            volatileAssetsValue.iadd(positionValue.mul(weight));
+          }
 
           // console.log(
           //   'Asset ----- Token: ',
@@ -184,15 +190,16 @@ export class CypherSubAccount {
 
           assetsValueUnweighted.iadd(coinTotalIncl);
           assetsValue.iadd(coinTotalIncl.mul(weight));
+          if (priceCache.safeguard) {
+            volatileAssetsValue.iadd(coinTotalIncl.mul(weight));
+          }
         }
 
         const pcTotalIncl = splToUiAmountFixed(
           I80F48.fromU64(openOrdersCache.pcTotal),
           QUOTE_TOKEN_DECIMALS
         );
-
-        assetsValueUnweighted.iadd(pcTotalIncl);
-        assetsValue.iadd(pcTotalIncl);
+        cumPcTotal.iadd(pcTotalIncl);
       }
 
       if (!derivative.market.equals(PublicKey.default)) {
@@ -232,6 +239,9 @@ export class CypherSubAccount {
 
           assetsValueUnweighted.iadd(positionValue);
           assetsValue.iadd(positionValue.mul(weight));
+          if (priceCache.safeguard) {
+            volatileAssetsValue.iadd(positionValue.mul(weight));
+          }
 
           // console.log(
           //   'Asset ----- Market: ',
@@ -249,35 +259,58 @@ export class CypherSubAccount {
           // );
         }
 
-        if (openOrdersCache.coinTotal != ZERO_BN) {
+        const coinLocked = openOrdersCache.coinTotal.sub(
+          openOrdersCache.coinFree
+        );
+
+        if (coinLocked != ZERO_BN) {
           const coinTotalIncl = splToUiAmountFixed(
-            I80F48.fromU64(openOrdersCache.coinTotal),
+            I80F48.fromU64(coinLocked),
             decimals
           ).mul(derivPrice);
 
           assetsValueUnweighted.iadd(coinTotalIncl);
           assetsValue.iadd(coinTotalIncl.mul(weight));
+          if (priceCache.safeguard) {
+            volatileAssetsValue.iadd(coinTotalIncl.mul(weight));
+          }
         }
 
         const pcTotalIncl = splToUiAmountFixed(
           I80F48.fromU64(openOrdersCache.pcTotal),
           QUOTE_TOKEN_DECIMALS
         );
-
-        assetsValueUnweighted.iadd(pcTotalIncl);
-        assetsValue.iadd(pcTotalIncl);
+        cumPcTotal.iadd(pcTotalIncl);
       }
     }
 
-    return { assetsValueUnweighted, assetsValue };
+    // this is a bit hacky because we know that the first cache is the usdc one
+    // but this should ideally be changed
+    const quotePriceCache = cacheAccount.getCache(0);
+    const quotePositionValue = cumPcTotal.mul(
+      new I80F48(quotePriceCache.oraclePrice)
+    );
+    const weight = I80F48.fromNumber(quotePriceCache.spotInitAssetWeight).div(
+      I80F48.fromNumber(100)
+    );
+
+    assetsValueUnweighted.iadd(quotePositionValue);
+    assetsValue.iadd(quotePositionValue.mul(weight));
+    if (quotePriceCache.safeguard) {
+      volatileAssetsValue.iadd(quotePositionValue.mul(weight));
+    }
+
+    return { assetsValueUnweighted, assetsValue, volatileAssetsValue };
   }
 
   getLiabilitiesValue(cacheAccount: CacheAccount): {
     liabilitiesValueUnweighted: I80F48;
     liabilitiesValue: I80F48;
+    volatileLiabilitiesValue: I80F48;
   } {
     const liabilitiesValueUnweighted = I80F48.fromNumber(0);
     const liabilitiesValue = I80F48.fromNumber(0);
+    const volatileLiabilitiesValue = I80F48.fromNumber(0);
 
     for (const { spot, derivative } of this.state.positions) {
       if (!spot.tokenMint.equals(PublicKey.default)) {
@@ -298,6 +331,9 @@ export class CypherSubAccount {
 
           liabilitiesValueUnweighted.iadd(positionValue);
           liabilitiesValue.iadd(positionValue.mul(weight));
+          if (priceCache.safeguard) {
+            volatileLiabilitiesValue.iadd(positionValue.mul(weight));
+          }
 
           // console.log(
           //   'Liability ----- Token: ',
@@ -344,6 +380,9 @@ export class CypherSubAccount {
 
           liabilitiesValueUnweighted.iadd(positionValue);
           liabilitiesValue.iadd(positionValue.mul(weight));
+          if (priceCache.safeguard) {
+            volatileLiabilitiesValue.iadd(positionValue.mul(weight));
+          }
 
           // console.log(
           //   'Liability ----- Market: ',
@@ -363,7 +402,11 @@ export class CypherSubAccount {
       }
     }
 
-    return { liabilitiesValueUnweighted, liabilitiesValue };
+    return {
+      liabilitiesValueUnweighted,
+      liabilitiesValue,
+      volatileLiabilitiesValue
+    };
   }
 
   subscribe() {

@@ -54,6 +54,37 @@ export class CypherAccount {
     };
   }
 
+  static async createWhitelisted(
+    client: CypherClient,
+    clearing: PublicKey,
+    whitelist: PublicKey,
+    authority: PublicKey,
+    accountNumber = 0
+  ) {
+    const [account, bump] = deriveAccountAddress(
+      authority,
+      accountNumber,
+      client.cypherPID
+    );
+    const ix = await client.methods
+      .createWhitelistedAccount(accountNumber, bump)
+      .accountsStrict({
+        clearing,
+        whitelist,
+        masterAccount: account,
+        authority,
+        payer: client.walletPubkey,
+        systemProgram: SystemProgram.programId
+      })
+      .instruction();
+
+    return {
+      account,
+      ixs: [ix],
+      signers: []
+    };
+  }
+
   static async load(
     client: CypherClient,
     address: PublicKey,
@@ -89,26 +120,36 @@ export class CypherAccount {
   ): {
     assetsValue: I80F48;
     assetsValueUnweighted: I80F48;
+    volatileAssetsValue: I80F48;
     liabilitiesValue: I80F48;
     liabilitiesValueUnweighted: I80F48;
+    volatileLiabilitiesValue: I80F48;
     cRatio: I80F48;
+    volatileCRatio: I80F48;
   } {
     const totalAssetsValue = I80F48.fromNumber(0);
     const totalAssetsValueUnweighted = I80F48.fromNumber(0);
+    const totalVolatileAssetsValue = I80F48.fromNumber(0);
     const totalLiabilitiesValue = I80F48.fromNumber(0);
     const totalLiabilitiesValueUnweighted = I80F48.fromNumber(0);
+    const totalVolatileLiabilitiesValue = I80F48.fromNumber(0);
 
     for (const subAccount of subAccounts) {
-      const { assetsValue, assetsValueUnweighted } =
+      const { assetsValue, assetsValueUnweighted, volatileAssetsValue } =
         subAccount.getAssetsValue(cacheAccount);
-      const { liabilitiesValue, liabilitiesValueUnweighted } =
-        subAccount.getLiabilitiesValue(cacheAccount);
+      const {
+        liabilitiesValue,
+        liabilitiesValueUnweighted,
+        volatileLiabilitiesValue
+      } = subAccount.getLiabilitiesValue(cacheAccount);
 
       if ((subAccount.state.marginingType as any).cross) {
         totalAssetsValue.iadd(assetsValue);
         totalAssetsValueUnweighted.iadd(assetsValueUnweighted);
+        totalVolatileAssetsValue.iadd(volatileAssetsValue);
         totalLiabilitiesValue.iadd(liabilitiesValue);
         totalLiabilitiesValueUnweighted.iadd(liabilitiesValueUnweighted);
+        totalVolatileLiabilitiesValue.iadd(volatileLiabilitiesValue);
       }
       // const cRatio = assetsValue.div(liabsValue);
       // console.log(
@@ -126,11 +167,16 @@ export class CypherAccount {
     return {
       assetsValue: totalAssetsValue,
       assetsValueUnweighted: totalAssetsValueUnweighted,
+      volatileAssetsValue: totalVolatileAssetsValue,
       liabilitiesValue: totalLiabilitiesValue,
       liabilitiesValueUnweighted: totalLiabilitiesValueUnweighted,
+      volatileLiabilitiesValue: totalVolatileLiabilitiesValue,
       cRatio: totalLiabilitiesValue.isZero()
         ? new I80F48(I80F48.MAX_BN)
-        : totalAssetsValue.div(totalLiabilitiesValue)
+        : totalAssetsValue.div(totalLiabilitiesValue),
+      volatileCRatio: totalVolatileLiabilitiesValue.isZero()
+        ? new I80F48(I80F48.MAX_BN)
+        : totalVolatileAssetsValue.div(totalVolatileLiabilitiesValue)
     };
   }
 
