@@ -32,6 +32,7 @@ export type FillsExtended = {
   takerAccount: PublicKey;
   side: Side;
 }[];
+export type ErrorCB = (error: unknown) => void;
 
 export interface Wallet {
   signTransaction(tx: Transaction): Promise<Transaction>;

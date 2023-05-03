@@ -2,6 +2,7 @@
 import { Market, Orderbook } from '@project-serum/serum';
 import { Pool } from '../accounts';
 import {
+  ErrorCB,
   Fills,
   FillsExtended,
   FillsListenerCB,
@@ -67,15 +68,20 @@ export class SpotMarketViewer {
       });
   }
 
-  addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250) {
+  addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250, errorCallback: ErrorCB) {
     if (this.market == null) return null;
 
-    const bidsAddress = this.market.bidsAddress;
-    this._bidsListener = this.connection.onAccountChange(
-      bidsAddress,
-      ({ data }) => callback(this.orderbookParser(data, orderbookDepth)),
-      'processed'
-    );
+    this.removeBidsListener();
+    try {
+      const bidsAddress = this.market.bidsAddress;
+      this._bidsListener = this.connection.onAccountChange(
+        bidsAddress,
+        ({ data }) => callback(this.orderbookParser(data, orderbookDepth)),
+        'processed'
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
   }
 
   removeBidsListener() {
@@ -83,15 +89,20 @@ export class SpotMarketViewer {
       this.connection.removeAccountChangeListener(this._bidsListener);
   }
 
-  addAsksListener(callback: OrderbookListenerCB, orderbookDepth = 250) {
+  addAsksListener(callback: OrderbookListenerCB, orderbookDepth = 250, errorCallback: ErrorCB) {
     if (this.market == null) return null;
 
-    const asksAddress = this.market.asksAddress;
-    this._asksListener = this.connection.onAccountChange(
-      asksAddress,
-      ({ data }) => callback(this.orderbookParser(data, orderbookDepth)),
-      'processed'
-    );
+    this.removeAsksListener();
+    try {
+      const asksAddress = this.market.asksAddress;
+      this._asksListener = this.connection.onAccountChange(
+        asksAddress,
+        ({ data }) => callback(this.orderbookParser(data, orderbookDepth)),
+        'processed'
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
   }
 
   removeAsksListener() {
@@ -99,15 +110,19 @@ export class SpotMarketViewer {
       this.connection.removeAccountChangeListener(this._asksListener);
   }
 
-  addEventQueueListener(callback: () => void) {
+  addEventQueueListener(callback: () => void, errorCallback: ErrorCB) {
     if (this.market == null) return null;
 
     this.removeEventQueueListener();
-    this._eventQueueListener = this.connection.onAccountChange(
-      this.market.decoded.eventQueue,
-      callback,
-      'processed'
-    );
+    try {
+      this._eventQueueListener = this.connection.onAccountChange(
+        this.market.decoded.eventQueue,
+        callback,
+        'processed'
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
   }
 
   removeEventQueueListener() {
@@ -117,24 +132,35 @@ export class SpotMarketViewer {
 
   addOpenOrdersAccountListener(
     openOrdersAccount: PublicKey,
-    callback: (x: any) => void
+    callback: (x: any) => void,
+    errorCallback: ErrorCB
   ) {
     if (this.market == null) return null;
 
     this.removeOpenOrdersAccountListener();
-    this._openOrdersAccountListener = this.connection.onAccountChange(
-      openOrdersAccount,
-      callback
-    );
+    try {
+      this._openOrdersAccountListener = this.connection.onAccountChange(
+        openOrdersAccount,
+        callback
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
+
   }
 
-  addFillsListener(callback: FillsListenerCB) {
+  addFillsListener(callback: FillsListenerCB, errorCallback: ErrorCB) {
     this.removeEventQueueListener();
-    this._eventQueueListener = this.connection.onAccountChange(
-      this.market.decoded.eventQueue,
-      ({ data }) => callback(this.fillsParser(data)),
-      'processed'
-    );
+    try {
+      this._eventQueueListener = this.connection.onAccountChange(
+        this.market.decoded.eventQueue,
+        ({ data }) => callback(this.fillsParser(data)),
+        'processed'
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
+
   }
 
   removeOpenOrdersAccountListener() {
