@@ -4,7 +4,8 @@ import {
   CacheAccountState,
   StateUpdateHandler,
   Cache,
-  CacheListenerCB
+  CacheListenerCB,
+  ErrorCB
 } from '../types';
 
 export class CacheAccount {
@@ -76,13 +77,18 @@ export class CacheAccount {
     return this.state.caches[idx];
   }
 
-  addCacheListener(callback: CacheListenerCB, idx: number) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const cb = (_: CacheAccountState): void => {
-      const cache = this.getCache(idx);
-      callback(cache);
-    };
-    this._subscribe(cb);
+  addCacheListener(callback: CacheListenerCB, idx: number, errorCallback: ErrorCB) {
+    this.removeCacheListener();
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const cb = (_: CacheAccountState): void => {
+        const cache = this.getCache(idx);
+        callback(cache);
+      };
+      this._subscribe(cb);
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
   }
 
   removeCacheListener() {

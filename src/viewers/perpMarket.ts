@@ -6,6 +6,7 @@ import {
 } from '@chugach-foundation/aaob';
 import { PerpetualMarket } from '../accounts';
 import {
+  ErrorCB,
   EventQueueListenerCB,
   Fills,
   FillsExtended,
@@ -32,7 +33,7 @@ export class PerpMarketViewer implements DerivativesMarket {
   constructor(
     readonly client: CypherClient,
     readonly market: PerpetualMarket
-  ) {}
+  ) { }
 
   private get connection() {
     return this.client.connection;
@@ -113,13 +114,18 @@ export class PerpMarketViewer implements DerivativesMarket {
     });
   }
 
-  addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250) {
-    const bidsAddress = this.market.state.inner.bids;
-    this._bidsListener = this.connection.onAccountChange(
-      bidsAddress,
-      ({ data }) => callback(this.orderbookParser(data, false, orderbookDepth)),
-      'processed'
-    );
+  addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250, errorCallback: ErrorCB) {
+    this.removeBidsListener();
+    try {
+      const bidsAddress = this.market.state.inner.bids;
+      this._bidsListener = this.connection.onAccountChange(
+        bidsAddress,
+        ({ data }) => callback(this.orderbookParser(data, false, orderbookDepth)),
+        'processed'
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
   }
 
   removeBidsListener() {
@@ -127,13 +133,18 @@ export class PerpMarketViewer implements DerivativesMarket {
       this.connection.removeAccountChangeListener(this._bidsListener);
   }
 
-  addAsksListener(callback: OrderbookListenerCB, orderbookDepth = 250) {
-    const asksAddress = this.market.state.inner.asks;
-    this._asksListener = this.connection.onAccountChange(
-      asksAddress,
-      ({ data }) => callback(this.orderbookParser(data, true, orderbookDepth)),
-      'processed'
-    );
+  addAsksListener(callback: OrderbookListenerCB, orderbookDepth = 250, errorCallback: ErrorCB) {
+    this.removeAsksListener();
+    try {
+      const asksAddress = this.market.state.inner.asks;
+      this._asksListener = this.connection.onAccountChange(
+        asksAddress,
+        ({ data }) => callback(this.orderbookParser(data, true, orderbookDepth)),
+        'processed'
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
   }
 
   removeAsksListener() {
@@ -141,13 +152,17 @@ export class PerpMarketViewer implements DerivativesMarket {
       this.connection.removeAccountChangeListener(this._asksListener);
   }
 
-  addEventQueueListener(callback: EventQueueListenerCB) {
+  addEventQueueListener(callback: EventQueueListenerCB, errorCallback: ErrorCB) {
     this.removeEventQueueListener();
-    this._eventQueueListener = this.connection.onAccountChange(
-      this.market.state.inner.eventQueue,
-      ({ data }) => callback(this.eventQueueParser(data)),
-      'processed'
-    );
+    try {
+      this._eventQueueListener = this.connection.onAccountChange(
+        this.market.state.inner.eventQueue,
+        ({ data }) => callback(this.eventQueueParser(data)),
+        'processed'
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
   }
 
   removeEventQueueListener() {
@@ -155,13 +170,17 @@ export class PerpMarketViewer implements DerivativesMarket {
       this.connection.removeAccountChangeListener(this._eventQueueListener);
   }
 
-  addFillsListener(callback: FillsListenerCB) {
+  addFillsListener(callback: FillsListenerCB, errorCallback: ErrorCB) {
     this.removeEventQueueListener();
-    this._eventQueueListener = this.connection.onAccountChange(
-      this.market.state.inner.eventQueue,
-      ({ data }) => callback(this.fillsParser(data)),
-      'processed'
-    );
+    try {
+      this._eventQueueListener = this.connection.onAccountChange(
+        this.market.state.inner.eventQueue,
+        ({ data }) => callback(this.fillsParser(data)),
+        'processed'
+      );
+    } catch (error: unknown) {
+      errorCallback(error);
+    }
   }
 
   removeFillsListener() {

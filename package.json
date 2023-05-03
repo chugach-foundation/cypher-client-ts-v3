@@ -1,6 +1,6 @@
 {
   "name": "@chugach-foundation/cypher-client",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "TypeScript SDK for cypher protocol v3",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -39,6 +39,6 @@
     "@project-serum/serum": "^0.13.65",
     "@pythnetwork/client": "^2.14.0",
     "@solana/spl-token": "^0.3.7",
-    "@solana/web3.js": "^1.73.2"
+    "@solana/web3.js": "^1.75.0"
   }
 }
