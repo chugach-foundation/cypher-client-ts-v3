@@ -18,8 +18,8 @@ import {
   getDerivativeOpenOrdersAcc,
   getDerivMarketAndViewer,
   loadAccs,
-  loadWallet,
 } from '../utils'
+import { loadWallet } from '../utils/wallet-loader'
 
 // Load  Env Variables
 require('dotenv').config({

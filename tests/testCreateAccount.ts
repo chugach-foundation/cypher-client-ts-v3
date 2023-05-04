@@ -6,11 +6,13 @@ import {
   encodeStrToUint8Array,
   getDefaultPriorityFeeIxs,
 } from '@cypher-client/utils'
-import { confirmOpts, loadWallet } from './utils'
+import { confirmOpts } from './utils'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { CypherClient } from '@cypher-client/client'
 import { Cluster } from '@cypher-client/types'
-import { PublicKey } from '@solana/web3.js'
+import { Keypair, PublicKey } from '@solana/web3.js'
+import fs from 'fs'
+import { loadWallet } from './utils/wallet-loader'
 
 // Load  Env Variables
 require('dotenv').config({
@@ -24,6 +26,16 @@ require('dotenv').config({
 const KP_PATH = process.env.KEYPAIR_PATH
 const CLUSTER = process.env.CLUSTER as Cluster
 const RPC_ENDPOINT = process.env.RPC_ENDPOINT
+
+// const loadWallet = (KP_PATH: string): Keypair => {
+//   try {
+//     const keypair = JSON.parse(fs.readFileSync(__dirname + '/' + KP_PATH, 'utf8'))
+//     return Keypair.fromSecretKey(Uint8Array.from(keypair))
+//   } catch (e) {
+//     console.error('Failed to load wallet', e)
+//     throw e
+//   }
+// }
 
 export const createAccs = async () => {
   const wallet = loadWallet(KP_PATH)

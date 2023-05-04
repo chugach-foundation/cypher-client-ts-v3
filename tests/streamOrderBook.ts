@@ -1,10 +1,11 @@
 import { PerpetualMarket } from '@cypher-client/accounts'
 import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
-import { loadWallet, confirmOpts } from 'utils'
+import { confirmOpts } from './utils'
 import { Cluster, ErrorCB, OrderbookListenerCB, ParsedOrderbook } from '@cypher-client/types'
 import { deriveMarketAddress, encodeStrToUint8Array, sleep } from '@cypher-client/utils'
 import { PerpMarketViewer } from '@cypher-client/viewers'
+import { loadWallet } from './utils/wallet-loader'
 
 // INFO:
 // Example in this file is only guaranteed to work with a cypher account that has one main subaccount

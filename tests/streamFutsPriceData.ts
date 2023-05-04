@@ -2,10 +2,11 @@ import { CacheAccount, FuturesMarket } from '@cypher-client/accounts'
 import { CypherClient } from '@cypher-client/client'
 import { CONFIGS } from '@cypher-client/constants'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
-import { loadWallet, confirmOpts } from 'utils'
+import { confirmOpts } from './utils'
 import { CacheListenerCB, Cache, Cluster, ErrorCB } from '@cypher-client/types'
 import { deriveMarketAddress, encodeStrToUint8Array, sleep } from '@cypher-client/utils'
 import { I80F48 } from '@blockworks-foundation/mango-client'
+import { loadWallet } from './utils/wallet-loader'
 
 // INFO:
 // Example in this file is only guaranteed to work with a cypher account that has one main subaccount

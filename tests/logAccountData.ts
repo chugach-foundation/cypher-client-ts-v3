@@ -7,11 +7,12 @@ import {
 } from '@cypher-client/accounts'
 import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
-import { loadWallet, confirmOpts, loadAccs, fetchGraphqlData, loadAndSubscribeCache } from 'utils'
+import { confirmOpts, loadAccs, fetchGraphqlData, loadAndSubscribeCache } from './utils'
 import { Cluster } from '@cypher-client/types'
 import { splToUiAmountFixed, encodeStrToUint8Array, sleep } from '@cypher-client/utils'
 import { deriveMarketAddress } from '../src/utils/pda'
 import { I80F48 } from '@blockworks-foundation/mango-client'
+import { loadWallet } from './utils/wallet-loader'
 
 // INFO:
 // Example in this file is only guaranteed to work with a cypher account that has one main subaccount

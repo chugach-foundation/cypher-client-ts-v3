@@ -1,11 +1,12 @@
 import { PerpetualMarket } from '@cypher-client/accounts'
 import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
-import { loadWallet, confirmOpts } from 'utils'
+import { confirmOpts } from './utils'
 import { Cluster } from '@cypher-client/types'
 import { deriveMarketAddress, sleep } from '@cypher-client/utils'
 import { priceLotsToNative, splToUiAmount } from '../src/utils/tokenAmount'
 import { BN } from '@project-serum/anchor'
+import { loadWallet } from './utils/wallet-loader'
 
 // Load  Env Variables
 require('dotenv').config({

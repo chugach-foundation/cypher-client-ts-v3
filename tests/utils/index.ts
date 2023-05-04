@@ -20,15 +20,28 @@ import { CacheAccount } from '../../src/accounts/cacheAccount'
 import { CONFIGS } from '@cypher-client/constants'
 import { Cluster } from '../../lib/types/index'
 
-export const loadWallet = (KP_PATH: string): Keypair => {
-  try {
-    const keypair = JSON.parse(fs.readFileSync(__dirname + '/../' + KP_PATH, 'utf8'))
-    return Keypair.fromSecretKey(Uint8Array.from(keypair))
-  } catch (e) {
-    console.error('Failed to load wallet', e)
-    throw e
-  }
-}
+// Load  Env Variables
+require('dotenv').config({
+  path: __dirname + `/default.env`,
+})
+
+require('dotenv').config({
+  path: __dirname + `/args.env`, // Can also be used to override default env variables
+})
+
+const KP_PATH = process.env.KEYPAIR_PATH
+const CLUSTER = process.env.CLUSTER as Cluster
+const RPC_ENDPOINT = process.env.RPC_ENDPOINT
+
+// export const loadWallet = (KP_PATH: string): Keypair => {
+//   try {
+//     const keypair = JSON.parse(fs.readFileSync(__dirname + '/../' + KP_PATH, 'utf8'))
+//     return Keypair.fromSecretKey(Uint8Array.from(keypair))
+//   } catch (e) {
+//     console.error('Failed to load wallet', e)
+//     throw e
+//   }
+// }
 
 // Default ConfirmOpts
 export const confirmOpts: ConfirmOptions = {

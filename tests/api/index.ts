@@ -1,6 +1,6 @@
 import { CypherAccount } from '@cypher-client/accounts'
 import { CONFIGS } from '@cypher-client/constants'
-import { fetchGraphqlData } from 'utils'
+import { fetchGraphqlData } from '../utils'
 import { Cluster } from '@cypher-client/types'
 
 interface OpenPosition {
