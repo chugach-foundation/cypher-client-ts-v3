@@ -144,4 +144,4 @@ export const createWhitelistedMasterAcc = async () => {
   }
 }
 
-createWhitelistedMasterAcc()
+// createWhitelistedMasterAcc()

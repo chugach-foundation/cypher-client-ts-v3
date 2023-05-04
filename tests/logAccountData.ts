@@ -63,6 +63,20 @@ export const getLeverageRatio = (assetsValueFixed: I80F48, liabsValueFixed: I80F
   return liabsValue / (assetsValue - liabsValue)
 }
 
+// portfolio value - unweighted
+export const getUnweightedPortfoliovalue = (assetsValueFixed: I80F48, liabsValueFixed: I80F48) => {
+  const liabsValue = Number(liabsValueFixed.toFixed(6))
+  const assetsValue = Number(assetsValueFixed.toFixed(6))
+  return assetsValue - liabsValue
+}
+
+// portfolio value - weighted (margin value on ui)
+export const getWeightedPortfoliovalue = (assetsValueFixed: I80F48, liabsValueFixed: I80F48) => {
+  const liabsValue = Number(liabsValueFixed.toFixed(6))
+  const assetsValue = Number(assetsValueFixed.toFixed(6))
+  return assetsValue - liabsValue
+}
+
 // returns positon size for a given perp market, can be used for futures as well
 export const getPerpPosition = (subAccs: CypherSubAccount[], perpMarket: PerpetualMarket) => {
   // find the sub account that has a position for the given perp market
@@ -138,11 +152,13 @@ export const getAccountData = async (
   subAccounts: CypherSubAccount[],
   perpMarket: PerpetualMarket,
 ) => {
-  const { assetsValue, liabilitiesValue, cRatio } = getCRatioRelatedData(
+  const { assetsValue, liabilitiesValue, assetsValueUnweighted, liabilitiesValueUnweighted, cRatio } = getCRatioRelatedData(
     cacheAccount,
     account,
     subAccounts,
   )
+  const unweightedPortfolioValue = getUnweightedPortfoliovalue(assetsValueUnweighted, liabilitiesValueUnweighted)
+  const weightedPortfolioValue = getWeightedPortfoliovalue(assetsValue, liabilitiesValue)
   const cRatioPerc = Number(cRatio.toFixed(6)) * 100 // * 100 turns c-ratio unto %, same format as init and maintenance ratios
   const initMarginRatio = await getInitialMarginRatio(clearing)
   const maintMarginRatio = await getMaintenanceMarginRatio(clearing)
@@ -150,6 +166,8 @@ export const getAccountData = async (
   const perpPosition = await getPerpPosition(subAccounts, perpMarket)
 
   return {
+    unweightedPortfolioValue,
+    weightedPortfolioValue,
     cRatioPerc,
     initMarginRatio,
     maintMarginRatio,
