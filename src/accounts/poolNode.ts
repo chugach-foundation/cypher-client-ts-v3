@@ -1,28 +1,38 @@
 import { PublicKey } from '@solana/web3.js';
 import { Market } from '@project-serum/serum';
 import { CypherClient } from '../client';
-import type { PoolNodeState, StateUpdateHandler } from '../types';
+import type { ErrorCB, PoolNodeState, StateUpdateHandler } from '../types';
 import { I80F48 } from '@blockworks-foundation/mango-client';
 
 export class PoolNode {
+  private _listener: number;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
     public state: PoolNodeState,
     readonly market: Market,
-    private _onStateUpdate?: StateUpdateHandler<PoolNodeState>
+    private _onStateUpdate?: StateUpdateHandler<PoolNodeState>,
+    private _errorCallback?: ErrorCB
   ) {
     _onStateUpdate && this.subscribe();
   }
   static async load(
     client: CypherClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<PoolNodeState>
+    onStateUpdateHandler?: StateUpdateHandler<PoolNodeState>,
+    errorCallback?: ErrorCB
   ): Promise<PoolNode> {
     const state = (await client.accounts.poolNode.fetchNullable(
       address
     )) as PoolNodeState;
-    return new PoolNode(client, address, state, null, onStateUpdateHandler);
+    return new PoolNode(
+      client,
+      address,
+      state,
+      null,
+      onStateUpdateHandler,
+      errorCallback
+    );
   }
 
   static async loadAll(client: CypherClient): Promise<PoolNode[]> {
@@ -56,18 +66,38 @@ export class PoolNode {
   }
 
   subscribe() {
-    this.client.accounts.poolNode
-      .subscribe(this.address)
-      .on('change', (state: PoolNodeState) => {
-        this.state = state;
-        // todo: check if dexMarkets need to be reloaded.(market listing/delisting)
+    this.removeListener();
+    try {
+      this.addListener();
+    } catch (error: unknown) {
+      if (this._errorCallback) {
+        this._errorCallback(error);
+      }
+    }
+  }
+
+  private addListener() {
+    this._listener = this.client.connection.onAccountChange(
+      this.address,
+      ({ data }) => {
+        this.state = this.client.program.coder.accounts.decode(
+          'PoolNode',
+          data
+        );
         if (this._onStateUpdate) {
           this._onStateUpdate(this.state);
         }
-      });
+      },
+      'processed'
+    );
+  }
+
+  private removeListener() {
+    if (this._listener)
+      this.client.connection.removeAccountChangeListener(this._listener);
   }
 
   async unsubscribe() {
-    await this.client.accounts.poolNode.unsubscribe(this.address);
+    this.removeListener();
   }
 }

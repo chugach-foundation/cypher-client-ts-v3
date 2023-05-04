@@ -10,16 +10,19 @@ import { makeCreateMarketAccountsIxs } from '../instructions';
 import { deriveMarketAddress } from '../utils';
 import type {
   CreatePerpetualMarketArgs,
+  ErrorCB,
   PerpetualMarketState,
   StateUpdateHandler
 } from '../types';
 
 export class PerpetualMarket {
+  private _listener: number;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
     public state: PerpetualMarketState,
-    private _onStateUpdate?: StateUpdateHandler<PerpetualMarketState>
+    private _onStateUpdate?: StateUpdateHandler<PerpetualMarketState>,
+    private _errorCallback?: ErrorCB
   ) {
     _onStateUpdate && this.subscribe();
   }
@@ -74,12 +77,19 @@ export class PerpetualMarket {
   static async load(
     client: CypherClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<PerpetualMarketState>
+    onStateUpdateHandler?: StateUpdateHandler<PerpetualMarketState>,
+    errorCallback?: ErrorCB
   ): Promise<PerpetualMarket> {
     const state = (await client.accounts.perpetualMarket.fetchNullable(
       address
     )) as PerpetualMarketState;
-    return new PerpetualMarket(client, address, state, onStateUpdateHandler);
+    return new PerpetualMarket(
+      client,
+      address,
+      state,
+      onStateUpdateHandler,
+      errorCallback
+    );
   }
 
   static async loadAll(client: CypherClient): Promise<PerpetualMarket[]> {
@@ -95,18 +105,38 @@ export class PerpetualMarket {
   }
 
   subscribe() {
-    this.client.accounts.perpetualMarket
-      .subscribe(this.address)
-      .on('change', (state: PerpetualMarketState) => {
-        this.state = state;
-        // todo: check if dexMarkets need to be reloaded.(market listing/delisting)
+    this.removeListener();
+    try {
+      this.addListener();
+    } catch (error: unknown) {
+      if (this._errorCallback) {
+        this._errorCallback(error);
+      }
+    }
+  }
+
+  private addListener() {
+    this._listener = this.client.connection.onAccountChange(
+      this.address,
+      ({ data }) => {
+        this.state = this.client.program.coder.accounts.decode(
+          'PerpetualMarket',
+          data
+        );
         if (this._onStateUpdate) {
           this._onStateUpdate(this.state);
         }
-      });
+      },
+      'processed'
+    );
+  }
+
+  private removeListener() {
+    if (this._listener)
+      this.client.connection.removeAccountChangeListener(this._listener);
   }
 
   async unsubscribe() {
-    await this.client.accounts.perpetualMarket.unsubscribe(this.address);
+    this.removeListener();
   }
 }

@@ -20,7 +20,7 @@ import type { Cluster, Wallet } from '../types';
 import { PublicKey } from '@solana/web3.js';
 
 export class CypherClient {
-  private _program: Program<Cypher>;
+  public program: Program<Cypher>;
   public faucet: FaucetClient;
 
   constructor(
@@ -32,7 +32,7 @@ export class CypherClient {
     const provider = {
       connection: new Connection(rpcEndpoint, confirmOpts.commitment)
     };
-    this._program = new Program<Cypher>(
+    this.program = new Program<Cypher>(
       cypherIdl as Cypher,
       CONFIGS[this.cluster].CYPHER_PID,
       provider
@@ -48,7 +48,7 @@ export class CypherClient {
     confirmOpts = AnchorProvider.defaultOptions()
   ) {
     const provider = new AnchorProvider(this.connection, wallet, confirmOpts);
-    this._program = new Program<Cypher>(
+    this.program = new Program<Cypher>(
       cypherIdl as Cypher,
       CONFIGS[this.cluster].CYPHER_PID,
       provider
@@ -65,11 +65,11 @@ export class CypherClient {
   }
 
   private get _provider(): Provider {
-    return this._program.provider;
+    return this.program.provider;
   }
 
   get anchorProvider(): AnchorProvider {
-    const provider = this._program.provider as AnchorProvider;
+    const provider = this.program.provider as AnchorProvider;
     if (provider.wallet) {
       return provider;
     }
@@ -80,11 +80,11 @@ export class CypherClient {
   }
 
   get methods(): MethodsNamespace<Cypher> {
-    return this._program.methods;
+    return this.program.methods;
   }
 
   get accounts(): AccountNamespace<Cypher> {
-    return this._program.account;
+    return this.program.account;
   }
 
   get isWalletConnected(): boolean {
@@ -112,11 +112,11 @@ export class CypherClient {
     // eslint-disable-next-line
     callback: (event: any, slot: number) => void
   ): number {
-    return this._program.addEventListener(eventName, callback);
+    return this.program.addEventListener(eventName, callback);
   }
 
   async removeEventListener(listener: number): Promise<void> {
-    return await this._program.removeEventListener(listener);
+    return await this.program.removeEventListener(listener);
   }
 
   async sendAndConfirm(

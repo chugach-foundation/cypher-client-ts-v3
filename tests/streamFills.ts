@@ -3,12 +3,14 @@ import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { loadWallet, confirmOpts } from 'utils'
 import { Cluster } from '@cypher-client/types'
-import { deriveMarketAddress, encodeStrToUint8Array, sleep } from '@cypher-client/utils'
-import { PerpMarketViewer } from '@cypher-client/viewers'
-import { FillsListenerCB, Fills } from '../lib/types/index'
-import { FillsExtended } from '../src/types/index'
-import { SpotMarketViewer } from '../src/viewers/spotMarket'
-import { derivePoolAddress } from '../src/utils/pda'
+import {
+  deriveMarketAddress,
+  derivePoolAddress,
+  encodeStrToUint8Array,
+  sleep,
+} from '@cypher-client/utils'
+import { PerpMarketViewer, SpotMarketViewer } from '@cypher-client/viewers'
+import { FillsListenerCB, FillsExtended, ErrorCB } from '../lib/types/index'
 
 // Load  Env Variables
 require('dotenv').config({
@@ -66,7 +68,12 @@ export const perpFillListener = (perpViewer: PerpMarketViewer) => {
     console.log('---------------------------------------------------')
   }
 
-  perpViewer.addFillsListener(fillsHandler)
+  const errorHandler: ErrorCB = (error: unknown) => {
+    console.log(error)
+    perpViewer.addFillsListener(fillsHandler, errorHandler)
+  }
+
+  perpViewer.addFillsListener(fillsHandler, errorHandler)
 }
 
 export const loadPerpFills = async (perpViewer: PerpMarketViewer) => {
@@ -99,7 +106,12 @@ export const spotFillListener = (spotViewer: SpotMarketViewer) => {
     console.log('---------------------------------------------------')
   }
 
-  spotViewer.addFillsListener(fillsHandler)
+  const errorHandler: ErrorCB = (error: unknown) => {
+    console.log(error)
+    spotViewer.addFillsListener(fillsHandler, errorHandler)
+  }
+
+  spotViewer.addFillsListener(fillsHandler, errorHandler)
 }
 
 export const loadSpotFills = async (spotViewer: SpotMarketViewer) => {

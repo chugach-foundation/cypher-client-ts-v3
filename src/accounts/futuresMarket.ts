@@ -11,16 +11,19 @@ import { bnToDate, deriveMarketAddress } from '../utils';
 import { BN } from '@project-serum/anchor';
 import type {
   CreateFuturesMarketArgs,
+  ErrorCB,
   FuturesMarketState,
   StateUpdateHandler
 } from '../types';
 
 export class FuturesMarket {
+  private _listener: number;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
     public state: FuturesMarketState,
-    private _onStateUpdate?: StateUpdateHandler<FuturesMarketState>
+    private _onStateUpdate?: StateUpdateHandler<FuturesMarketState>,
+    private _errorCallback?: ErrorCB
   ) {
     _onStateUpdate && this.subscribe();
   }
@@ -77,12 +80,19 @@ export class FuturesMarket {
   static async load(
     client: CypherClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<FuturesMarketState>
+    onStateUpdateHandler?: StateUpdateHandler<FuturesMarketState>,
+    errorCallback?: ErrorCB
   ): Promise<FuturesMarket> {
     const state = (await client.accounts.futuresMarket.fetchNullable(
       address
     )) as FuturesMarketState;
-    return new FuturesMarket(client, address, state, onStateUpdateHandler);
+    return new FuturesMarket(
+      client,
+      address,
+      state,
+      onStateUpdateHandler,
+      errorCallback
+    );
   }
 
   static async loadAll(client: CypherClient): Promise<FuturesMarket[]> {
@@ -130,18 +140,38 @@ export class FuturesMarket {
   }
 
   subscribe() {
-    this.client.accounts.futuresMarket
-      .subscribe(this.address)
-      .on('change', (state: FuturesMarketState) => {
-        this.state = state;
-        // todo: check if dexMarkets need to be reloaded.(market listing/delisting)
+    this.removeListener();
+    try {
+      this.addListener();
+    } catch (error: unknown) {
+      if (this._errorCallback) {
+        this._errorCallback(error);
+      }
+    }
+  }
+
+  private addListener() {
+    this._listener = this.client.connection.onAccountChange(
+      this.address,
+      ({ data }) => {
+        this.state = this.client.program.coder.accounts.decode(
+          'FuturesMarket',
+          data
+        );
         if (this._onStateUpdate) {
           this._onStateUpdate(this.state);
         }
-      });
+      },
+      'processed'
+    );
+  }
+
+  private removeListener() {
+    if (this._listener)
+      this.client.connection.removeAccountChangeListener(this._listener);
   }
 
   async unsubscribe() {
-    await this.client.accounts.futuresMarket.unsubscribe(this.address);
+    this.removeListener();
   }
 }

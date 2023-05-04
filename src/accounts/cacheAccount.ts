@@ -9,13 +9,16 @@ import {
 } from '../types';
 
 export class CacheAccount {
-  private _cacheListener: number;
+  private _listener: number;
+  private _cacheListeners: Map<number, CacheListenerCB>;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
     public state: CacheAccountState,
-    private _onStateUpdate?: StateUpdateHandler<CacheAccountState>
+    private _onStateUpdate?: StateUpdateHandler<CacheAccountState>,
+    private _errorCallback?: ErrorCB
   ) {
+    this._cacheListeners = new Map<number, CacheListenerCB>();
     _onStateUpdate && this.subscribe();
   }
 
@@ -53,12 +56,19 @@ export class CacheAccount {
   static async load(
     client: CypherClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<CacheAccountState>
+    onStateUpdateHandler?: StateUpdateHandler<CacheAccountState>,
+    errorCallback?: ErrorCB
   ) {
     const state = (await client.accounts.cacheAccount.fetchNullable(
       address
     )) as CacheAccountState;
-    return new CacheAccount(client, address, state, onStateUpdateHandler);
+    return new CacheAccount(
+      client,
+      address,
+      state,
+      onStateUpdateHandler,
+      errorCallback
+    );
   }
 
   getCaches(): Cache[] {
@@ -77,39 +87,61 @@ export class CacheAccount {
     return this.state.caches[idx];
   }
 
-  addCacheListener(callback: CacheListenerCB, idx: number, errorCallback: ErrorCB) {
-    this.removeCacheListener();
+  addCacheListener(
+    callback: CacheListenerCB,
+    idx: number,
+    errorCallback: ErrorCB
+  ) {
+    this.removeCacheListener(idx);
+    this._cacheListeners.set(idx, callback);
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const cb = (_: CacheAccountState): void => {
-        const cache = this.getCache(idx);
-        callback(cache);
-      };
-      this._subscribe(cb);
+      this.subscribe();
     } catch (error: unknown) {
       errorCallback(error);
     }
   }
 
-  removeCacheListener() {
-    if (this._cacheListener)
-      this.connection.removeAccountChangeListener(this._cacheListener);
-  }
-
-  private _subscribe(callback: (data: CacheAccountState) => void) {
-    this.client.accounts.cacheAccount
-      .subscribe(this.address)
-      .on('change', (state: CacheAccountState) => {
-        this.state = state;
-        callback(state);
-      });
+  removeCacheListener(idx: number) {
+    if (this._cacheListeners.get(idx)) this._cacheListeners.delete(idx);
   }
 
   subscribe() {
-    this._subscribe(this._onStateUpdate);
+    this.removeListener();
+    try {
+      this.addListener();
+    } catch (error: unknown) {
+      if (this._errorCallback) {
+        this._errorCallback(error);
+      }
+    }
+  }
+
+  private addListener() {
+    this._listener = this.client.connection.onAccountChange(
+      this.address,
+      ({ data }) => {
+        this.state = this.client.program.coder.accounts.decode(
+          'CacheAccount',
+          data
+        );
+        if (this._onStateUpdate) {
+          this._onStateUpdate(this.state);
+        }
+        for (const [key, value] of this._cacheListeners) {
+          const cache = this.getCache(key);
+          value(cache);
+        }
+      },
+      'processed'
+    );
+  }
+
+  private removeListener() {
+    if (this._listener)
+      this.client.connection.removeAccountChangeListener(this._listener);
   }
 
   async unsubscribe() {
-    await this.client.accounts.cacheAccount.unsubscribe(this.address);
+    this.removeListener();
   }
 }

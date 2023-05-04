@@ -2,7 +2,7 @@
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import { CypherClient } from '../client';
 import { deriveAccountAddress } from '../utils';
-import { CypherAccountState, StateUpdateHandler } from '../types';
+import { CypherAccountState, ErrorCB, StateUpdateHandler } from '../types';
 import { I80F48 } from '@blockworks-foundation/mango-client';
 import {
   deriveOrdersAccountAddress,
@@ -16,11 +16,13 @@ import { CypherSubAccount } from './subAccount';
 import { CacheAccount } from './cacheAccount';
 
 export class CypherAccount {
+  private _listener: number;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
     public state: CypherAccountState,
-    private _onStateUpdate?: StateUpdateHandler<CypherAccountState>
+    private _onStateUpdate?: StateUpdateHandler<CypherAccountState>,
+    private _errorCallback?: ErrorCB
   ) {
     _onStateUpdate && this.subscribe();
   }
@@ -88,7 +90,8 @@ export class CypherAccount {
   static async load(
     client: CypherClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<CypherAccountState>
+    onStateUpdateHandler?: StateUpdateHandler<CypherAccountState>,
+    errorCallback?: ErrorCB
   ) {
     const state = await client.accounts.cypherAccount.fetchNullable(address);
 
@@ -98,7 +101,8 @@ export class CypherAccount {
       client,
       address,
       state as CypherAccountState,
-      onStateUpdateHandler
+      onStateUpdateHandler,
+      errorCallback
     );
   }
 
@@ -181,19 +185,39 @@ export class CypherAccount {
   }
 
   subscribe() {
-    this.client.accounts.cypherAccount
-      .subscribe(this.address)
-      .on('change', (state: CypherAccountState) => {
-        this.state = state;
-        // todo: check if dexMarkets need to be reloaded.(market listing/delisting)
+    this.removeListener();
+    try {
+      this.addListener();
+    } catch (error: unknown) {
+      if (this._errorCallback) {
+        this._errorCallback(error);
+      }
+    }
+  }
+
+  private addListener() {
+    this._listener = this.client.connection.onAccountChange(
+      this.address,
+      ({ data }) => {
+        this.state = this.client.program.coder.accounts.decode(
+          'CypherAccount',
+          data
+        );
         if (this._onStateUpdate) {
           this._onStateUpdate(this.state);
         }
-      });
+      },
+      'processed'
+    );
+  }
+
+  private removeListener() {
+    if (this._listener)
+      this.client.connection.removeAccountChangeListener(this._listener);
   }
 
   async unsubscribe() {
-    await this.client.accounts.cypherAccount.unsubscribe(this.address);
+    this.removeListener();
   }
 
   getSpotOpenOrdersAddress(dexMarket: PublicKey, subAccount: PublicKey) {

@@ -7,16 +7,23 @@ import {
   derivePoolNodeAddress,
   derivePoolNodeVaultAddress
 } from '../utils';
-import type { CreatePoolArgs, PoolState, StateUpdateHandler } from '../types';
+import type {
+  CreatePoolArgs,
+  ErrorCB,
+  PoolState,
+  StateUpdateHandler
+} from '../types';
 import { I80F48, ZERO_I80F48 } from '@blockworks-foundation/mango-client';
 
 export class Pool {
+  private _listener: number;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
     public state: PoolState,
     readonly market?: Market,
-    private _onStateUpdate?: StateUpdateHandler<PoolState>
+    private _onStateUpdate?: StateUpdateHandler<PoolState>,
+    private _errorCallback?: ErrorCB
   ) {
     _onStateUpdate && this.subscribe();
   }
@@ -64,7 +71,8 @@ export class Pool {
   static async load(
     client: CypherClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<PoolState>
+    onStateUpdateHandler?: StateUpdateHandler<PoolState>,
+    errorCallback?: ErrorCB
   ): Promise<Pool> {
     const state = (await client.accounts.pool.fetchNullable(
       address
@@ -76,9 +84,23 @@ export class Pool {
         {},
         client.dexPID
       );
-      return new Pool(client, address, state, market, onStateUpdateHandler);
+      return new Pool(
+        client,
+        address,
+        state,
+        market,
+        onStateUpdateHandler,
+        errorCallback
+      );
     }
-    return new Pool(client, address, state, null, onStateUpdateHandler);
+    return new Pool(
+      client,
+      address,
+      state,
+      null,
+      onStateUpdateHandler,
+      errorCallback
+    );
   }
 
   static async loadAll(client: CypherClient): Promise<Pool[]> {
@@ -193,18 +215,35 @@ export class Pool {
   }
 
   subscribe() {
-    this.client.accounts.pool
-      .subscribe(this.address)
-      .on('change', (state: PoolState) => {
-        this.state = state;
-        // todo: check if dexMarkets need to be reloaded.(market listing/delisting)
+    this.removeListener();
+    try {
+      this.addListener();
+    } catch (error: unknown) {
+      if (this._errorCallback) {
+        this._errorCallback(error);
+      }
+    }
+  }
+
+  private addListener() {
+    this._listener = this.client.connection.onAccountChange(
+      this.address,
+      ({ data }) => {
+        this.state = this.client.program.coder.accounts.decode('Pool', data);
         if (this._onStateUpdate) {
           this._onStateUpdate(this.state);
         }
-      });
+      },
+      'processed'
+    );
+  }
+
+  private removeListener() {
+    if (this._listener)
+      this.client.connection.removeAccountChangeListener(this._listener);
   }
 
   async unsubscribe() {
-    await this.client.accounts.pool.unsubscribe(this.address);
+    this.removeListener();
   }
 }

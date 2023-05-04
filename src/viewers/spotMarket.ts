@@ -68,7 +68,11 @@ export class SpotMarketViewer {
       });
   }
 
-  addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250, errorCallback: ErrorCB) {
+  addBidsListener(
+    callback: OrderbookListenerCB,
+    orderbookDepth = 250,
+    errorCallback: ErrorCB
+  ) {
     if (this.market == null) return null;
 
     this.removeBidsListener();
@@ -89,7 +93,11 @@ export class SpotMarketViewer {
       this.connection.removeAccountChangeListener(this._bidsListener);
   }
 
-  addAsksListener(callback: OrderbookListenerCB, orderbookDepth = 250, errorCallback: ErrorCB) {
+  addAsksListener(
+    callback: OrderbookListenerCB,
+    orderbookDepth = 250,
+    errorCallback: ErrorCB
+  ) {
     if (this.market == null) return null;
 
     this.removeAsksListener();
@@ -146,7 +154,6 @@ export class SpotMarketViewer {
     } catch (error: unknown) {
       errorCallback(error);
     }
-
   }
 
   addFillsListener(callback: FillsListenerCB, errorCallback: ErrorCB) {
@@ -160,7 +167,6 @@ export class SpotMarketViewer {
     } catch (error: unknown) {
       errorCallback(error);
     }
-
   }
 
   removeOpenOrdersAccountListener() {

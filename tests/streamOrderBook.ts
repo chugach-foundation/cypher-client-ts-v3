@@ -2,7 +2,7 @@ import { PerpetualMarket } from '@cypher-client/accounts'
 import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { loadWallet, confirmOpts } from 'utils'
-import { Cluster, OrderbookListenerCB, ParsedOrderbook } from '@cypher-client/types'
+import { Cluster, ErrorCB, OrderbookListenerCB, ParsedOrderbook } from '@cypher-client/types'
 import { deriveMarketAddress, encodeStrToUint8Array, sleep } from '@cypher-client/utils'
 import { PerpMarketViewer } from '@cypher-client/viewers'
 
@@ -33,20 +33,31 @@ export const getPerpMkt = async (client: CypherClient, mktName: string) => {
 }
 
 export const bookListeners = (perpViewer: PerpMarketViewer) => {
+  // bid side handler
   const bidHandler: OrderbookListenerCB = (bid: ParsedOrderbook) => {
     for (const order of bid) {
       console.log('bids: ' + ' | price: ' + order[0] + ' | size: ' + order[1])
     }
     console.log('---------------------------------------------------')
   }
+  const bidErrorHandler: ErrorCB = (error: unknown) => {
+    console.log(error)
+    perpViewer.addBidsListener(bidHandler, bidErrorHandler)
+  }
+  // ask side handler
   const askHandler: OrderbookListenerCB = (ask: ParsedOrderbook) => {
     for (const order of ask) {
       console.log('asks: ' + ' | price: ' + order[0] + ' | size: ' + order[1])
     }
     console.log('---------------------------------------------------')
   }
-  perpViewer.addBidsListener(bidHandler)
-  perpViewer.addAsksListener(askHandler)
+  const askErrorHandler: ErrorCB = (error: unknown) => {
+    console.log(error)
+    perpViewer.addAsksListener(bidHandler, askErrorHandler)
+  }
+
+  perpViewer.addBidsListener(bidHandler, bidErrorHandler)
+  perpViewer.addAsksListener(askHandler, askErrorHandler)
 }
 
 export const main = async () => {

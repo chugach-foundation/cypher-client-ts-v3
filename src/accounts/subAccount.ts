@@ -10,6 +10,7 @@ import {
 import type {
   CypherSubAccountState,
   DerivativePositionState,
+  ErrorCB,
   SpotPositionState,
   StateUpdateHandler
 } from '../types';
@@ -19,11 +20,13 @@ import { DerivativePosition } from '../viewers/derivativePosition';
 import { QUOTE_TOKEN_DECIMALS } from '../constants/shared';
 
 export class CypherSubAccount {
+  private _listener: number;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
     public state: CypherSubAccountState,
-    private _onStateUpdate?: StateUpdateHandler<CypherSubAccountState>
+    private _onStateUpdate?: StateUpdateHandler<CypherSubAccountState>,
+    private _errorCallback?: ErrorCB
   ) {
     _onStateUpdate && this.subscribe();
   }
@@ -61,12 +64,19 @@ export class CypherSubAccount {
   static async load(
     client: CypherClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<CypherSubAccountState>
+    onStateUpdateHandler?: StateUpdateHandler<CypherSubAccountState>,
+    errorCallback?: ErrorCB
   ) {
     const state = (await client.accounts.cypherSubAccount.fetchNullable(
       address
     )) as CypherSubAccountState;
-    return new CypherSubAccount(client, address, state, onStateUpdateHandler);
+    return new CypherSubAccount(
+      client,
+      address,
+      state,
+      onStateUpdateHandler,
+      errorCallback
+    );
   }
 
   getSpotPosition(tokenMint: PublicKey): SpotPosition {
@@ -182,7 +192,7 @@ export class CypherSubAccount {
           // );
         }
 
-        if (openOrdersCache.coinTotal != ZERO_BN) {
+        if (!openOrdersCache.coinTotal.eq(ZERO_BN)) {
           const coinTotalIncl = splToUiAmountFixed(
             I80F48.fromU64(openOrdersCache.coinTotal),
             decimals
@@ -263,7 +273,7 @@ export class CypherSubAccount {
           openOrdersCache.coinFree
         );
 
-        if (coinLocked != ZERO_BN) {
+        if (!coinLocked.eq(ZERO_BN)) {
           const coinTotalIncl = splToUiAmountFixed(
             I80F48.fromU64(coinLocked),
             decimals
@@ -410,17 +420,38 @@ export class CypherSubAccount {
   }
 
   subscribe() {
-    this.client.accounts.cypherSubAccount
-      .subscribe(this.address)
-      .on('change', (state: CypherSubAccountState) => {
-        this.state = state;
+    this.removeListener();
+    try {
+      this.addListener();
+    } catch (error: unknown) {
+      if (this._errorCallback) {
+        this._errorCallback(error);
+      }
+    }
+  }
+
+  private addListener() {
+    this._listener = this.client.connection.onAccountChange(
+      this.address,
+      ({ data }) => {
+        this.state = this.client.program.coder.accounts.decode(
+          'CypherSubAccount',
+          data
+        );
         if (this._onStateUpdate) {
           this._onStateUpdate(this.state);
         }
-      });
+      },
+      'processed'
+    );
+  }
+
+  private removeListener() {
+    if (this._listener)
+      this.client.connection.removeAccountChangeListener(this._listener);
   }
 
   async unsubscribe() {
-    await this.client.accounts.cypherSubAccount.unsubscribe(this.address);
+    this.removeListener();
   }
 }

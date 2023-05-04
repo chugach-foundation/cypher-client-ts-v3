@@ -1,5 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 import {
+  ErrorCB,
   OpenOrder,
   OrdersAccountState,
   Side,
@@ -25,11 +26,13 @@ export interface Order {
   openOrdersAddress: PublicKey;
 }
 export class DerivativesOrdersAccount {
+  private _listener: number;
   constructor(
     readonly client: CypherClient,
     readonly address: PublicKey,
     public state: OrdersAccountState,
-    private _onStateUpdate?: StateUpdateHandler<OrdersAccountState>
+    private _onStateUpdate?: StateUpdateHandler<OrdersAccountState>,
+    private _errorCallback?: ErrorCB
   ) {
     _onStateUpdate && this.subscribe();
   }
@@ -37,7 +40,8 @@ export class DerivativesOrdersAccount {
   static async load(
     client: CypherClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<OrdersAccountState>
+    onStateUpdateHandler?: StateUpdateHandler<OrdersAccountState>,
+    errorCallback?: ErrorCB
   ) {
     const state = (await client.accounts.ordersAccount.fetchNullable(
       address
@@ -46,7 +50,8 @@ export class DerivativesOrdersAccount {
       client,
       address,
       state,
-      onStateUpdateHandler
+      onStateUpdateHandler,
+      errorCallback
     );
   }
 
@@ -155,18 +160,38 @@ export class DerivativesOrdersAccount {
   }
 
   subscribe() {
-    this.client.accounts.ordersAccount
-      .subscribe(this.address)
-      .on('change', (state: OrdersAccountState) => {
-        this.state = state;
-        // todo: check if dexMarkets need to be reloaded.(market listing/delisting)
+    this.removeListener();
+    try {
+      this.addListener();
+    } catch (error: unknown) {
+      if (this._errorCallback) {
+        this._errorCallback(error);
+      }
+    }
+  }
+
+  private addListener() {
+    this._listener = this.client.connection.onAccountChange(
+      this.address,
+      ({ data }) => {
+        this.state = this.client.program.coder.accounts.decode(
+          'OrdersAccount',
+          data
+        );
         if (this._onStateUpdate) {
           this._onStateUpdate(this.state);
         }
-      });
+      },
+      'processed'
+    );
+  }
+
+  private removeListener() {
+    if (this._listener)
+      this.client.connection.removeAccountChangeListener(this._listener);
   }
 
   async unsubscribe() {
-    await this.client.accounts.ordersAccount.unsubscribe(this.address);
+    this.removeListener();
   }
 }
