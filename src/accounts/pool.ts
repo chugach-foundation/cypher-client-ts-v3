@@ -79,8 +79,8 @@ export class Pool {
     )) as PoolState;
 
     const isUsdcOrNonSerumMarket =
-      !state.tokenMint.equals(client.quoteMint) ||
-      !state.dexMarket.equals(SystemProgram.programId);
+      state.tokenMint.equals(client.quoteMint) ||
+      state.dexMarket.equals(SystemProgram.programId);
 
     const market = isUsdcOrNonSerumMarket
       ? null
