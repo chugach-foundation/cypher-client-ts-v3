@@ -31,7 +31,7 @@ export class FuturesMarketViewer implements DerivativesMarket {
   private _eventQueueListener: number;
   private _fillsListener: number;
 
-  constructor(readonly client: CypherClient, readonly market: FuturesMarket) { }
+  constructor(readonly client: CypherClient, readonly market: FuturesMarket) {}
 
   private get connection() {
     return this.client.connection;
@@ -112,13 +112,18 @@ export class FuturesMarketViewer implements DerivativesMarket {
     });
   }
 
-  addBidsListener(callback: OrderbookListenerCB, orderbookDepth = 250, errorCallback: ErrorCB) {
+  addBidsListener(
+    callback: OrderbookListenerCB,
+    errorCallback: ErrorCB,
+    orderbookDepth = 250
+  ) {
     this.removeBidsListener();
     try {
       const bidsAddress = this.market.state.inner.bids;
       this._bidsListener = this.connection.onAccountChange(
         bidsAddress,
-        ({ data }) => callback(this.orderbookParser(data, false, orderbookDepth)),
+        ({ data }) =>
+          callback(this.orderbookParser(data, false, orderbookDepth)),
         'processed'
       );
     } catch (error: unknown) {
@@ -131,13 +136,18 @@ export class FuturesMarketViewer implements DerivativesMarket {
       this.connection.removeAccountChangeListener(this._bidsListener);
   }
 
-  addAsksListener(callback: OrderbookListenerCB, orderbookDepth = 250, errorCallback: ErrorCB) {
+  addAsksListener(
+    callback: OrderbookListenerCB,
+    errorCallback: ErrorCB,
+    orderbookDepth = 250
+  ) {
     this.removeAsksListener();
     try {
       const asksAddress = this.market.state.inner.asks;
       this._asksListener = this.connection.onAccountChange(
         asksAddress,
-        ({ data }) => callback(this.orderbookParser(data, true, orderbookDepth)),
+        ({ data }) =>
+          callback(this.orderbookParser(data, true, orderbookDepth)),
         'processed'
       );
     } catch (error: unknown) {
@@ -150,7 +160,10 @@ export class FuturesMarketViewer implements DerivativesMarket {
       this.connection.removeAccountChangeListener(this._asksListener);
   }
 
-  addEventQueueListener(callback: EventQueueListenerCB, errorCallback: ErrorCB) {
+  addEventQueueListener(
+    callback: EventQueueListenerCB,
+    errorCallback: ErrorCB
+  ) {
     this.removeEventQueueListener();
     try {
       this._eventQueueListener = this.connection.onAccountChange(

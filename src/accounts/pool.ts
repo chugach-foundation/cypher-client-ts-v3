@@ -77,27 +77,25 @@ export class Pool {
     const state = (await client.accounts.pool.fetchNullable(
       address
     )) as PoolState;
-    if (!state.tokenMint.equals(client.quoteMint)) {
-      const market = await Market.load(
-        client.connection,
-        state.dexMarket,
-        {},
-        client.dexPID
-      );
-      return new Pool(
-        client,
-        address,
-        state,
-        market,
-        onStateUpdateHandler,
-        errorCallback
-      );
-    }
+
+    const isUsdcOrNonSerumMarket =
+      !state.tokenMint.equals(client.quoteMint) &&
+      !state.dexMarket.equals(SystemProgram.programId);
+
+    const market = isUsdcOrNonSerumMarket
+      ? null
+      : await Market.load(
+          client.connection,
+          state.dexMarket,
+          {},
+          client.dexPID
+        );
+
     return new Pool(
       client,
       address,
       state,
-      null,
+      market,
       onStateUpdateHandler,
       errorCallback
     );
