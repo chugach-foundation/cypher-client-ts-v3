@@ -116,7 +116,7 @@ export class PerpMarketViewer implements DerivativesMarket {
 
   addBidsListener(
     callback: OrderbookListenerCB,
-    errorCallback: ErrorCB,
+    errorCallback: ErrorCB = () => {},
     orderbookDepth = 250
   ) {
     this.removeBidsListener();
@@ -140,7 +140,7 @@ export class PerpMarketViewer implements DerivativesMarket {
 
   addAsksListener(
     callback: OrderbookListenerCB,
-    errorCallback: ErrorCB,
+    errorCallback: ErrorCB = () => {},
     orderbookDepth = 250
   ) {
     this.removeAsksListener();

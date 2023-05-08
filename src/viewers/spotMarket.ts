@@ -70,7 +70,7 @@ export class SpotMarketViewer {
 
   addBidsListener(
     callback: OrderbookListenerCB,
-    errorCallback: ErrorCB,
+    errorCallback: ErrorCB = () => {},
     orderbookDepth = 250
   ) {
     if (this.market == null) return null;
@@ -95,7 +95,7 @@ export class SpotMarketViewer {
 
   addAsksListener(
     callback: OrderbookListenerCB,
-    errorCallback: ErrorCB,
+    errorCallback: ErrorCB = () => {},
     orderbookDepth = 250
   ) {
     if (this.market == null) return null;

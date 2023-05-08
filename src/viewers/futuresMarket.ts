@@ -114,7 +114,7 @@ export class FuturesMarketViewer implements DerivativesMarket {
 
   addBidsListener(
     callback: OrderbookListenerCB,
-    errorCallback: ErrorCB,
+    errorCallback: ErrorCB = () => {},
     orderbookDepth = 250
   ) {
     this.removeBidsListener();
@@ -138,7 +138,7 @@ export class FuturesMarketViewer implements DerivativesMarket {
 
   addAsksListener(
     callback: OrderbookListenerCB,
-    errorCallback: ErrorCB,
+    errorCallback: ErrorCB = () => {},
     orderbookDepth = 250
   ) {
     this.removeAsksListener();
