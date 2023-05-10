@@ -15,6 +15,7 @@ import {
   ParsedOrderbook
 } from '../types';
 import { CypherClient } from '../client/index';
+import { last } from 'lodash';
 import { PublicKey } from '@solana/web3.js';
 import { CALLBACK_INFO_LEN, QUOTE_TOKEN_DECIMALS } from '../constants/shared';
 import { DerivativesMarket } from './derivativesMarket';
@@ -33,7 +34,7 @@ export class PerpMarketViewer implements DerivativesMarket {
   constructor(
     readonly client: CypherClient,
     readonly market: PerpetualMarket
-  ) {}
+  ) { }
 
   private get connection() {
     return this.client.connection;
@@ -262,12 +263,7 @@ export class PerpMarketViewer implements DerivativesMarket {
     return a || 0;
   }
 
-  getlastPrice(fills: Fills) {
-    const last = fills && fills.length > 0 && fills[0].price;
-
-    if (last) return last;
-    return 0;
-  }
+  getlastPrice = (fills: Fills): number => last(fills)?.price || 0
 
   getMiddlePointPrice(bids: ParsedOrderbook, asks: ParsedOrderbook) {
     const b = bids?.length > 0 && Number(bids[0][0]);
