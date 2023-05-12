@@ -12,7 +12,5 @@ export function dateToBn(date: Date): BN {
   return new BN(date.valueOf() / 1_000);
 }
 
-// eslint-disable-next-line
-export function sleep(ms: number): Promise<any> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
