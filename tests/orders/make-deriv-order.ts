@@ -15,7 +15,7 @@ import { CONFIGS } from '@cypher-client/constants'
 import { Cluster } from '@cypher-client/types'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { BN } from '@project-serum/anchor'
-import { makeNewPerpOrderIx } from '@cypher-client/instructions'
+import { makeNewPerpOrderIx, makeSettlePerpFundsIx } from '@cypher-client/instructions'
 import {
   confirmOpts,
   getDerivativeOpenOrdersAcc,
@@ -103,6 +103,23 @@ export const makeDerivOrder = async (marketType: 'pairFuture' | 'perpetualFuture
       maxQuoteQty: quoteInLots,
       maxTs: new BN('18446744073709551615'),
     },
+  )
+
+  // you can tx.add(settleFundsix) into tx 
+  // or have this in its own tx that you call periodically
+  // since program will auto settle funds if you are canceling 
+  // and replacing orders, but if you plan to leave orders on book 
+  // after fills (without requoting), would suggest having this as 
+  // its own tx that you place on some set interval
+  const settleFundsix = await makeSettlePerpFundsIx(
+    client,
+    clearingAddress,
+    cacheacct.address,
+    acc.address,
+    subAcc.address,
+    derivOpenOrdersAcc.address,
+    mktAddress,
+    poolnodeAddress
   )
 
   const { modifyComputeUnits, addPriorityFee } = getDefaultPriorityFeeIxs()
