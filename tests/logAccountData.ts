@@ -13,6 +13,8 @@ import { splToUiAmountFixed, encodeStrToUint8Array, sleep } from '@cypher-client
 import { deriveMarketAddress } from '../src/utils/pda'
 import { I80F48 } from '@blockworks-foundation/mango-client'
 import { loadWallet } from './utils/wallet-loader'
+import { PublicKey } from '@solana/web3.js'
+import { splToUiAmount } from '../src/utils/tokenAmount'
 
 // INFO:
 // Example in this file is only guaranteed to work with a cypher account that has one main subaccount
@@ -81,7 +83,12 @@ export const getWeightedPortfoliovalue = (assetsValueFixed: I80F48, liabsValueFi
 export const getPerpPosition = (subAccs: CypherSubAccount[], perpMarket: PerpetualMarket) => {
   // find the sub account that has a position for the given perp market
   const subAcc = subAccs.find((acc) => {
-    acc.getDerivativePosition(perpMarket.address) != null
+    const position = acc.getDerivativePosition(perpMarket.address)
+    if (position) {
+      return true
+    } else {
+      return false
+    }
   })
   if (subAcc) {
     const perpPosition = subAcc.getDerivativePosition(perpMarket.address)
@@ -96,18 +103,28 @@ export const getPerpPosition = (subAccs: CypherSubAccount[], perpMarket: Perpetu
 
     console.log(
       'coinFree ',
-      perpPosition.state.openOrdersCache.coinFree.toNumber(),
+      Number(
+        splToUiAmount(
+          perpPosition.state.openOrdersCache.coinFree,
+          perpMarket.state.inner.config.decimals,
+        ).toFixed(6),
+      ),
       'coinTotal',
-      perpPosition.state.openOrdersCache.coinTotal.toNumber(),
+      Number(
+        splToUiAmount(
+          perpPosition.state.openOrdersCache.coinTotal,
+          perpMarket.state.inner.config.decimals,
+        ).toFixed(6),
+      ),
       'pcFree',
-      perpPosition.state.openOrdersCache.pcFree.toNumber(),
+      Number(splToUiAmount(perpPosition.state.openOrdersCache.pcFree, 6).toFixed(6)),
       'pcTotal',
-      perpPosition.state.openOrdersCache.pcTotal.toNumber(),
+      Number(splToUiAmount(perpPosition.state.openOrdersCache.pcTotal, 6).toFixed(6)),
     )
 
     console.log('basePos ', basePositionUi, 'filledPos ', totalPositionUi)
 
-    return totalPosition
+    return totalPositionUi
   } else {
     return undefined
   }
@@ -152,12 +169,17 @@ export const getAccountData = async (
   subAccounts: CypherSubAccount[],
   perpMarket: PerpetualMarket,
 ) => {
-  const { assetsValue, liabilitiesValue, assetsValueUnweighted, liabilitiesValueUnweighted, cRatio } = getCRatioRelatedData(
-    cacheAccount,
-    account,
-    subAccounts,
+  const {
+    assetsValue,
+    liabilitiesValue,
+    assetsValueUnweighted,
+    liabilitiesValueUnweighted,
+    cRatio,
+  } = getCRatioRelatedData(cacheAccount, account, subAccounts)
+  const unweightedPortfolioValue = getUnweightedPortfoliovalue(
+    assetsValueUnweighted,
+    liabilitiesValueUnweighted,
   )
-  const unweightedPortfolioValue = getUnweightedPortfoliovalue(assetsValueUnweighted, liabilitiesValueUnweighted)
   const weightedPortfolioValue = getWeightedPortfoliovalue(assetsValue, liabilitiesValue)
   const cRatioPerc = Number(cRatio.toFixed(6)) * 100 // * 100 turns c-ratio unto %, same format as init and maintenance ratios
   const initMarginRatio = await getInitialMarginRatio(clearing)

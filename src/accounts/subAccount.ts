@@ -158,13 +158,13 @@ export class CypherSubAccount {
         const decimals = priceCache.decimals;
         const openOrdersCache = spot.openOrdersCache;
         const oraclePrice = new I80F48(priceCache.oraclePrice);
-
         const weight = I80F48.fromNumber(priceCache.spotInitAssetWeight).div(
           I80F48.fromNumber(100)
         );
 
-        const basePosition = new I80F48(spot.position);
+        let basePosition = new I80F48(spot.position);
         if (basePosition.isPos()) {
+          basePosition = basePosition.mul(new I80F48(priceCache.depositIndex));
           const positionValue = splToUiAmountFixed(
             basePosition,
             priceCache.decimals
@@ -241,7 +241,9 @@ export class CypherSubAccount {
           );
         }
 
-        const basePosition = new I80F48(derivative.basePosition);
+        const basePosition = new I80F48(derivative.basePosition).add(
+          new I80F48(openOrdersCache.coinTotal)
+        );
         if (basePosition.isPos()) {
           const positionValue = splToUiAmountFixed(basePosition, decimals).mul(
             derivPrice
@@ -310,6 +312,18 @@ export class CypherSubAccount {
       volatileAssetsValue.iadd(quotePositionValue.mul(weight));
     }
 
+    // console.log(
+    //   'Asset ----- Token: USDC',
+    //   'Position (UI): ',
+    //   cumPcTotal.toFixed(4),
+    //   'Weight: ',
+    //   weight.toFixed(4),
+    //   'Oracle Price: ',
+    //   new I80F48(quotePriceCache.oraclePrice).toFixed(4),
+    //   'Position Value: ',
+    //   quotePositionValue.toFixed(4)
+    // );
+
     return { assetsValueUnweighted, assetsValue, volatileAssetsValue };
   }
 
@@ -325,15 +339,14 @@ export class CypherSubAccount {
     for (const { spot, derivative } of this.state.positions) {
       if (!spot.tokenMint.equals(PublicKey.default)) {
         const priceCache = cacheAccount.getCache(spot.cacheIndex);
-
         const oraclePrice = new I80F48(priceCache.oraclePrice);
-
         const weight = I80F48.fromNumber(priceCache.spotInitLiabWeight).div(
           I80F48.fromNumber(100)
         );
 
-        const basePosition = new I80F48(spot.position);
+        let basePosition = new I80F48(spot.position);
         if (basePosition.isNeg()) {
+          basePosition = basePosition.mul(new I80F48(priceCache.borrowIndex));
           const positionValue = splToUiAmountFixed(
             basePosition.abs(),
             priceCache.decimals
