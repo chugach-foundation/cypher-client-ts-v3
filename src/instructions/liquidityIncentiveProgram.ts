@@ -4,7 +4,7 @@ import {
   SystemProgram,
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js';
-import { LiquidityIncentiveProgramClient } from '../client';
+import { LiquidityIncentiveClient } from '../client';
 import { BN } from '@project-serum/anchor';
 import { CONFIGS } from '../constants/shared';
 import { TransactionInstruction } from '@solana/web3.js';
@@ -21,7 +21,7 @@ import {
 } from '@solana/spl-token';
 
 export const makeCreateDepositIx = async (
-  client: LiquidityIncentiveProgramClient,
+  client: LiquidityIncentiveClient,
   campaign: PublicKey,
   poolAddress: PublicKey,
   poolNodeAddress: PublicKey,
@@ -96,7 +96,7 @@ export const makeCreateDepositIx = async (
 };
 
 export const makeEndDepositIx = async (
-  client: LiquidityIncentiveProgramClient,
+  client: LiquidityIncentiveClient,
   campaign: PublicKey,
   campaignRewardVault: PublicKey,
   campaignRewardVaultAuthority: PublicKey,

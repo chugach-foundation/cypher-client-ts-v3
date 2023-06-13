@@ -1,4 +1,4 @@
-import { AnchorProvider, Idl } from '@project-serum/anchor';
+import { AnchorProvider } from '@project-serum/anchor';
 import { FaucetClient } from './faucet';
 import { CONFIGS } from '../constants';
 import cypherIdl from '../generated/idl/cypher.json';
@@ -7,11 +7,7 @@ import type { Cluster, Wallet } from '../types';
 import { PublicKey } from '@solana/web3.js';
 import { ProgramClient } from './client';
 
-export type CypherProgramClient = CypherClient<Cypher>;
-
-export class CypherClient<
-  Cypher extends Idl = Idl
-> extends ProgramClient<Cypher> {
+export class CypherClient extends ProgramClient<Cypher> {
   public faucet: FaucetClient;
 
   constructor(

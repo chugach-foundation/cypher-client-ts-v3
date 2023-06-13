@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import { deriveSubAccountAddress, splToUiAmountFixed } from '../../utils';
-import { CypherProgramClient } from '../../client';
+import { CypherClient } from '../../client';
 import {
   I80F48,
   ZERO_BN,
@@ -22,7 +22,7 @@ import { QUOTE_TOKEN_DECIMALS } from '../../constants/shared';
 export class CypherSubAccount {
   private _listener: number;
   constructor(
-    readonly client: CypherProgramClient,
+    readonly client: CypherClient,
     readonly address: PublicKey,
     public state: CypherSubAccountState,
     private _onStateUpdate?: StateUpdateHandler<CypherSubAccountState>,
@@ -32,7 +32,7 @@ export class CypherSubAccount {
   }
 
   static async create(
-    client: CypherProgramClient,
+    client: CypherClient,
     authority: PublicKey,
     masterAccount: PublicKey,
     accountNumber = 0,
@@ -62,7 +62,7 @@ export class CypherSubAccount {
   }
 
   static async load(
-    client: CypherProgramClient,
+    client: CypherClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<CypherSubAccountState>,
     errorCallback?: ErrorCB

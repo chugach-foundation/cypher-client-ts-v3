@@ -12,10 +12,10 @@ import {
   CreateOracleProductsArgs,
   SubAccountMargining
 } from '../types';
-import { CypherProgramClient } from '../client';
+import { CypherClient } from '../client';
 
 export const makeCreatePublicClearingIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   authority: PublicKey,
   payer: PublicKey,
@@ -33,7 +33,7 @@ export const makeCreatePublicClearingIx = (
 };
 
 export const makeCreatePrivateClearingIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   privateClearing: PublicKey,
   authority: PublicKey,
@@ -56,7 +56,7 @@ export const makeCreatePrivateClearingIx = (
 };
 
 export const makeCreateAccountIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   account: PublicKey,
   authority: PublicKey,
@@ -77,7 +77,7 @@ export const makeCreateAccountIx = (
 };
 
 export const makeCreateWhitelistedAccountIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   whitelist: PublicKey,
   account: PublicKey,
@@ -100,7 +100,7 @@ export const makeCreateWhitelistedAccountIx = (
 };
 
 export const makeCreateSubAccountIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   masterAccount: PublicKey,
   subAccount: PublicKey,
   authority: PublicKey,
@@ -121,7 +121,7 @@ export const makeCreateSubAccountIx = (
 };
 
 export const makeCreateFuturesMarketIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   market: PublicKey,
@@ -162,7 +162,7 @@ export const makeCreateFuturesMarketIx = (
 };
 
 export const makeCreatePerpMarketIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   market: PublicKey,
@@ -200,7 +200,7 @@ export const makeCreatePerpMarketIx = (
 };
 
 export const makeCreatePoolIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   pool: PublicKey,
@@ -236,7 +236,7 @@ export const makeCreatePoolIx = (
 };
 
 export const makeCreateOracleProductsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   cacheAccount: PublicKey,
   oracleProducts: PublicKey,
   authority: PublicKey,
@@ -267,7 +267,7 @@ export const makeCreateOracleProductsIx = (
 };
 
 export const makeCreateDerivativesOrdersAccountIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   masterAccount: PublicKey,
   market: PublicKey,
   openOrders: PublicKey,
@@ -289,7 +289,7 @@ export const makeCreateDerivativesOrdersAccountIx = (
 };
 
 export const makeInitSpotOpenOrdersIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   masterAccount: PublicKey,
   subAccount: PublicKey,
   pool: PublicKey,
@@ -318,7 +318,7 @@ export const makeInitSpotOpenOrdersIx = (
 };
 
 export const makeCacheOraclePricesIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   cacheAccount: PublicKey,
   oracleProducts: PublicKey,
   productsArr: PublicKey[],
@@ -359,7 +359,7 @@ export const makeCacheOraclePricesIx = (
 };
 
 export const makeCloseSpotOpenOrdersIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   masterAccount: PublicKey,
   subAccount: PublicKey,
   assetPool: PublicKey,
@@ -384,7 +384,7 @@ export const makeCloseSpotOpenOrdersIx = (
 };
 
 export const makeSetAccountDelegateIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   masterAccount: PublicKey,
   delegate: PublicKey,
   authority: PublicKey
@@ -400,7 +400,7 @@ export const makeSetAccountDelegateIx = (
 };
 
 export const makeSetSubAccountDelegateIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   subAccount: PublicKey,
   delegate: PublicKey,
   authority: PublicKey
@@ -416,7 +416,7 @@ export const makeSetSubAccountDelegateIx = (
 };
 
 export const makeDepositFundsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -448,7 +448,7 @@ export const makeDepositFundsIx = (
 };
 
 export const makeWithdrawFundsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -482,7 +482,7 @@ export const makeWithdrawFundsIx = (
 };
 
 export const makeNewFuturesOrderIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -523,7 +523,7 @@ export const makeNewFuturesOrderIx = (
 };
 
 export const makeNewFuturesOrdersIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -562,7 +562,7 @@ export const makeNewFuturesOrdersIx = (
 };
 
 export const makeCancelFuturesOrderIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -599,7 +599,7 @@ export const makeCancelFuturesOrderIx = (
     .instruction();
 };
 export const makeCancelFuturesOrdersIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -636,7 +636,7 @@ export const makeCancelFuturesOrdersIx = (
 };
 
 export const makeSettleFuturesFundsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   cacheAccount: PublicKey,
   clearing: PublicKey,
   masterAccount: PublicKey,
@@ -662,7 +662,7 @@ export const makeSettleFuturesFundsIx = (
 };
 
 export const makeNewPerpOrderIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -701,7 +701,7 @@ export const makeNewPerpOrderIx = (
 };
 
 export const makeMultipleNewPerpOrdersIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -738,7 +738,7 @@ export const makeMultipleNewPerpOrdersIx = (
 };
 
 export const makeCancelPerpOrderIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -776,7 +776,7 @@ export const makeCancelPerpOrderIx = (
 };
 
 export const makeCancelPerpOrdersIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -813,7 +813,7 @@ export const makeCancelPerpOrdersIx = (
 };
 
 export const makeSettlePerpFundsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -848,7 +848,7 @@ export interface NewSpotOrderDexAccounts {
 }
 
 export const makeNewSpotOrderIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -904,7 +904,7 @@ export interface CancelSpotOrderDexAccounts {
 }
 
 export const makeCancelSpotOrderIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -952,7 +952,7 @@ export interface SettleSpotFundsDexAccounts {
 }
 
 export const makeSettleSpotFundsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -985,7 +985,7 @@ export const makeSettleSpotFundsIx = (
 };
 
 export const makeUpdateTokenIndexIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   cacheAccount: PublicKey,
   pool: PublicKey,
   poolNodes: PublicKey[]
@@ -1004,7 +1004,7 @@ export const makeUpdateTokenIndexIx = (
 };
 
 export const makeUpdateFundingRateIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   cacheAccount: PublicKey,
   market: PublicKey,
   orderbook: PublicKey,
@@ -1024,7 +1024,7 @@ export const makeUpdateFundingRateIx = (
 };
 
 export const makeConsumeFuturesEventsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   market: PublicKey,
   orderbook: PublicKey,
@@ -1051,7 +1051,7 @@ export const makeConsumeFuturesEventsIx = (
 };
 
 export const makeConsumePerpEventsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   market: PublicKey,
   orderbook: PublicKey,
@@ -1078,7 +1078,7 @@ export const makeConsumePerpEventsIx = (
 };
 
 export const makeEditSubAccountMarginIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   masterAccount: PublicKey,
   subAccount: PublicKey,
   authority: PublicKey,
@@ -1095,7 +1095,7 @@ export const makeEditSubAccountMarginIx = (
 };
 
 export const makeUpdateAccountMarginIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
   signer: PublicKey,
@@ -1119,7 +1119,7 @@ export const makeUpdateAccountMarginIx = (
 };
 
 export const makeTransferBetweenSubAccountsIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   clearing: PublicKey,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
@@ -1146,7 +1146,7 @@ export const makeTransferBetweenSubAccountsIx = (
 };
 
 export const makeDepositDeliverableIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   market: PublicKey,
   pool: PublicKey,
   poolNode: PublicKey,
@@ -1172,7 +1172,7 @@ export const makeDepositDeliverableIx = (
 };
 
 export const makeSettlePositionIx = (
-  client: CypherProgramClient,
+  client: CypherClient,
   cacheAccount: PublicKey,
   masterAccount: PublicKey,
   subAccount: PublicKey,

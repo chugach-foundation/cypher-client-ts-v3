@@ -5,7 +5,7 @@ import {
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js';
 import { Pool } from './pool';
-import { CypherProgramClient } from '../../client';
+import { CypherClient } from '../../client';
 import { makeCreateMarketAccountsIxs } from '../../instructions';
 import { bnToDate, deriveMarketAddress } from '../../utils';
 import { BN } from '@project-serum/anchor';
@@ -19,7 +19,7 @@ import type {
 export class FuturesMarket {
   private _listener: number;
   constructor(
-    readonly client: CypherProgramClient,
+    readonly client: CypherClient,
     readonly address: PublicKey,
     public state: FuturesMarketState,
     private _onStateUpdate?: StateUpdateHandler<FuturesMarketState>,
@@ -29,7 +29,7 @@ export class FuturesMarket {
   }
 
   static async create(
-    client: CypherProgramClient,
+    client: CypherClient,
     authority: PublicKey,
     clearing: PublicKey,
     cacheAccount: PublicKey,
@@ -78,7 +78,7 @@ export class FuturesMarket {
   }
 
   static async load(
-    client: CypherProgramClient,
+    client: CypherClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<FuturesMarketState>,
     errorCallback?: ErrorCB
@@ -95,7 +95,7 @@ export class FuturesMarket {
     );
   }
 
-  static async loadAll(client: CypherProgramClient): Promise<FuturesMarket[]> {
+  static async loadAll(client: CypherClient): Promise<FuturesMarket[]> {
     const queryResult = await client.accounts.futuresMarket.all();
     return queryResult.map(
       (result) =>

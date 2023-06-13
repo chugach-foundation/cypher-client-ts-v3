@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { CypherProgramClient } from '../../client';
+import { CypherClient } from '../../client';
 import { deriveAccountAddress } from '../../utils';
 import { CypherAccountState, ErrorCB, StateUpdateHandler } from '../../types';
 import { I80F48 } from '@blockworks-foundation/mango-client';
@@ -18,7 +18,7 @@ import { CacheAccount } from './cacheAccount';
 export class CypherAccount {
   private _listener: number;
   constructor(
-    readonly client: CypherProgramClient,
+    readonly client: CypherClient,
     readonly address: PublicKey,
     public state: CypherAccountState,
     private _onStateUpdate?: StateUpdateHandler<CypherAccountState>,
@@ -28,7 +28,7 @@ export class CypherAccount {
   }
 
   static async create(
-    client: CypherProgramClient,
+    client: CypherClient,
     clearing: PublicKey,
     authority: PublicKey,
     accountNumber = 0
@@ -57,7 +57,7 @@ export class CypherAccount {
   }
 
   static async createWhitelisted(
-    client: CypherProgramClient,
+    client: CypherClient,
     clearing: PublicKey,
     whitelist: PublicKey,
     authority: PublicKey,
@@ -88,7 +88,7 @@ export class CypherAccount {
   }
 
   static async load(
-    client: CypherProgramClient,
+    client: CypherClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<CypherAccountState>,
     errorCallback?: ErrorCB

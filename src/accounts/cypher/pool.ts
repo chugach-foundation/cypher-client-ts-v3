@@ -1,7 +1,7 @@
 import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
 import { Market } from '@project-serum/serum';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { CypherProgramClient } from '../../client';
+import { CypherClient } from '../../client';
 import {
   derivePoolAddress,
   derivePoolNodeAddress,
@@ -18,7 +18,7 @@ import { I80F48, ZERO_I80F48 } from '@blockworks-foundation/mango-client';
 export class Pool {
   private _listener: number;
   constructor(
-    readonly client: CypherProgramClient,
+    readonly client: CypherClient,
     readonly address: PublicKey,
     public state: PoolState,
     readonly market?: Market,
@@ -29,7 +29,7 @@ export class Pool {
   }
 
   static async create(
-    client: CypherProgramClient,
+    client: CypherClient,
     clearing: PublicKey,
     cacheAccount: PublicKey,
     tokenMint: PublicKey,
@@ -69,7 +69,7 @@ export class Pool {
   }
 
   static async load(
-    client: CypherProgramClient,
+    client: CypherClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<PoolState>,
     errorCallback?: ErrorCB
@@ -101,7 +101,7 @@ export class Pool {
     );
   }
 
-  static async loadAll(client: CypherProgramClient): Promise<Pool[]> {
+  static async loadAll(client: CypherClient): Promise<Pool[]> {
     const pools: Pool[] = [];
     const queryResult = await client.accounts.pool.all();
     for (const result of queryResult) {

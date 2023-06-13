@@ -6,9 +6,7 @@ import { CONFIGS } from '../constants';
 import { ProgramClient } from './client';
 import { PublicKey } from '@solana/web3.js';
 
-export class LiquidityIncentiveClient<
-  LiquidityIncentiveProgram extends Idl
-> extends ProgramClient<LiquidityIncentiveProgram> {
+export class LiquidityIncentiveClient extends ProgramClient<LiquidityIncentiveProgram> {
   readonly cypherProgramId: PublicKey;
 
   constructor(
@@ -28,6 +26,3 @@ export class LiquidityIncentiveClient<
     this.cypherProgramId = CONFIGS[cluster].CYPHER_PID;
   }
 }
-
-export type LiquidityIncentiveProgramClient =
-  LiquidityIncentiveClient<LiquidityIncentiveProgram>;

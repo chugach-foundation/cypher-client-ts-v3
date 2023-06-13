@@ -6,7 +6,7 @@ import {
   Side,
   StateUpdateHandler
 } from '../../types';
-import { CypherProgramClient } from '../../client';
+import { CypherClient } from '../../client';
 import { ZERO_BN } from '@blockworks-foundation/mango-client';
 import { BN } from '@project-serum/anchor';
 import { FuturesMarketViewer, PerpMarketViewer } from '../../viewers';
@@ -32,7 +32,7 @@ export interface Order {
 export class DerivativesOrdersAccount {
   private _listener: number;
   constructor(
-    readonly client: CypherProgramClient,
+    readonly client: CypherClient,
     readonly address: PublicKey,
     public state: OrdersAccountState,
     private _onStateUpdate?: StateUpdateHandler<OrdersAccountState>,
@@ -42,7 +42,7 @@ export class DerivativesOrdersAccount {
   }
 
   static async load(
-    client: CypherProgramClient,
+    client: CypherClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<OrdersAccountState>,
     errorCallback?: ErrorCB

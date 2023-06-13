@@ -7,12 +7,10 @@ import {
 import * as Aaob from '@chugach-foundation/aaob';
 import { struct, u8, u32 } from 'buffer-layout';
 import { TokenInstructions } from '@project-serum/serum';
-import { CypherProgramClient } from '../client';
+import { CypherClient } from '../client';
 import { AnchorProvider } from '@project-serum/anchor';
 
-export const makeCreateMarketAccountsIxs = async (
-  client: CypherProgramClient
-) => {
+export const makeCreateMarketAccountsIxs = async (client: CypherClient) => {
   const eventCapacity = 50;
   const callbackInfoLen = 34;
   const orderCapacity = 1_000;

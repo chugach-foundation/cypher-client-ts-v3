@@ -5,7 +5,7 @@ import {
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js';
 import { Pool } from './pool';
-import { CypherProgramClient } from '../../client';
+import { CypherClient } from '../../client';
 import { makeCreateMarketAccountsIxs } from '../../instructions';
 import { deriveMarketAddress } from '../../utils';
 import type {
@@ -18,7 +18,7 @@ import type {
 export class PerpetualMarket {
   private _listener: number;
   constructor(
-    readonly client: CypherProgramClient,
+    readonly client: CypherClient,
     readonly address: PublicKey,
     public state: PerpetualMarketState,
     private _onStateUpdate?: StateUpdateHandler<PerpetualMarketState>,
@@ -28,7 +28,7 @@ export class PerpetualMarket {
   }
 
   static async create(
-    client: CypherProgramClient,
+    client: CypherClient,
     authority: PublicKey,
     clearing: PublicKey,
     cacheAccount: PublicKey,
@@ -75,7 +75,7 @@ export class PerpetualMarket {
   }
 
   static async load(
-    client: CypherProgramClient,
+    client: CypherClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<PerpetualMarketState>,
     errorCallback?: ErrorCB
@@ -92,9 +92,7 @@ export class PerpetualMarket {
     );
   }
 
-  static async loadAll(
-    client: CypherProgramClient
-  ): Promise<PerpetualMarket[]> {
+  static async loadAll(client: CypherClient): Promise<PerpetualMarket[]> {
     const queryResult = await client.accounts.perpetualMarket.all();
     return queryResult.map(
       (result) =>
