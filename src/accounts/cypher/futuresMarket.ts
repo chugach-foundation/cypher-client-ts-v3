@@ -5,36 +5,37 @@ import {
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js';
 import { Pool } from './pool';
-import { CypherClient } from '../client';
-import { makeCreateMarketAccountsIxs } from '../instructions';
-import { deriveMarketAddress } from '../utils';
+import { CypherProgramClient } from '../../client';
+import { makeCreateMarketAccountsIxs } from '../../instructions';
+import { bnToDate, deriveMarketAddress } from '../../utils';
+import { BN } from '@project-serum/anchor';
 import type {
-  CreatePerpetualMarketArgs,
+  CreateFuturesMarketArgs,
   ErrorCB,
-  PerpetualMarketState,
+  FuturesMarketState,
   StateUpdateHandler
-} from '../types';
+} from '../../types';
 
-export class PerpetualMarket {
+export class FuturesMarket {
   private _listener: number;
   constructor(
-    readonly client: CypherClient,
+    readonly client: CypherProgramClient,
     readonly address: PublicKey,
-    public state: PerpetualMarketState,
-    private _onStateUpdate?: StateUpdateHandler<PerpetualMarketState>,
+    public state: FuturesMarketState,
+    private _onStateUpdate?: StateUpdateHandler<FuturesMarketState>,
     private _errorCallback?: ErrorCB
   ) {
     _onStateUpdate && this.subscribe();
   }
 
   static async create(
-    client: CypherClient,
+    client: CypherProgramClient,
     authority: PublicKey,
     clearing: PublicKey,
     cacheAccount: PublicKey,
     quotePool: Pool,
     oracleProducts: PublicKey,
-    args: CreatePerpetualMarketArgs
+    args: CreateFuturesMarketArgs
   ) {
     const [market, marketBump] = deriveMarketAddress(
       args.marketName,
@@ -42,7 +43,7 @@ export class PerpetualMarket {
     );
     args.marketBump = marketBump;
 
-    const { orderbook, eventQueue, bids, asks, ixs, signers } =
+    const { orderbook, eventQueue, bids, asks, priceHistory, ixs, signers } =
       await makeCreateMarketAccountsIxs(client);
 
     const tx = new Transaction();
@@ -50,14 +51,16 @@ export class PerpetualMarket {
     await client.sendAndConfirm(tx, signers);
 
     await client.methods
-      .createPerpMarket({
+      .createFuturesMarket({
         ...args,
-        marketType: args.marketType as never
+        marketType: args.marketType as never,
+        deliveryType: args.deliveryType as never
       })
       .accountsStrict({
         clearing,
         cacheAccount,
         market,
+        priceHistory,
         oracleProducts,
         quotePool: quotePool.address,
         orderbook,
@@ -75,15 +78,15 @@ export class PerpetualMarket {
   }
 
   static async load(
-    client: CypherClient,
+    client: CypherProgramClient,
     address: PublicKey,
-    onStateUpdateHandler?: StateUpdateHandler<PerpetualMarketState>,
+    onStateUpdateHandler?: StateUpdateHandler<FuturesMarketState>,
     errorCallback?: ErrorCB
-  ): Promise<PerpetualMarket> {
-    const state = (await client.accounts.perpetualMarket.fetchNullable(
+  ): Promise<FuturesMarket> {
+    const state = (await client.accounts.futuresMarket.fetchNullable(
       address
-    )) as PerpetualMarketState;
-    return new PerpetualMarket(
+    )) as FuturesMarketState;
+    return new FuturesMarket(
       client,
       address,
       state,
@@ -92,16 +95,48 @@ export class PerpetualMarket {
     );
   }
 
-  static async loadAll(client: CypherClient): Promise<PerpetualMarket[]> {
-    const queryResult = await client.accounts.perpetualMarket.all();
+  static async loadAll(client: CypherProgramClient): Promise<FuturesMarket[]> {
+    const queryResult = await client.accounts.futuresMarket.all();
     return queryResult.map(
       (result) =>
-        new PerpetualMarket(
+        new FuturesMarket(
           client,
           result.publicKey,
-          result.account as PerpetualMarketState
+          result.account as FuturesMarketState
         )
     );
+  }
+
+  get marketPrice(): BN {
+    return this.state.marketPrice;
+  }
+
+  get positionsCount(): BN {
+    return this.state.positionsCount;
+  }
+
+  get totalBorrows(): BN {
+    return this.state.totalBorrows;
+  }
+
+  get totalPurchased(): BN {
+    return this.state.totalPurchased;
+  }
+
+  get totalRaised(): BN {
+    return this.state.totalRaised;
+  }
+
+  get tokenSupply(): BN {
+    return this.state.tokenSupply;
+  }
+
+  get marketActivatesAt(): Date {
+    return bnToDate(this.state.activatesAt);
+  }
+
+  get marketExpiresAt(): Date {
+    return bnToDate(this.state.expiresAt);
   }
 
   subscribe() {
@@ -120,7 +155,7 @@ export class PerpetualMarket {
       this.address,
       ({ data }) => {
         this.state = this.client.program.coder.accounts.decode(
-          'PerpetualMarket',
+          'FuturesMarket',
           data
         );
         if (this._onStateUpdate) {

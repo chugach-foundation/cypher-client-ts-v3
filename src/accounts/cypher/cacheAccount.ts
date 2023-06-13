@@ -1,18 +1,18 @@
 import { PublicKey, Keypair } from '@solana/web3.js';
-import { CypherClient } from '../client';
+import { CypherProgramClient } from '../../client';
 import {
   CacheAccountState,
   StateUpdateHandler,
   Cache,
   CacheListenerCB,
   ErrorCB
-} from '../types';
+} from '../../types';
 
 export class CacheAccount {
   private _listener: number;
   private _cacheListeners: Map<number, CacheListenerCB>;
   constructor(
-    readonly client: CypherClient,
+    readonly client: CypherProgramClient,
     readonly address: PublicKey,
     public state: CacheAccountState,
     private _onStateUpdate?: StateUpdateHandler<CacheAccountState>,
@@ -23,7 +23,7 @@ export class CacheAccount {
   }
 
   static async create(
-    client: CypherClient,
+    client: CypherProgramClient,
     clearing: PublicKey,
     authority: PublicKey
   ) {
@@ -54,7 +54,7 @@ export class CacheAccount {
   }
 
   static async load(
-    client: CypherClient,
+    client: CypherProgramClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<CacheAccountState>,
     errorCallback?: ErrorCB

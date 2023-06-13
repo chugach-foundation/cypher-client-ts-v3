@@ -1,13 +1,17 @@
 import { PublicKey } from '@solana/web3.js';
 import { Market } from '@project-serum/serum';
-import { CypherClient } from '../client';
-import type { ErrorCB, PoolNodeState, StateUpdateHandler } from '../types';
+import { CypherProgramClient } from '../../client';
+import type { ErrorCB, PoolNodeState, StateUpdateHandler } from '../../types';
 import { I80F48 } from '@blockworks-foundation/mango-client';
+import {
+  derivePoolNodeVaultAddress,
+  derivePoolNodeVaultSigner
+} from '../../utils/pda';
 
 export class PoolNode {
   private _listener: number;
   constructor(
-    readonly client: CypherClient,
+    readonly client: CypherProgramClient,
     readonly address: PublicKey,
     public state: PoolNodeState,
     readonly market: Market,
@@ -17,7 +21,7 @@ export class PoolNode {
     _onStateUpdate && this.subscribe();
   }
   static async load(
-    client: CypherClient,
+    client: CypherProgramClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<PoolNodeState>,
     errorCallback?: ErrorCB
@@ -35,7 +39,7 @@ export class PoolNode {
     );
   }
 
-  static async loadAll(client: CypherClient): Promise<PoolNode[]> {
+  static async loadAll(client: CypherProgramClient): Promise<PoolNode[]> {
     const pools: PoolNode[] = [];
     const queryResult = await client.accounts.pool.all();
     for (const result of queryResult) {
@@ -63,6 +67,24 @@ export class PoolNode {
 
   get borrows(): I80F48 {
     return new I80F48(this.state.borrows);
+  }
+
+  vaultAddress(): PublicKey {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [address, _] = derivePoolNodeVaultAddress(
+      this.address,
+      this.client.cypherPID
+    );
+    return address;
+  }
+
+  vaultSignerAddress(): PublicKey {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [address, _] = derivePoolNodeVaultSigner(
+      this.address,
+      this.client.cypherPID
+    );
+    return address;
   }
 
   subscribe() {

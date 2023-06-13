@@ -1,5 +1,5 @@
 import { CacheAccount, PerpetualMarket } from '@cypher-client/accounts'
-import { CypherClient } from '@cypher-client/client'
+import { CypherClient, CypherProgramClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { Cluster, ErrorCB, OrderbookListenerCB, ParsedOrderbook } from '@cypher-client/types'
 import { deriveMarketAddress, encodeStrToUint8Array, sleep } from '@cypher-client/utils'
@@ -27,7 +27,7 @@ const RPC_ENDPOINT = process.env.RPC_ENDPOINT
 const KP_PATH = process.env.KEYPAIR_PATH
 
 // get perp market for a specified market
-export const getPerpMkt = async (client: CypherClient, mktName: string) => {
+export const getPerpMkt = async (client: CypherProgramClient, mktName: string) => {
   const encodedMkt = encodeStrToUint8Array(mktName)
   const [mktPubkey, number] = deriveMarketAddress(encodedMkt, client.cypherPID)
   const perpMkt = await PerpetualMarket.load(client, mktPubkey)
@@ -138,7 +138,7 @@ export const main = async () => {
   const MARKET = process.env.MARKET
   const client = new CypherClient(CLUSTER, RPC_ENDPOINT, new NodeWallet(wallet), confirmOpts)
 
-  const perpMkt = await getPerpMkt(client, MARKET)
+  const perpMkt = await getPerpMkt(client as CypherProgramClient, MARKET)
   const perpMktViewer = new PerpMarketViewer(client, perpMkt)
 
   let cacheAccount = await loadAndSubscribeCache(client, (cache) => {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { deriveSubAccountAddress, splToUiAmountFixed } from '../utils';
-import { CypherClient } from '../client';
+import { deriveSubAccountAddress, splToUiAmountFixed } from '../../utils';
+import { CypherProgramClient } from '../../client';
 import {
   I80F48,
   ZERO_BN,
@@ -13,16 +13,16 @@ import type {
   ErrorCB,
   SpotPositionState,
   StateUpdateHandler
-} from '../types';
+} from '../../types';
 import { CacheAccount } from './cacheAccount';
-import { SpotPosition } from '../viewers/spotPosition';
-import { DerivativePosition } from '../viewers/derivativePosition';
-import { QUOTE_TOKEN_DECIMALS } from '../constants/shared';
+import { SpotPosition } from '../../viewers/spotPosition';
+import { DerivativePosition } from '../../viewers/derivativePosition';
+import { QUOTE_TOKEN_DECIMALS } from '../../constants/shared';
 
 export class CypherSubAccount {
   private _listener: number;
   constructor(
-    readonly client: CypherClient,
+    readonly client: CypherProgramClient,
     readonly address: PublicKey,
     public state: CypherSubAccountState,
     private _onStateUpdate?: StateUpdateHandler<CypherSubAccountState>,
@@ -32,7 +32,7 @@ export class CypherSubAccount {
   }
 
   static async create(
-    client: CypherClient,
+    client: CypherProgramClient,
     authority: PublicKey,
     masterAccount: PublicKey,
     accountNumber = 0,
@@ -62,7 +62,7 @@ export class CypherSubAccount {
   }
 
   static async load(
-    client: CypherClient,
+    client: CypherProgramClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<CypherSubAccountState>,
     errorCallback?: ErrorCB

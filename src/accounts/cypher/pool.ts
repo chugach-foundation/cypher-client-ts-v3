@@ -1,24 +1,24 @@
 import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
 import { Market } from '@project-serum/serum';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { CypherClient } from '../client';
+import { CypherProgramClient } from '../../client';
 import {
   derivePoolAddress,
   derivePoolNodeAddress,
   derivePoolNodeVaultAddress
-} from '../utils';
+} from '../../utils';
 import type {
   CreatePoolArgs,
   ErrorCB,
   PoolState,
   StateUpdateHandler
-} from '../types';
+} from '../../types';
 import { I80F48, ZERO_I80F48 } from '@blockworks-foundation/mango-client';
 
 export class Pool {
   private _listener: number;
   constructor(
-    readonly client: CypherClient,
+    readonly client: CypherProgramClient,
     readonly address: PublicKey,
     public state: PoolState,
     readonly market?: Market,
@@ -29,7 +29,7 @@ export class Pool {
   }
 
   static async create(
-    client: CypherClient,
+    client: CypherProgramClient,
     clearing: PublicKey,
     cacheAccount: PublicKey,
     tokenMint: PublicKey,
@@ -69,7 +69,7 @@ export class Pool {
   }
 
   static async load(
-    client: CypherClient,
+    client: CypherProgramClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<PoolState>,
     errorCallback?: ErrorCB
@@ -101,7 +101,7 @@ export class Pool {
     );
   }
 
-  static async loadAll(client: CypherClient): Promise<Pool[]> {
+  static async loadAll(client: CypherProgramClient): Promise<Pool[]> {
     const pools: Pool[] = [];
     const queryResult = await client.accounts.pool.all();
     for (const result of queryResult) {
@@ -210,6 +210,16 @@ export class Pool {
 
     const slope = optimalApr.div(optimalUtil);
     return slope.mul(utilization);
+  }
+
+  poolNodeAddress(nodeNumber: number): PublicKey {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [address, _] = derivePoolNodeAddress(
+      this.address,
+      nodeNumber,
+      this.client.cypherPID
+    );
+    return address;
   }
 
   subscribe() {

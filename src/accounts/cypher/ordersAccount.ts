@@ -5,14 +5,18 @@ import {
   OrdersAccountState,
   Side,
   StateUpdateHandler
-} from '../types';
-import { CypherClient } from '../client';
+} from '../../types';
+import { CypherProgramClient } from '../../client';
 import { ZERO_BN } from '@blockworks-foundation/mango-client';
 import { BN } from '@project-serum/anchor';
-import { FuturesMarketViewer, PerpMarketViewer } from '../viewers';
-import { splToUiAmount, priceLotsToNative, sizeLotsToNative } from '../utils';
+import { FuturesMarketViewer, PerpMarketViewer } from '../../viewers';
+import {
+  splToUiAmount,
+  priceLotsToNative,
+  sizeLotsToNative
+} from '../../utils';
 import { LeafNode, getPriceFromKey } from '@chugach-foundation/aaob';
-import { QUOTE_TOKEN_DECIMALS } from '../constants/shared';
+import { QUOTE_TOKEN_DECIMALS } from '../../constants/shared';
 
 export interface Order {
   side: Side;
@@ -28,7 +32,7 @@ export interface Order {
 export class DerivativesOrdersAccount {
   private _listener: number;
   constructor(
-    readonly client: CypherClient,
+    readonly client: CypherProgramClient,
     readonly address: PublicKey,
     public state: OrdersAccountState,
     private _onStateUpdate?: StateUpdateHandler<OrdersAccountState>,
@@ -38,7 +42,7 @@ export class DerivativesOrdersAccount {
   }
 
   static async load(
-    client: CypherClient,
+    client: CypherProgramClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<OrdersAccountState>,
     errorCallback?: ErrorCB

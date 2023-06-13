@@ -1,4 +1,4 @@
-import { CypherClient } from '@cypher-client/client'
+import { CypherClient, CypherProgramClient } from '@cypher-client/client'
 import { CypherAccount } from '@cypher-client/accounts/account'
 import { PublicKey } from '@solana/web3.js'
 import { CypherSubAccount } from '@cypher-client/accounts/subAccount'
@@ -14,7 +14,7 @@ const client = new CypherClient('mainnet-beta', process.env.RPC_ENDPOINT)
 
 const cypherAccountPubkey = new PublicKey('4R476ZsZfQaJhbmt6iam4o49mD4vjbfALkgWxehtnLMY')
 
-async function testRun(cypherClient: CypherClient) {
+async function testRun(cypherClient: CypherProgramClient) {
   const cacheAccount = await CacheAccount.load(cypherClient, CONFIGS['mainnet-beta'].CACHE)
   const account = await CypherAccount.load(cypherClient, cypherAccountPubkey)
   const subAccountCaches = account.state.subAccountCaches.filter(
@@ -36,4 +36,4 @@ async function testRun(cypherClient: CypherClient) {
   console.log('///// Master Account \\\\\\\n')
 }
 
-testRun(client)
+testRun(client as CypherProgramClient)

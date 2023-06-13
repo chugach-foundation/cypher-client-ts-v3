@@ -1,8 +1,8 @@
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { CypherClient } from '../client';
-import { OracleProductsState } from '../types';
-import { CreateOracleProductsArgs } from '../types/on-chain';
-import { deriveOracleProductsAddress } from '../utils/pda';
+import { CypherProgramClient } from '../../client';
+import { OracleProductsState } from '../../types';
+import { CreateOracleProductsArgs } from '../../types/cypher';
+import { deriveOracleProductsAddress } from '../../utils/pda';
 
 export class OracleProducts {
   constructor(
@@ -11,7 +11,7 @@ export class OracleProducts {
   ) {}
 
   static async create(
-    client: CypherClient,
+    client: CypherProgramClient,
     cacheAccount: PublicKey,
     authority: PublicKey,
     oracleAddrs: PublicKey[],
@@ -50,7 +50,7 @@ export class OracleProducts {
     };
   }
 
-  static async load(client: CypherClient, address: PublicKey) {
+  static async load(client: CypherProgramClient, address: PublicKey) {
     const state = (await client.accounts.oracleProducts.fetch(
       address
     )) as OracleProductsState;

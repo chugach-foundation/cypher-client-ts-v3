@@ -1,10 +1,10 @@
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { CypherClient } from '../client';
-import type { CreateClearingArgs, ClearingState } from '../types';
+import { CypherProgramClient } from '../../client';
+import type { CreateClearingArgs, ClearingState } from '../../types';
 import {
   derivePublicClearingAddress,
   derivePrivateClearingAddress
-} from '../utils/pda';
+} from '../../utils/pda';
 
 export class Clearing {
   constructor(
@@ -13,7 +13,7 @@ export class Clearing {
   ) {}
 
   static async createPublicClearing(
-    client: CypherClient,
+    client: CypherProgramClient,
     authority: PublicKey,
     args: CreateClearingArgs
   ) {
@@ -41,7 +41,7 @@ export class Clearing {
   }
 
   static async createPrivateClearing(
-    client: CypherClient,
+    client: CypherProgramClient,
     authority: PublicKey,
     args: CreateClearingArgs
   ) {
@@ -76,7 +76,7 @@ export class Clearing {
     };
   }
 
-  static async load(client: CypherClient, address: PublicKey) {
+  static async load(client: CypherProgramClient, address: PublicKey) {
     const state = (await client.accounts.clearing.fetch(
       address
     )) as ClearingState;

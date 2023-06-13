@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { CypherClient } from '../client';
-import { deriveAccountAddress } from '../utils';
-import { CypherAccountState, ErrorCB, StateUpdateHandler } from '../types';
+import { CypherProgramClient } from '../../client';
+import { deriveAccountAddress } from '../../utils';
+import { CypherAccountState, ErrorCB, StateUpdateHandler } from '../../types';
 import { I80F48 } from '@blockworks-foundation/mango-client';
 import {
   deriveOrdersAccountAddress,
   deriveSerumOrdersAccountAddress
-} from '../utils/pda';
+} from '../../utils/pda';
 import { Pool } from './pool';
 import { DerivativesOrdersAccount } from './ordersAccount';
-import { FuturesMarketViewer, PerpMarketViewer } from '../viewers';
+import { FuturesMarketViewer, PerpMarketViewer } from '../../viewers';
 import { getAssociatedTokenAddress } from '@project-serum/associated-token';
 import { CypherSubAccount } from './subAccount';
 import { CacheAccount } from './cacheAccount';
@@ -18,7 +18,7 @@ import { CacheAccount } from './cacheAccount';
 export class CypherAccount {
   private _listener: number;
   constructor(
-    readonly client: CypherClient,
+    readonly client: CypherProgramClient,
     readonly address: PublicKey,
     public state: CypherAccountState,
     private _onStateUpdate?: StateUpdateHandler<CypherAccountState>,
@@ -28,7 +28,7 @@ export class CypherAccount {
   }
 
   static async create(
-    client: CypherClient,
+    client: CypherProgramClient,
     clearing: PublicKey,
     authority: PublicKey,
     accountNumber = 0
@@ -57,7 +57,7 @@ export class CypherAccount {
   }
 
   static async createWhitelisted(
-    client: CypherClient,
+    client: CypherProgramClient,
     clearing: PublicKey,
     whitelist: PublicKey,
     authority: PublicKey,
@@ -88,7 +88,7 @@ export class CypherAccount {
   }
 
   static async load(
-    client: CypherClient,
+    client: CypherProgramClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<CypherAccountState>,
     errorCallback?: ErrorCB

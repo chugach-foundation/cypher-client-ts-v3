@@ -1,5 +1,5 @@
 import { EventQueue } from '@chugach-foundation/aaob';
-import { Cache, Side } from './on-chain';
+import { Cache, Side } from './cypher';
 import { BN } from '@project-serum/anchor';
 import { PublicKey, Transaction } from '@solana/web3.js';
 
@@ -7,6 +7,7 @@ export type Cluster = 'localnet' | 'devnet' | 'mainnet-beta';
 
 export interface Config {
   CYPHER_PID: PublicKey;
+  LIP_PID: PublicKey;
   DEX_PID: PublicKey;
   PYTH_PID: PublicKey;
   FAUCET_PID?: PublicKey;
@@ -40,4 +41,5 @@ export interface Wallet {
   publicKey: PublicKey;
 }
 
-export * from './on-chain';
+export * from './cypher';
+export * from './liquidityIncentiveProgram';
