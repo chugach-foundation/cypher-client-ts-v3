@@ -1,5 +1,5 @@
 import { PerpetualMarket } from '@cypher-client/accounts'
-import { CypherClient, CypherProgramClient } from '@cypher-client/client'
+import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { confirmOpts } from './utils'
 import { Cluster } from '@cypher-client/types'
@@ -31,7 +31,7 @@ export const encodeStrToUint8Array = (str: string): number[] => {
 }
 
 // get perp market for a specified market
-export const getPerpMkt = async (client: CypherProgramClient, mktName: string) => {
+export const getPerpMkt = async (client: CypherClient, mktName: string) => {
   const encodedMkt = encodeStrToUint8Array(mktName)
   const [mktPubkey, number] = deriveMarketAddress(encodedMkt, client.cypherPID)
   const perpMkt = await PerpetualMarket.load(client, mktPubkey)
@@ -43,7 +43,7 @@ export const main = async () => {
   const wallet = loadWallet(KP_PATH)
   const MARKET = process.env.MARKET
   const client = new CypherClient(CLUSTER, RPC_ENDPOINT, new NodeWallet(wallet), confirmOpts)
-  const perpMkt = await getPerpMkt(client as CypherProgramClient, MARKET)
+  const perpMkt = await getPerpMkt(client, MARKET)
 
   const tickSizeNativeUnits = priceLotsToNative(
     new BN(perpMkt.state.inner.tickSize),

@@ -1,5 +1,5 @@
 import { CacheAccount, FuturesMarket } from '@cypher-client/accounts'
-import { CypherClient, CypherProgramClient } from '@cypher-client/client'
+import { CypherClient } from '@cypher-client/client'
 import { CONFIGS } from '@cypher-client/constants'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { confirmOpts } from './utils'
@@ -26,7 +26,7 @@ const RPC_ENDPOINT = process.env.RPC_ENDPOINT
 const KP_PATH = process.env.KEYPAIR_PATH
 
 // get futures market for a specified market
-export const getFuturesMkt = async (client: CypherProgramClient, mktName: string) => {
+export const getFuturesMkt = async (client: CypherClient, mktName: string) => {
   const encodedMkt = encodeStrToUint8Array(mktName)
   const [mktPubkey, number] = deriveMarketAddress(encodedMkt, client.cypherPID)
   const futsMkt = await FuturesMarket.load(client, mktPubkey)
@@ -35,7 +35,7 @@ export const getFuturesMkt = async (client: CypherProgramClient, mktName: string
 }
 
 // get cache account for specified market
-export const getFuturesCache = async (client: CypherProgramClient) => {
+export const getFuturesCache = async (client: CypherClient) => {
   const cacheAddress = CONFIGS[CLUSTER].CACHE
   const futsCache = await CacheAccount.load(client, cacheAddress)
 
@@ -64,8 +64,8 @@ export const main = async () => {
   //const wallet = loadWallet(KP_PATH)
   const MARKET = process.env.MARKET
   const client = new CypherClient(CLUSTER, RPC_ENDPOINT)
-  const futsMkt = await getFuturesMkt(client as CypherProgramClient, MARKET)
-  const futsCache = await getFuturesCache(client as CypherProgramClient)
+  const futsMkt = await getFuturesMkt(client, MARKET)
+  const futsCache = await getFuturesCache(client)
   const idx = futsMkt.state.inner.config.cacheIndex
 
   cacheListner(futsCache, idx)

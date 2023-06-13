@@ -8,7 +8,7 @@ import {
 } from '@cypher-client/utils'
 import { confirmOpts } from './utils'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
-import { CypherClient, CypherProgramClient } from '@cypher-client/client'
+import { CypherClient } from '@cypher-client/client'
 import { Cluster } from '@cypher-client/types'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import fs from 'fs'
@@ -44,14 +44,10 @@ export const createAccs = async () => {
   const cypherPID = client.cypherPID
   const [masterAccountAddress] = deriveAccountAddress(authority, 0, cypherPID)
   const [clearingAddress] = derivePublicClearingAddress(cypherPID)
-  const masterAccountData = await CypherAccount.create(
-    client as CypherProgramClient,
-    clearingAddress,
-    authority,
-  )
+  const masterAccountData = await CypherAccount.create(client, clearingAddress, authority)
 
   const subAccountData = await CypherSubAccount.create(
-    client as CypherProgramClient,
+    client,
     authority,
     masterAccountAddress,
     0,
@@ -76,11 +72,7 @@ export const createMasterAcc = async () => {
   const authority = wallet.publicKey
   const cypherPID = client.cypherPID
   const [clearingAddress] = derivePublicClearingAddress(cypherPID)
-  const masterAccountData = await CypherAccount.create(
-    client as CypherProgramClient,
-    clearingAddress,
-    authority,
-  )
+  const masterAccountData = await CypherAccount.create(client, clearingAddress, authority)
 
   try {
     const { modifyComputeUnits, addPriorityFee } = getDefaultPriorityFeeIxs()
@@ -102,7 +94,7 @@ export const createSubAcc = async () => {
   const [masterAccountAddress] = deriveAccountAddress(authority, 0, cypherPID)
 
   const subAccountData = await CypherSubAccount.create(
-    client as CypherProgramClient,
+    client,
     authority,
     masterAccountAddress,
     0,
@@ -133,7 +125,7 @@ export const createWhitelistedMasterAcc = async () => {
   console.log(whitelistAccount.toString())
 
   const masterAccountData = await CypherAccount.createWhitelisted(
-    client as CypherProgramClient,
+    client,
     privateClearing,
     whitelistAccount,
     authority,

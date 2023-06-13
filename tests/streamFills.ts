@@ -1,5 +1,5 @@
 import { PerpetualMarket, Pool } from '@cypher-client/accounts'
-import { CypherClient, CypherProgramClient } from '@cypher-client/client'
+import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { confirmOpts } from './utils'
 import { Cluster } from '@cypher-client/types'
@@ -28,7 +28,7 @@ const RPC_ENDPOINT = process.env.RPC_ENDPOINT
 const KP_PATH = process.env.KEYPAIR_PATH
 
 // get perp market for a specified market
-export const getPerpMkt = async (client: CypherProgramClient, mktName: string) => {
+export const getPerpMkt = async (client: CypherClient, mktName: string) => {
   const encodedMkt = encodeStrToUint8Array(mktName)
   const [mktPubkey, number] = deriveMarketAddress(encodedMkt, client.cypherPID)
   console.log('Perp Market address: ' + mktPubkey)
@@ -38,7 +38,7 @@ export const getPerpMkt = async (client: CypherProgramClient, mktName: string) =
 }
 
 // get perp market for a specified market
-export const getSpotMkt = async (client: CypherProgramClient, poolName: string) => {
+export const getSpotMkt = async (client: CypherClient, poolName: string) => {
   const encodedMkt = encodeStrToUint8Array(poolName)
   const [poolPubkey, number] = derivePoolAddress(encodedMkt, client.cypherPID)
   console.log('Pool address: ' + poolPubkey)
@@ -129,10 +129,10 @@ export const main = async () => {
   const MARKET = process.env.MARKET
   const POOL = process.env.POOL
   const client = new CypherClient(CLUSTER, RPC_ENDPOINT, new NodeWallet(wallet), confirmOpts)
-  const perpMkt = await getPerpMkt(client as CypherProgramClient, MARKET)
+  const perpMkt = await getPerpMkt(client, MARKET)
   const perpMktViewer = new PerpMarketViewer(client, perpMkt)
 
-  const spotMkt = await getSpotMkt(client as CypherProgramClient, POOL)
+  const spotMkt = await getSpotMkt(client, POOL)
   const spotMktViewer = new SpotMarketViewer(client, spotMkt)
 
   await loadPerpFills(perpMktViewer)

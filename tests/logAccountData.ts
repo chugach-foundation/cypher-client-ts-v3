@@ -5,7 +5,7 @@ import {
   CypherSubAccount,
   PerpetualMarket,
 } from '@cypher-client/accounts'
-import { CypherClient, CypherProgramClient } from '@cypher-client/client'
+import { CypherClient } from '@cypher-client/client'
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet'
 import { confirmOpts, loadAccs, fetchGraphqlData, loadAndSubscribeCache } from './utils'
 import { Cluster } from '@cypher-client/types'
@@ -210,7 +210,7 @@ export const main = async () => {
     encodeStrToUint8Array(MARKET),
     client.cypherPID,
   )
-  const perpMarket = await PerpetualMarket.load(client as CypherProgramClient, marketPubkey)
+  const perpMarket = await PerpetualMarket.load(client, marketPubkey)
 
   const cache = await loadAndSubscribeCache(client, (cache) => {
     cacheAccount = cache
