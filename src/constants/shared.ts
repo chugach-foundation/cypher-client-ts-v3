@@ -16,7 +16,7 @@ export const CONFIGS: { [key in Cluster]: Config } = {
     PYTH_QUOTE_PRODUCT: new PublicKey(
       '6NpdXrQEpmDZ3jZKmM2rhdmkd3H6QAk23j2x8bkXcHKA'
     ),
-    CACHE: new PublicKey('DV1umVB5KzBkPuav7JbDNNKUzaDk9v2zAUNudR3kKRmZ'),
+    CACHE: new PublicKey('9j2BAs64tYjQdaHsMbFnY4VKUnsLMTc8vrXpXcvP6ujz'),
     HISTORY_API_GRAPHQL: 'http://localhost:8081/v1/graphql',
     HISTORY_API_REST: 'http://localhost:8081/api/rest'
   },
@@ -30,7 +30,7 @@ export const CONFIGS: { [key in Cluster]: Config } = {
     PYTH_QUOTE_PRODUCT: new PublicKey(
       '6NpdXrQEpmDZ3jZKmM2rhdmkd3H6QAk23j2x8bkXcHKA'
     ),
-    CACHE: new PublicKey('DV1umVB5KzBkPuav7JbDNNKUzaDk9v2zAUNudR3kKRmZ'),
+    CACHE: new PublicKey('9j2BAs64tYjQdaHsMbFnY4VKUnsLMTc8vrXpXcvP6ujz'),
     HISTORY_API_GRAPHQL: 'devnet-v3.cypher-history.com/v1/graphql',
     HISTORY_API_REST: 'devnet-v3.cypher-history.com/api/rest'
   },
