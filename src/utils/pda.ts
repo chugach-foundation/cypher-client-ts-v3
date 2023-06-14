@@ -160,3 +160,36 @@ export const deriveSerumOrdersAccountAddress = (
     cypherPID
   );
 };
+
+export const deriveCampaignRewardVault = (
+  campaign: PublicKey,
+  lipPID: PublicKey
+) => {
+  const B_CAMPAIGN = anchorUtils.bytes.utf8.encode('campaign');
+  return anchorUtils.publicKey.findProgramAddressSync(
+    [B_CAMPAIGN, campaign.toBuffer()],
+    lipPID
+  );
+};
+
+export const deriveCampaignRewardVaultAuthority = (
+  campaign: PublicKey,
+  lipPID: PublicKey
+) => {
+  const B_CAMPAIGN_AUTHORITY = anchorUtils.bytes.utf8.encode('campaign_auth');
+  return anchorUtils.publicKey.findProgramAddressSync(
+    [B_CAMPAIGN_AUTHORITY, campaign.toBuffer()],
+    lipPID
+  );
+};
+
+export const deriveDepositAuthority = (
+  deposit: PublicKey,
+  lipPID: PublicKey
+) => {
+  const B_DEPOSIT_AUTHORITY = anchorUtils.bytes.utf8.encode('deposit_auth');
+  return anchorUtils.publicKey.findProgramAddressSync(
+    [B_DEPOSIT_AUTHORITY, deposit.toBuffer()],
+    lipPID
+  );
+};

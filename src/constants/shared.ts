@@ -8,6 +8,7 @@ export const QUOTE_TOKEN_DECIMALS = 6;
 export const CONFIGS: { [key in Cluster]: Config } = {
   localnet: {
     CYPHER_PID: new PublicKey('9ZoxkdieCwUWu57SyNkd4PR2fb7azpNiefeZjwDbzBQo'),
+    LIP_PID: new PublicKey(''),
     PYTH_PID: new PublicKey('gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s'),
     DEX_PID: new PublicKey('EoTcMgcDRTJVZDMZWBoU6rhYHZfkNTVEAfz3uUJRcYGj'),
     FAUCET_PID: new PublicKey('2gCkR5aaUiTVRiKDB79EWXm5PAVDWtNTnp9mGuu4ZKdY'),
@@ -21,6 +22,7 @@ export const CONFIGS: { [key in Cluster]: Config } = {
   },
   devnet: {
     CYPHER_PID: new PublicKey('9ZoxkdieCwUWu57SyNkd4PR2fb7azpNiefeZjwDbzBQo'),
+    LIP_PID: new PublicKey(''),
     PYTH_PID: new PublicKey('gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s'),
     DEX_PID: new PublicKey('EoTcMgcDRTJVZDMZWBoU6rhYHZfkNTVEAfz3uUJRcYGj'),
     FAUCET_PID: new PublicKey('2gCkR5aaUiTVRiKDB79EWXm5PAVDWtNTnp9mGuu4ZKdY'),
@@ -34,6 +36,7 @@ export const CONFIGS: { [key in Cluster]: Config } = {
   },
   'mainnet-beta': {
     CYPHER_PID: new PublicKey('CYPH3o83JX6jY6NkbproSpdmQ5VWJtxjfJ5P8veyYVu3'),
+    LIP_PID: new PublicKey(''),
     PYTH_PID: new PublicKey('FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH'),
     DEX_PID: new PublicKey('srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX'),
     QUOTE_MINT: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),

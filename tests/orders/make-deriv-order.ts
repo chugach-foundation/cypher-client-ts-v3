@@ -105,11 +105,11 @@ export const makeDerivOrder = async (marketType: 'pairFuture' | 'perpetualFuture
     },
   )
 
-  // you can tx.add(settleFundsix) into tx 
+  // you can tx.add(settleFundsix) into tx
   // or have this in its own tx that you call periodically
-  // since program will auto settle funds if you are canceling 
-  // and replacing orders, but if you plan to leave orders on book 
-  // after fills (without requoting), would suggest having this as 
+  // since program will auto settle funds if you are canceling
+  // and replacing orders, but if you plan to leave orders on book
+  // after fills (without requoting), would suggest having this as
   // its own tx that you place on some set interval
   const settleFundsix = await makeSettlePerpFundsIx(
     client,
@@ -119,7 +119,7 @@ export const makeDerivOrder = async (marketType: 'pairFuture' | 'perpetualFuture
     subAcc.address,
     derivOpenOrdersAcc.address,
     mktAddress,
-    poolnodeAddress
+    poolnodeAddress,
   )
 
   const { modifyComputeUnits, addPriorityFee } = getDefaultPriorityFeeIxs()

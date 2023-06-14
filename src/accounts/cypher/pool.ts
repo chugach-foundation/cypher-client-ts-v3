@@ -1,18 +1,18 @@
 import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
 import { Market } from '@project-serum/serum';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { CypherClient } from '../client';
+import { CypherClient } from '../../client';
 import {
   derivePoolAddress,
   derivePoolNodeAddress,
   derivePoolNodeVaultAddress
-} from '../utils';
+} from '../../utils';
 import type {
   CreatePoolArgs,
   ErrorCB,
   PoolState,
   StateUpdateHandler
-} from '../types';
+} from '../../types';
 import { I80F48, ZERO_I80F48 } from '@blockworks-foundation/mango-client';
 
 export class Pool {
@@ -210,6 +210,16 @@ export class Pool {
 
     const slope = optimalApr.div(optimalUtil);
     return slope.mul(utilization);
+  }
+
+  poolNodeAddress(nodeNumber: number): PublicKey {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [address, _] = derivePoolNodeAddress(
+      this.address,
+      nodeNumber,
+      this.client.cypherPID
+    );
+    return address;
   }
 
   subscribe() {

@@ -1,8 +1,12 @@
 import { PublicKey } from '@solana/web3.js';
 import { Market } from '@project-serum/serum';
-import { CypherClient } from '../client';
-import type { ErrorCB, PoolNodeState, StateUpdateHandler } from '../types';
+import { CypherClient } from '../../client';
+import type { ErrorCB, PoolNodeState, StateUpdateHandler } from '../../types';
 import { I80F48 } from '@blockworks-foundation/mango-client';
+import {
+  derivePoolNodeVaultAddress,
+  derivePoolNodeVaultSigner
+} from '../../utils/pda';
 
 export class PoolNode {
   private _listener: number;
@@ -63,6 +67,24 @@ export class PoolNode {
 
   get borrows(): I80F48 {
     return new I80F48(this.state.borrows);
+  }
+
+  vaultAddress(): PublicKey {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [address, _] = derivePoolNodeVaultAddress(
+      this.address,
+      this.client.cypherPID
+    );
+    return address;
+  }
+
+  vaultSignerAddress(): PublicKey {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [address, _] = derivePoolNodeVaultSigner(
+      this.address,
+      this.client.cypherPID
+    );
+    return address;
   }
 
   subscribe() {

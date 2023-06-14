@@ -1,8 +1,8 @@
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { CypherClient } from '../client';
-import { OracleProductsState } from '../types';
-import { CreateOracleProductsArgs } from '../types/on-chain';
-import { deriveOracleProductsAddress } from '../utils/pda';
+import { CypherClient } from '../../client';
+import { OracleProductsState } from '../../types';
+import { CreateOracleProductsArgs } from '../../types/cypher';
+import { deriveOracleProductsAddress } from '../../utils/pda';
 
 export class OracleProducts {
   constructor(

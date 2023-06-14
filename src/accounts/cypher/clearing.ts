@@ -1,10 +1,10 @@
 import { PublicKey, SystemProgram } from '@solana/web3.js';
-import { CypherClient } from '../client';
-import type { CreateClearingArgs, ClearingState } from '../types';
+import { CypherClient } from '../../client';
+import type { CreateClearingArgs, ClearingState } from '../../types';
 import {
   derivePublicClearingAddress,
   derivePrivateClearingAddress
-} from '../utils/pda';
+} from '../../utils/pda';
 
 export class Clearing {
   constructor(

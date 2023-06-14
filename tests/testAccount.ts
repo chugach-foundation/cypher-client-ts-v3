@@ -36,4 +36,4 @@ async function testRun(cypherClient: CypherClient) {
   console.log('///// Master Account \\\\\\\n')
 }
 
-testRun(client)
+testRun(client as CypherClient)

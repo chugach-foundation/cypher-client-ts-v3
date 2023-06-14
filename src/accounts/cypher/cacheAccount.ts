@@ -1,12 +1,12 @@
 import { PublicKey, Keypair } from '@solana/web3.js';
-import { CypherClient } from '../client';
+import { CypherClient } from '../../client';
 import {
   CacheAccountState,
   StateUpdateHandler,
   Cache,
   CacheListenerCB,
   ErrorCB
-} from '../types';
+} from '../../types';
 
 export class CacheAccount {
   private _listener: number;
