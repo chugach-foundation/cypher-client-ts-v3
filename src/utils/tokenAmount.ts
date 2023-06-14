@@ -1,6 +1,6 @@
 import { I80F48 } from '@blockworks-foundation/mango-client';
 import { BN } from '@project-serum/anchor';
-import { Side } from '../types/on-chain';
+import { Side } from '../types/cypher';
 
 export function getSideFromKey(orderId: BN): Side {
   const orderIdSideFlag = new BN(1).shln(63);

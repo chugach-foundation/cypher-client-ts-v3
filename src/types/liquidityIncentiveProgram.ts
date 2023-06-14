@@ -1,12 +1,12 @@
 import { Event } from '@project-serum/anchor';
 import { TypeDef } from '@project-serum/anchor/dist/cjs/program/namespace/types';
-import type { LiquidityIncentiveProgram } from '../generated/types/liquidity_incentive_program';
+import type { LiquidityIncentiveProgram } from '../generated/types/liquidityIncentiveProgram';
 
-export type Campaign = TypeDef<
+export type CampaignState = TypeDef<
   LiquidityIncentiveProgram['accounts'][0],
   LiquidityIncentiveProgram
 >;
-export type Deposit = TypeDef<
+export type DepositState = TypeDef<
   LiquidityIncentiveProgram['accounts'][1],
   LiquidityIncentiveProgram
 >;

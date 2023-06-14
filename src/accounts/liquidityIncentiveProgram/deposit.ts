@@ -4,8 +4,8 @@ import {
   SYSVAR_RENT_PUBKEY,
   SystemProgram
 } from '@solana/web3.js';
-import { LiquidityIncentiveProgramClient } from '../../client/liquidityIncentiveProgram';
-import { Deposit as DepositState, ErrorCB } from '../../types';
+import { LiquidityIncentiveClient } from '../../client/liquidityIncentiveProgram';
+import { DepositState, ErrorCB } from '../../types';
 import { StateUpdateHandler } from '../../types/index';
 import { Campaign } from './campaign';
 import {
@@ -27,7 +27,7 @@ export class Deposit {
   private _listener: number;
 
   constructor(
-    readonly client: LiquidityIncentiveProgramClient,
+    readonly client: LiquidityIncentiveClient,
     readonly address: PublicKey,
     public state: DepositState,
     private _onStateUpdate?: StateUpdateHandler<DepositState>,
@@ -37,7 +37,7 @@ export class Deposit {
   }
 
   static async create(
-    client: LiquidityIncentiveProgramClient,
+    client: LiquidityIncentiveClient,
     campaign: Campaign,
     pool: Pool,
     poolNode: PoolNode,
@@ -106,7 +106,7 @@ export class Deposit {
   }
 
   async end(
-    client: LiquidityIncentiveProgramClient,
+    client: LiquidityIncentiveClient,
     campaign: Campaign,
     pool: Pool,
     poolNode: PoolNode,
@@ -189,7 +189,7 @@ export class Deposit {
   }
 
   static async load(
-    client: LiquidityIncentiveProgramClient,
+    client: LiquidityIncentiveClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<DepositState>,
     errorCallback?: ErrorCB

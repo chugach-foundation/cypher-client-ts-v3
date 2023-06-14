@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
-import { LiquidityIncentiveProgramClient } from '../../client/liquidityIncentiveProgram';
-import { Campaign as CampaignState, ErrorCB } from '../../types';
+import { LiquidityIncentiveClient } from '../../client/liquidityIncentiveProgram';
+import { CampaignState, ErrorCB } from '../../types';
 import { StateUpdateHandler } from '../../types/index';
 import {
   deriveCampaignRewardVault,
@@ -10,7 +10,7 @@ import {
 export class Campaign {
   private _listener: number;
   constructor(
-    readonly client: LiquidityIncentiveProgramClient,
+    readonly client: LiquidityIncentiveClient,
     readonly address: PublicKey,
     public state: CampaignState,
     private _onStateUpdate?: StateUpdateHandler<CampaignState>,
@@ -20,7 +20,7 @@ export class Campaign {
   }
 
   static async load(
-    client: LiquidityIncentiveProgramClient,
+    client: LiquidityIncentiveClient,
     address: PublicKey,
     onStateUpdateHandler?: StateUpdateHandler<CampaignState>,
     errorCallback?: ErrorCB
