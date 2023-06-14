@@ -36,7 +36,7 @@ export const CONFIGS: { [key in Cluster]: Config } = {
   },
   'mainnet-beta': {
     CYPHER_PID: new PublicKey('CYPH3o83JX6jY6NkbproSpdmQ5VWJtxjfJ5P8veyYVu3'),
-    LIP_PID: new PublicKey('CYPH3o83JX6jY6NkbproSpdmQ5VWJtYVu3placeholder'),
+    LIP_PID: new PublicKey('11111111111111111111111111111111'),
     PYTH_PID: new PublicKey('FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH'),
     DEX_PID: new PublicKey('srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX'),
     QUOTE_MINT: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
