@@ -46,17 +46,11 @@ export class Deposit {
   ) {
     const deposit = new Keypair();
     const tempTokenAccount = new Keypair();
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [depositAuthority, depositBump] = deriveDepositAuthority(
+    const [depositAuthority] = deriveDepositAuthority(
       deposit.publicKey,
       client.programId
     );
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [clearing, clearingBump] = derivePublicClearingAddress(
-      client.cypherProgramId
-    );
+    const [clearing] = derivePublicClearingAddress(client.cypherProgramId);
     const [cypherAccount, accountBump] = deriveAccountAddress(
       depositAuthority,
       0,
@@ -113,38 +107,27 @@ export class Deposit {
     authority: PublicKey
   ) {
     const tempTokenAccount = new Keypair();
-
     const campaignRewardVault = campaign.rewardVaultAddress();
     const campaignRewardVaultAuthority = campaign.rewardVaultAuthorityAddress();
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [depositAuthority, depositBump] = deriveDepositAuthority(
+    const [depositAuthority] = deriveDepositAuthority(
       this.address,
       client.programId
     );
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [clearing, clearingBump] = derivePublicClearingAddress(
-      client.cypherProgramId
-    );
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [cypherAccount, accountBump] = deriveAccountAddress(
+    const [clearing] = derivePublicClearingAddress(client.cypherProgramId);
+    const [cypherAccount] = deriveAccountAddress(
       depositAuthority,
       0,
       client.cypherProgramId
     );
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [cypherSubAccount, subAccountBump] = deriveSubAccountAddress(
+    const [cypherSubAccount] = deriveSubAccountAddress(
       cypherAccount,
       0,
       client.cypherProgramId
     );
-
     const assetTokenAccount = await getAssociatedTokenAddress(
       authority,
       campaign.state.assetMint
     );
-
     const rewardTokenAccount = await getAssociatedTokenAddress(
       authority,
       campaign.state.rewardMint

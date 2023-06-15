@@ -70,8 +70,7 @@ export class PoolNode {
   }
 
   vaultAddress(): PublicKey {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [address, _] = derivePoolNodeVaultAddress(
+    const [address] = derivePoolNodeVaultAddress(
       this.address,
       this.client.cypherPID
     );
@@ -79,8 +78,7 @@ export class PoolNode {
   }
 
   vaultSignerAddress(): PublicKey {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [address, _] = derivePoolNodeVaultSigner(
+    const [address] = derivePoolNodeVaultSigner(
       this.address,
       this.client.cypherPID
     );

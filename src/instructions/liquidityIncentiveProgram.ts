@@ -36,23 +36,17 @@ export const makeCreateDepositIx = async (
   const deposit = new Keypair();
   const tempTokenAccount = new Keypair();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [depositAuthority, depositBump] = deriveDepositAuthority(
+  const [depositAuthority] = deriveDepositAuthority(
     deposit.publicKey,
     client.programId
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [clearing, clearingBump] = derivePublicClearingAddress(
-    client.cypherProgramId
-  );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [clearing] = derivePublicClearingAddress(client.cypherProgramId);
   const [cypherAccount, accountBump] = deriveAccountAddress(
     depositAuthority,
     0,
     client.cypherProgramId
   );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cypherSubAccount, subAccountBump] = deriveSubAccountAddress(
     cypherAccount,
     0,
@@ -112,39 +106,27 @@ export const makeEndDepositIx = async (
   ixs: TransactionInstruction[];
 }> => {
   const tempTokenAccount = new Keypair();
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [depositAuthority, depositBump] = deriveDepositAuthority(
-    deposit,
-    client.programId
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [clearing, clearingBump] = derivePublicClearingAddress(
-    client.cypherProgramId
-  );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [cypherAccount, accountBump] = deriveAccountAddress(
+  const [depositAuthority] = deriveDepositAuthority(deposit, client.programId);
+  const [clearing] = derivePublicClearingAddress(client.cypherProgramId);
+  const [cypherAccount] = deriveAccountAddress(
     depositAuthority,
     0,
     client.cypherProgramId
   );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [cypherSubAccount, subAccountBump] = deriveSubAccountAddress(
+  const [cypherSubAccount] = deriveSubAccountAddress(
     cypherAccount,
     0,
     client.cypherProgramId
   );
-
   const assetTokenAccount = await getAssociatedTokenAddress(
     client.walletPubkey,
     assetMint
   );
-
   const rewardTokenAccount = await getAssociatedTokenAddress(
     client.walletPubkey,
     rewardMint
   );
+
   return {
     signers: [tempTokenAccount],
     ixs: [

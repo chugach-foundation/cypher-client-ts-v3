@@ -49,8 +49,7 @@ export class Campaign {
   }
 
   rewardVaultAddress(): PublicKey {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [address, _] = deriveCampaignRewardVault(
+    const [address] = deriveCampaignRewardVault(
       this.address,
       this.client.programId
     );
@@ -58,8 +57,7 @@ export class Campaign {
   }
 
   rewardVaultAuthorityAddress(): PublicKey {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [address, _] = deriveCampaignRewardVaultAuthority(
+    const [address] = deriveCampaignRewardVaultAuthority(
       this.address,
       this.client.programId
     );

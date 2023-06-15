@@ -34,7 +34,7 @@ export class PerpMarketViewer implements DerivativesMarket {
   constructor(
     readonly client: CypherClient,
     readonly market: PerpetualMarket
-  ) { }
+  ) {}
 
   private get connection() {
     return this.client.connection;
@@ -263,7 +263,7 @@ export class PerpMarketViewer implements DerivativesMarket {
     return a || 0;
   }
 
-  getlastPrice = (fills: Fills): number => last(fills)?.price || 0
+  getlastPrice = (fills: Fills): number => last(fills)?.price || 0;
 
   getMiddlePointPrice(bids: ParsedOrderbook, asks: ParsedOrderbook) {
     const b = bids?.length > 0 && Number(bids[0][0]);
@@ -276,12 +276,10 @@ export class PerpMarketViewer implements DerivativesMarket {
   getContractsOnOrderbooks(bids: ParsedOrderbook, asks: ParsedOrderbook) {
     let contracts = 0;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, size] of bids) {
       contracts += size;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (const [_, size] of asks) {
       contracts += size;
     }

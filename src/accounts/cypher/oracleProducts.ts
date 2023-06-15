@@ -17,8 +17,7 @@ export class OracleProducts {
     oracleAddrs: PublicKey[],
     args: CreateOracleProductsArgs
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [oracleProductsAddress, bump] = deriveOracleProductsAddress(
+    const [oracleProductsAddress] = deriveOracleProductsAddress(
       args.symbol,
       client.cypherPID
     );

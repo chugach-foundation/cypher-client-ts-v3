@@ -45,10 +45,7 @@ export class Clearing {
     authority: PublicKey,
     args: CreateClearingArgs
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [publicClearing, publicClearingBump] = derivePublicClearingAddress(
-      client.cypherPID
-    );
+    const [publicClearing] = derivePublicClearingAddress(client.cypherPID);
     const [privateClearing, privateClearingBump] = derivePrivateClearingAddress(
       args.clearingNumber,
       client.cypherPID

@@ -39,12 +39,7 @@ export class Pool {
     args: CreatePoolArgs
   ) {
     const [pool, poolBump] = derivePoolAddress(args.poolName, client.cypherPID);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [poolNode, poolNodeBump] = derivePoolNodeAddress(
-      pool,
-      0,
-      client.cypherPID
-    );
+    const [poolNode] = derivePoolNodeAddress(pool, 0, client.cypherPID);
     const [tokenVault] = derivePoolNodeVaultAddress(poolNode, client.cypherPID);
     args.poolBump = poolBump;
     await client.methods
@@ -213,8 +208,7 @@ export class Pool {
   }
 
   poolNodeAddress(nodeNumber: number): PublicKey {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [address, _] = derivePoolNodeAddress(
+    const [address] = derivePoolNodeAddress(
       this.address,
       nodeNumber,
       this.client.cypherPID
