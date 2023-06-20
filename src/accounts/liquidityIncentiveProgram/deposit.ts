@@ -177,7 +177,7 @@ export class Deposit {
     onStateUpdateHandler?: StateUpdateHandler<DepositState>,
     errorCallback?: ErrorCB
   ) {
-    const state = (await client.accounts.campaign.fetch(
+    const state = (await client.accounts.deposit.fetch(
       address
     )) as DepositState;
     return new Deposit(
