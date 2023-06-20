@@ -6,6 +6,9 @@ export const cypherIdl = _cypherIdl as Idl;
 export const liquidityIncentiveProgramIdl =
   _liquidityIncentiveProgramIdl as Idl;
 export const cypherCoder = new BorshCoder(cypherIdl) as Coder;
+export const liquidityIncentiveProgramCoder = new BorshCoder(
+  liquidityIncentiveProgramIdl
+) as Coder;
 
 export function bnToDate(bn: BN): Date {
   return new Date(bn.toNumber() * 1000);
