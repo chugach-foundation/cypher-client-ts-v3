@@ -551,7 +551,17 @@ export type LiquidityIncentiveProgram = {
           "index": false
         },
         {
+          "name": "campaign",
+          "type": "publicKey",
+          "index": false
+        },
+        {
           "name": "owner",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "assetMint",
           "type": "publicKey",
           "index": false
         },
@@ -581,7 +591,17 @@ export type LiquidityIncentiveProgram = {
           "index": false
         },
         {
+          "name": "campaign",
+          "type": "publicKey",
+          "index": false
+        },
+        {
           "name": "owner",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "assetMint",
           "type": "publicKey",
           "index": false
         },
@@ -1205,7 +1225,17 @@ export const IDL: LiquidityIncentiveProgram = {
           "index": false
         },
         {
+          "name": "campaign",
+          "type": "publicKey",
+          "index": false
+        },
+        {
           "name": "owner",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "assetMint",
           "type": "publicKey",
           "index": false
         },
@@ -1235,7 +1265,17 @@ export const IDL: LiquidityIncentiveProgram = {
           "index": false
         },
         {
+          "name": "campaign",
+          "type": "publicKey",
+          "index": false
+        },
+        {
           "name": "owner",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "assetMint",
           "type": "publicKey",
           "index": false
         },
