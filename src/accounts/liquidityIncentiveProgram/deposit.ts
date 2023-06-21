@@ -41,7 +41,7 @@ export class Deposit {
     campaign: Campaign,
     pool: Pool,
     poolNode: PoolNode,
-    authority: PublicKey,
+    fundingAccount: PublicKey,
     amount: BN
   ) {
     const deposit = new Keypair();
@@ -62,11 +62,6 @@ export class Deposit {
       client.cypherProgramId
     );
 
-    const fundingAccount = await getAssociatedTokenAddress(
-      authority,
-      campaign.state.assetMint
-    );
-
     const ix = await client.methods
       .createDeposit(accountBump, subAccountBump, amount)
       .accountsStrict({
@@ -83,8 +78,8 @@ export class Deposit {
         pool: pool.address,
         poolNode: poolNode.address,
         poolNodeVault: poolNode.vaultAddress(),
-        payer: authority,
-        signer: authority,
+        payer: client.walletPubkey,
+        signer: client.walletPubkey,
         cypherProgram: client.cypherProgramId,
         tokenProgram: TOKEN_PROGRAM_ID,
         rent: SYSVAR_RENT_PUBKEY,
@@ -104,7 +99,7 @@ export class Deposit {
     campaign: Campaign,
     pool: Pool,
     poolNode: PoolNode,
-    authority: PublicKey
+    assetTokenAccount: PublicKey
   ) {
     const tempTokenAccount = new Keypair();
     const campaignRewardVault = campaign.rewardVaultAddress();
@@ -124,12 +119,8 @@ export class Deposit {
       0,
       client.cypherProgramId
     );
-    const assetTokenAccount = await getAssociatedTokenAddress(
-      authority,
-      campaign.state.assetMint
-    );
     const rewardTokenAccount = await getAssociatedTokenAddress(
-      authority,
+      client.walletPubkey,
       campaign.state.rewardMint
     );
 
@@ -154,8 +145,8 @@ export class Deposit {
         poolNodeVaultSigner: poolNode.vaultSignerAddress(),
         rewardTokenAccount,
         rewardMint: campaign.state.rewardMint,
-        payer: authority,
-        signer: authority,
+        payer: client.walletPubkey,
+        signer: client.walletPubkey,
         cypherProgram: client.cypherProgramId,
         tokenProgram: TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
