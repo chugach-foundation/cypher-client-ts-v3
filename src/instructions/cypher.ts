@@ -460,10 +460,11 @@ export const makeWithdrawFundsIx = (
   destinationTokenAccount: PublicKey,
   tokenMint: PublicKey,
   authority: PublicKey,
-  amount: BN
+  amount: BN,
+  zero = false
 ) => {
   return client.methods
-    .withdrawFunds(amount)
+    .withdrawFunds(amount, zero)
     .accountsStrict({
       clearing,
       cacheAccount,

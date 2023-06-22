@@ -7,6 +7,7 @@ export type Cluster = 'localnet' | 'devnet' | 'mainnet-beta';
 
 export interface Config {
   CYPHER_PID: PublicKey;
+  CYPHER_TOKEN_MINT: PublicKey;
   LIP_PID: PublicKey;
   DEX_PID: PublicKey;
   PYTH_PID: PublicKey;

@@ -1,5 +1,5 @@
 export type Cypher = {
-  "version": "3.0.0",
+  "version": "3.0.7",
   "name": "cypher",
   "instructions": [
     {
@@ -390,6 +390,32 @@ export type Cypher = {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeWhitelist",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rentDestination",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
         }
       ],
       "args": []
@@ -1462,6 +1488,27 @@ export type Cypher = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "revokeWhitelist",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
     },
     {
       "name": "setAccountDelegate",
@@ -2576,6 +2623,12 @@ export type Cypher = {
         {
           "name": "amount",
           "type": "u64"
+        },
+        {
+          "name": "zero",
+          "type": {
+            "option": "bool"
+          }
         }
       ]
     },
@@ -4142,9 +4195,13 @@ export type Cypher = {
             "type": {
               "array": [
                 "u8",
-                7
+                3
               ]
             }
+          },
+          {
+            "name": "accountCount",
+            "type": "u32"
           }
         ]
       }
@@ -8791,7 +8848,7 @@ export type Cypher = {
 };
 
 export const IDL: Cypher = {
-  "version": "3.0.0",
+  "version": "3.0.7",
   "name": "cypher",
   "instructions": [
     {
@@ -9182,6 +9239,32 @@ export const IDL: Cypher = {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeWhitelist",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rentDestination",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
         }
       ],
       "args": []
@@ -10254,6 +10337,27 @@ export const IDL: Cypher = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "revokeWhitelist",
+      "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "whitelist",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
     },
     {
       "name": "setAccountDelegate",
@@ -11368,6 +11472,12 @@ export const IDL: Cypher = {
         {
           "name": "amount",
           "type": "u64"
+        },
+        {
+          "name": "zero",
+          "type": {
+            "option": "bool"
+          }
         }
       ]
     },
@@ -12934,9 +13044,13 @@ export const IDL: Cypher = {
             "type": {
               "array": [
                 "u8",
-                7
+                3
               ]
             }
+          },
+          {
+            "name": "accountCount",
+            "type": "u32"
           }
         ]
       }
