@@ -11,12 +11,12 @@
   "author": "cypher protocol",
   "license": "Apache 2.0",
   "scripts": {
-    "build": "npx tsc",
+    "build": "rm -rf ./lib && npx tsc",
     "export-to-client": "anchor build --provider.cluster devnet && cp ../target/idl/* ./src/generated/idl && cp ../target/types/* ./src/generated/types && rm -rf ./lib && npx tsc",
     "lint": "eslint src --ext .ts",
     "fmt": "prettier --config .prettierrc 'src/**/*.ts' --check",
     "fmt:fix": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "prepare": "npx tsc"
+    "prepare": "rm -rf ./lib && npx tsc"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.1",
