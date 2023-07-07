@@ -96,6 +96,33 @@ export class Pool {
     );
   }
 
+  static async loadMultiple(
+    client: CypherClient,
+    poolAddresses: PublicKey[]
+  ): Promise<Pool[]> {
+    const pools: Pool[] = [];
+    const queryResult = await client.accounts.pool.fetchMultiple(poolAddresses);
+    let i = 0;
+    for (const result of queryResult) {
+      if (result) {
+        const poolState = result as PoolState;
+        if (!poolState.tokenMint.equals(client.quoteMint)) {
+          const market = await Market.load(
+            client.connection,
+            poolState.dexMarket,
+            {},
+            client.dexPID
+          );
+          pools.push(new Pool(client, poolAddresses[i], poolState, market));
+        } else {
+          pools.push(new Pool(client, poolAddresses[i], poolState));
+        }
+      }
+      i += 1;
+    }
+    return pools;
+  }
+
   static async loadAll(client: CypherClient): Promise<Pool[]> {
     const pools: Pool[] = [];
     const queryResult = await client.accounts.pool.all();

@@ -59,6 +59,35 @@ export class DerivativesOrdersAccount {
     );
   }
 
+  static async loadMultiple(
+    client: CypherClient,
+    ordersAccountAddresses: PublicKey[],
+    onStateUpdateHandler?: StateUpdateHandler<OrdersAccountState>,
+    errorCallback?: ErrorCB
+  ): Promise<DerivativesOrdersAccount[]> {
+    const ordersAccounts: DerivativesOrdersAccount[] = [];
+    const queryResult = await client.accounts.ordersAccount.fetchMultiple(
+      ordersAccountAddresses
+    );
+    let i = 0;
+    for (const result of queryResult) {
+      if (result) {
+        const subAccount = result as OrdersAccountState;
+        ordersAccounts.push(
+          new DerivativesOrdersAccount(
+            client,
+            ordersAccountAddresses[i],
+            subAccount,
+            onStateUpdateHandler,
+            errorCallback
+          )
+        );
+      }
+      i += 1;
+    }
+    return ordersAccounts;
+  }
+
   getOrderIds() {
     const orderIds: BN[] = [];
 

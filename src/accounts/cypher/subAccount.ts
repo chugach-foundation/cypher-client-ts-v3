@@ -79,6 +79,35 @@ export class CypherSubAccount {
     );
   }
 
+  static async loadMultiple(
+    client: CypherClient,
+    subAccountAddresses: PublicKey[],
+    onStateUpdateHandler?: StateUpdateHandler<CypherSubAccountState>,
+    errorCallback?: ErrorCB
+  ): Promise<CypherSubAccount[]> {
+    const subAccounts: CypherSubAccount[] = [];
+    const queryResult = await client.accounts.cypherSubAccount.fetchMultiple(
+      subAccountAddresses
+    );
+    let i = 0;
+    for (const result of queryResult) {
+      if (result) {
+        const subAccount = result as CypherSubAccountState;
+        subAccounts.push(
+          new CypherSubAccount(
+            client,
+            subAccountAddresses[i],
+            subAccount,
+            onStateUpdateHandler,
+            errorCallback
+          )
+        );
+      }
+      i += 1;
+    }
+    return subAccounts;
+  }
+
   getSpotPosition(tokenMint: PublicKey): SpotPosition {
     for (const position of this.state.positions) {
       if (position.spot.tokenMint.equals(tokenMint)) {

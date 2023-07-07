@@ -92,6 +92,35 @@ export class PerpetualMarket {
     );
   }
 
+  static async loadMultiple(
+    client: CypherClient,
+    perpMarketAddresses: PublicKey[],
+    onStateUpdateHandler?: StateUpdateHandler<PerpetualMarketState>,
+    errorCallback?: ErrorCB
+  ): Promise<PerpetualMarket[]> {
+    const perpMarkets: PerpetualMarket[] = [];
+    const queryResult = await client.accounts.perpetualMarket.fetchMultiple(
+      perpMarketAddresses
+    );
+    let i = 0;
+    for (const result of queryResult) {
+      if (result) {
+        const poolState = result as PerpetualMarketState;
+        perpMarkets.push(
+          new PerpetualMarket(
+            client,
+            perpMarketAddresses[i],
+            poolState,
+            onStateUpdateHandler,
+            errorCallback
+          )
+        );
+      }
+      i += 1;
+    }
+    return perpMarkets;
+  }
+
   static async loadAll(client: CypherClient): Promise<PerpetualMarket[]> {
     const queryResult = await client.accounts.perpetualMarket.all();
     return queryResult.map(

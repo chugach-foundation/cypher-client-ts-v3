@@ -106,6 +106,35 @@ export class CypherAccount {
     );
   }
 
+  static async loadMultiple(
+    client: CypherClient,
+    accountAddresses: PublicKey[],
+    onStateUpdateHandler?: StateUpdateHandler<CypherAccountState>,
+    errorCallback?: ErrorCB
+  ): Promise<CypherAccount[]> {
+    const accounts: CypherAccount[] = [];
+    const queryResult = await client.accounts.cypherAccount.fetchMultiple(
+      accountAddresses
+    );
+    let i = 0;
+    for (const result of queryResult) {
+      if (result) {
+        const subAccount = result as CypherAccountState;
+        accounts.push(
+          new CypherAccount(
+            client,
+            accountAddresses[i],
+            subAccount,
+            onStateUpdateHandler,
+            errorCallback
+          )
+        );
+      }
+      i += 1;
+    }
+    return accounts;
+  }
+
   getSubAccounts(): PublicKey[] {
     const subAccounts: PublicKey[] = [];
 

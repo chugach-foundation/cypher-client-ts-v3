@@ -95,6 +95,35 @@ export class FuturesMarket {
     );
   }
 
+  static async loadMultiple(
+    client: CypherClient,
+    futuresMarketAddresses: PublicKey[],
+    onStateUpdateHandler?: StateUpdateHandler<FuturesMarketState>,
+    errorCallback?: ErrorCB
+  ): Promise<FuturesMarket[]> {
+    const futuresMarkets: FuturesMarket[] = [];
+    const queryResult = await client.accounts.futuresMarket.fetchMultiple(
+      futuresMarketAddresses
+    );
+    let i = 0;
+    for (const result of queryResult) {
+      if (result) {
+        const poolState = result as FuturesMarketState;
+        futuresMarkets.push(
+          new FuturesMarket(
+            client,
+            futuresMarketAddresses[i],
+            poolState,
+            onStateUpdateHandler,
+            errorCallback
+          )
+        );
+      }
+      i += 1;
+    }
+    return futuresMarkets;
+  }
+
   static async loadAll(client: CypherClient): Promise<FuturesMarket[]> {
     const queryResult = await client.accounts.futuresMarket.all();
     return queryResult.map(

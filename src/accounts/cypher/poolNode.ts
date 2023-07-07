@@ -39,6 +39,36 @@ export class PoolNode {
     );
   }
 
+  static async loadMultiple(
+    client: CypherClient,
+    poolNodesAddresses: PublicKey[],
+    onStateUpdateHandler?: StateUpdateHandler<PoolNodeState>,
+    errorCallback?: ErrorCB
+  ): Promise<PoolNode[]> {
+    const poolNodes: PoolNode[] = [];
+    const queryResult = await client.accounts.poolNode.fetchMultiple(
+      poolNodesAddresses
+    );
+    let i = 0;
+    for (const result of queryResult) {
+      if (result) {
+        const poolState = result as PoolNodeState;
+        poolNodes.push(
+          new PoolNode(
+            client,
+            poolNodesAddresses[i],
+            poolState,
+            null,
+            onStateUpdateHandler,
+            errorCallback
+          )
+        );
+      }
+      i += 1;
+    }
+    return poolNodes;
+  }
+
   static async loadAll(client: CypherClient): Promise<PoolNode[]> {
     const pools: PoolNode[] = [];
     const queryResult = await client.accounts.pool.all();
