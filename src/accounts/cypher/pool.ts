@@ -107,7 +107,7 @@ export class Pool {
       if (result) {
         const poolState = result as PoolState;
         if (
-          !poolState.tokenMint.equals(client.quoteMint) ||
+          !poolState.tokenMint.equals(client.quoteMint) &&
           !poolState.dexMarket.equals(PublicKey.default)
         ) {
           const market = await Market.load(
@@ -131,7 +131,7 @@ export class Pool {
     const queryResult = await client.accounts.pool.all();
     for (const result of queryResult) {
       if (
-        !result.account.tokenMint.equals(client.quoteMint) ||
+        !result.account.tokenMint.equals(client.quoteMint) &&
         !result.account.dexMarket.equals(PublicKey.default)
       ) {
         const market = await Market.load(
