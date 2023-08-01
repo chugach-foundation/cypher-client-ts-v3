@@ -185,7 +185,8 @@ export class SpotMarketViewer {
     size: number,
     side: 'buy' | 'sell',
     bids: ParsedOrderbook,
-    asks: ParsedOrderbook
+    asks: ParsedOrderbook,
+    priceBonusFocus = 0.05
   ) {
     const orderbook = side === 'buy' ? asks : bids;
     let acc = 0;
@@ -201,15 +202,16 @@ export class SpotMarketViewer {
       throw new Error();
     }
 
-    if (side === 'buy') return selectedOrder[0] * 1.05;
-    else return selectedOrder[0] * 0.95;
+    if (side === 'buy') return selectedOrder[0] * (1 + priceBonusFocus);
+    return selectedOrder[0] * (1 - priceBonusFocus);
   }
 
   calcMarketOrderPriceForAvailableAmount(
     size: number,
     side: 'buy' | 'sell',
     bids: ParsedOrderbook,
-    asks: ParsedOrderbook
+    asks: ParsedOrderbook,
+    priceBonusFocus = 0.05
   ) {
     if (!size) throw new Error('Size is empty');
 
@@ -233,8 +235,9 @@ export class SpotMarketViewer {
       availableSize = acc;
     }
 
-    if (side === 'buy') return [selectedOrder[0] * 1.05, availableSize];
-    else return [selectedOrder[0] * 0.95, availableSize];
+    if (side === 'buy')
+      return [selectedOrder[0] * (1 + priceBonusFocus), availableSize];
+    return [selectedOrder[0] * (1 - priceBonusFocus), availableSize];
   }
 
   getTopAskPrice(asks: ParsedOrderbook) {
