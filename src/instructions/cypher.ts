@@ -1080,6 +1080,8 @@ export const makeConsumePerpEventsIx = (
 
 export const makeEditSubAccountMarginIx = (
   client: CypherClient,
+  clearing: PublicKey,
+  cacheAccount: PublicKey,
   masterAccount: PublicKey,
   subAccount: PublicKey,
   authority: PublicKey,
@@ -1088,6 +1090,8 @@ export const makeEditSubAccountMarginIx = (
   return client.methods
     .editSubAccountMargining(marginingType as never)
     .accountsStrict({
+      clearing,
+      cacheAccount,
       masterAccount,
       subAccount,
       authority

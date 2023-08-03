@@ -193,3 +193,14 @@ export const deriveDepositAuthority = (
     lipPID
   );
 };
+
+export const deriveSequenceAccount = (
+  authority: PublicKey,
+  sym: string,
+  sequenceEnforcerPID: PublicKey
+) => {
+  return anchorUtils.publicKey.findProgramAddressSync(
+    [Buffer.from(sym, 'utf-8'), authority.toBuffer()],
+    sequenceEnforcerPID
+  );
+};

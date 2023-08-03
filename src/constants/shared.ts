@@ -11,6 +11,7 @@ export const CONFIGS: { [key in Cluster]: Config } = {
     CYPHER_TOKEN_MINT: new PublicKey('11111111111111111111111111111111'),
     LIP_PID: new PublicKey('F1HVQ92YoF27Z652KBETWoyagY7Vej6F6mtvKDvYK3rX'),
     PYTH_PID: new PublicKey('gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s'),
+    SEQ_ENFORCER_PID: new PublicKey('11111111111111111111111111111111'),
     DEX_PID: new PublicKey('EoTcMgcDRTJVZDMZWBoU6rhYHZfkNTVEAfz3uUJRcYGj'),
     FAUCET_PID: new PublicKey('2gCkR5aaUiTVRiKDB79EWXm5PAVDWtNTnp9mGuu4ZKdY'),
     QUOTE_MINT: new PublicKey('GE2GoxjfHo9uPJGDxwVifPFomBybhsh4m5SMqaw7vPBw'),
@@ -28,6 +29,9 @@ export const CONFIGS: { [key in Cluster]: Config } = {
     ),
     LIP_PID: new PublicKey('F1HVQ92YoF27Z652KBETWoyagY7Vej6F6mtvKDvYK3rX'),
     PYTH_PID: new PublicKey('gSbePebfvPy7tRqimPoVecS2UsBvYv46ynrzWocc92s'),
+    SEQ_ENFORCER_PID: new PublicKey(
+      'FBngRHN4s5cmHagqy3Zd6xcK3zPJBeX5DixtHFbBhyCn'
+    ),
     DEX_PID: new PublicKey('EoTcMgcDRTJVZDMZWBoU6rhYHZfkNTVEAfz3uUJRcYGj'),
     FAUCET_PID: new PublicKey('2gCkR5aaUiTVRiKDB79EWXm5PAVDWtNTnp9mGuu4ZKdY'),
     QUOTE_MINT: new PublicKey('GE2GoxjfHo9uPJGDxwVifPFomBybhsh4m5SMqaw7vPBw'),
@@ -45,6 +49,9 @@ export const CONFIGS: { [key in Cluster]: Config } = {
     ),
     LIP_PID: new PublicKey('cLip5AGrwoNJaYxdNicRg6uXMZbVCNGvYPC3rKuyASS'),
     PYTH_PID: new PublicKey('FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH'),
+    SEQ_ENFORCER_PID: new PublicKey(
+      'GDDMwNyyx8uB6zrqwBFHjLLG3TBYk2F8Az4yrQC5RzMp'
+    ),
     DEX_PID: new PublicKey('srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX'),
     QUOTE_MINT: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
     PYTH_QUOTE_PRODUCT: new PublicKey(

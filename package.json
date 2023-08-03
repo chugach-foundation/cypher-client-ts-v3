@@ -39,6 +39,7 @@
     "@project-serum/serum": "^0.13.65",
     "@pythnetwork/client": "^2.14.0",
     "@solana/spl-token": "^0.3.7",
-    "@solana/web3.js": "^1.75.0"
+    "@solana/web3.js": "^1.75.0",
+    "crypto-js": "^4.1.1"
   }
 }

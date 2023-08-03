@@ -1,5 +1,5 @@
 export type Cypher = {
-  "version": "3.0.7",
+  "version": "3.0.8",
   "name": "cypher",
   "instructions": [
     {
@@ -1193,6 +1193,16 @@ export type Cypher = {
     {
       "name": "editSubAccountMargining",
       "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
         {
           "name": "masterAccount",
           "isMut": true,
@@ -8321,6 +8331,36 @@ export type Cypher = {
       ]
     },
     {
+      "name": "TransferBetweenSubAccountsLog",
+      "fields": [
+        {
+          "name": "masterAccount",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "fromSubAccount",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "toSubAccount",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "assetMint",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "OrderFillLog",
       "fields": [
         {
@@ -8841,6 +8881,11 @@ export type Cypher = {
     },
     {
       "code": 6090,
+      "name": "WouldExceedBorrowLimit",
+      "msg": "this operation would exceed borrow limits"
+    },
+    {
+      "code": 6091,
       "name": "Default",
       "msg": "Default"
     }
@@ -8848,7 +8893,7 @@ export type Cypher = {
 };
 
 export const IDL: Cypher = {
-  "version": "3.0.7",
+  "version": "3.0.8",
   "name": "cypher",
   "instructions": [
     {
@@ -10042,6 +10087,16 @@ export const IDL: Cypher = {
     {
       "name": "editSubAccountMargining",
       "accounts": [
+        {
+          "name": "clearing",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "cacheAccount",
+          "isMut": false,
+          "isSigner": false
+        },
         {
           "name": "masterAccount",
           "isMut": true,
@@ -17170,6 +17225,36 @@ export const IDL: Cypher = {
       ]
     },
     {
+      "name": "TransferBetweenSubAccountsLog",
+      "fields": [
+        {
+          "name": "masterAccount",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "fromSubAccount",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "toSubAccount",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "assetMint",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "OrderFillLog",
       "fields": [
         {
@@ -17690,6 +17775,11 @@ export const IDL: Cypher = {
     },
     {
       "code": 6090,
+      "name": "WouldExceedBorrowLimit",
+      "msg": "this operation would exceed borrow limits"
+    },
+    {
+      "code": 6091,
       "name": "Default",
       "msg": "Default"
     }

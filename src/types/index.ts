@@ -11,6 +11,7 @@ export interface Config {
   LIP_PID: PublicKey;
   DEX_PID: PublicKey;
   PYTH_PID: PublicKey;
+  SEQ_ENFORCER_PID: PublicKey;
   FAUCET_PID?: PublicKey;
   QUOTE_MINT: PublicKey;
   PYTH_QUOTE_PRODUCT: PublicKey;
