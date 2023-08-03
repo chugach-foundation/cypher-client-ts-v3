@@ -88,11 +88,6 @@ export class SpotMarketViewer {
     }
   }
 
-  removeBidsListener() {
-    if (this._bidsListener)
-      this.connection.removeAccountChangeListener(this._bidsListener);
-  }
-
   addAsksListener(
     callback: OrderbookListenerCB,
     errorCallback: ErrorCB = () => {},
@@ -113,11 +108,6 @@ export class SpotMarketViewer {
     }
   }
 
-  removeAsksListener() {
-    if (this._asksListener)
-      this.connection.removeAccountChangeListener(this._asksListener);
-  }
-
   addEventQueueListener(callback: () => void, errorCallback: ErrorCB) {
     if (this.market == null) return null;
 
@@ -131,11 +121,6 @@ export class SpotMarketViewer {
     } catch (error: unknown) {
       errorCallback(error);
     }
-  }
-
-  removeEventQueueListener() {
-    if (this._eventQueueListener)
-      this.connection.removeAccountChangeListener(this._eventQueueListener);
   }
 
   addOpenOrdersAccountListener(
@@ -169,16 +154,36 @@ export class SpotMarketViewer {
     }
   }
 
-  removeOpenOrdersAccountListener() {
-    if (this._openOrdersAccountListener)
-      this.connection.removeAccountChangeListener(
+  async removeOpenOrdersAccountListener() {
+    if (this._openOrdersAccountListener) {
+      await this.connection.removeAccountChangeListener(
         this._openOrdersAccountListener
       );
+      this._openOrdersAccountListener = undefined;
+    }
   }
 
-  removeFillsListener() {
-    if (this._eventQueueListener)
-      this.connection.removeAccountChangeListener(this._eventQueueListener);
+  async removeBidsListener() {
+    if (this._bidsListener) {
+      await this.connection.removeAccountChangeListener(this._bidsListener);
+      this._bidsListener = undefined;
+    }
+  }
+
+  async removeAsksListener() {
+    if (this._asksListener) {
+      await this.connection.removeAccountChangeListener(this._asksListener);
+      this._asksListener = undefined;
+    }
+  }
+
+  async removeEventQueueListener() {
+    if (this._eventQueueListener) {
+      await this.connection.removeAccountChangeListener(
+        this._eventQueueListener
+      );
+      this._eventQueueListener = undefined;
+    }
   }
 
   calcMarketOrderPrice(

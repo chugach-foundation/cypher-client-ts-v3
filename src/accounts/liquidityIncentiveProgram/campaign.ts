@@ -80,9 +80,11 @@ export class Campaign {
     );
   }
 
-  private removeListener() {
-    if (this._listener)
-      this.client.connection.removeAccountChangeListener(this._listener);
+  private async removeListener() {
+    if (this._listener) {
+      await this.client.connection.removeAccountChangeListener(this._listener);
+      this._listener = undefined;
+    }
   }
 
   async unsubscribe() {

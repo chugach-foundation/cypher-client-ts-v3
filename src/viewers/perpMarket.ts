@@ -134,11 +134,6 @@ export class PerpMarketViewer implements DerivativesMarket {
     }
   }
 
-  removeBidsListener() {
-    if (this._bidsListener)
-      this.connection.removeAccountChangeListener(this._bidsListener);
-  }
-
   addAsksListener(
     callback: OrderbookListenerCB,
     errorCallback: ErrorCB = () => {},
@@ -156,11 +151,6 @@ export class PerpMarketViewer implements DerivativesMarket {
     } catch (error: unknown) {
       errorCallback(error);
     }
-  }
-
-  removeAsksListener() {
-    if (this._asksListener)
-      this.connection.removeAccountChangeListener(this._asksListener);
   }
 
   addEventQueueListener(
@@ -197,9 +187,27 @@ export class PerpMarketViewer implements DerivativesMarket {
     }
   }
 
-  removeFillsListener() {
-    if (this._eventQueueListener)
-      this.connection.removeAccountChangeListener(this._eventQueueListener);
+  async removeBidsListener() {
+    if (this._bidsListener) {
+      await this.connection.removeAccountChangeListener(this._bidsListener);
+      this._bidsListener = undefined;
+    }
+  }
+
+  async removeAsksListener() {
+    if (this._asksListener) {
+      await this.connection.removeAccountChangeListener(this._asksListener);
+      this._asksListener = undefined;
+    }
+  }
+
+  async removeFillsListener() {
+    if (this._eventQueueListener) {
+      await this.connection.removeAccountChangeListener(
+        this._eventQueueListener
+      );
+      this._eventQueueListener = undefined;
+    }
   }
 
   calcMarketOrderPrice(
