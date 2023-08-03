@@ -57,8 +57,9 @@ export type OrdersAccountActionLog = Event<Cypher['events'][6]>;
 export type SettlePositionLog = Event<Cypher['events'][7]>;
 export type LiquidateCollateralLog = Event<Cypher['events'][8]>;
 export type DepositOrWithdrawLog = Event<Cypher['events'][9]>;
-export type OrderFillLog = Event<Cypher['events'][10]>;
-export type FundingPaymentLog = Event<Cypher['events'][11]>;
+export type TransferBetweenSubAccountsLog = Event<Cypher['events'][10]>;
+export type OrderFillLog = Event<Cypher['events'][11]>;
+export type FundingPaymentLog = Event<Cypher['events'][12]>;
 
 export class OperatingStatus {
   static readonly Active = { active: {} };
